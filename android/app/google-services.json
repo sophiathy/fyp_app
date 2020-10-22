@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "955320510919",
+    "firebase_url": "https://fyp-55293157.firebaseio.com",
+    "project_id": "fyp-55293157",
+    "storage_bucket": "fyp-55293157.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955320510919:android:83f86336674cf7487a91e2",
+        "android_client_info": {
+          "package_name": "com.fyp_55293157.exercise_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955320510919-neev27dnnr8nga1lm5e9tm2u35eno01p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2oAtJ1kN2ym99e4qXF4BARzFz7kg3CNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955320510919-neev27dnnr8nga1lm5e9tm2u35eno01p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
-const kColorBehind_light = Color(0xFFE1F5FE);
-const kColorBehind_dark = Colors.black54;
+const kBackground_light = Color(0xFFE1F5FE);
+const kBackground_dark = Colors.black54;
 
 //Sections at Home
 const kSectionBackground_light = Colors.white;
 const kSectionBackground_dark = Color(0xFF212121);
 
-const kTextColor_light = Colors.indigo;
-const kTextColor_dark = Colors.white;
+const kTitleColor_light = Colors.indigo;
+//TODO: maybe no use
+const kTitleColor_dark = Colors.white;
 
 //used in Today's Summary
 const kIconBg_light = Color(0xFFEEEEEE);
 const kIconBg_dark = Color(0xFF424242);
 
 //used in login page
-const kIndigoColor = Colors.indigo;
+const kInputBoxColor = Colors.indigo;
 
 /* //not in used
 const kActiveIconColor = Color(0xFFE68342);

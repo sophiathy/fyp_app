@@ -29,12 +29,14 @@ dependencies:
   firebase_analytics: ^6.0.2
   firebase_auth: ^0.18.1+2
   firebase_core: ^0.5.0+1
-  #use SVG in the app
+  #use svg in the app
   flutter_svg: ^0.19.1
-  #locate users
+  #locate user
   geolocator: ^6.1.1
   #state management
   provider: ^4.3.2+2
+  #remember user settings
+  shared_preferences: ^0.5.12+2
 
 dev_dependencies:
   flutter_test:

@@ -9,6 +9,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //TODO:
   //final AuthService _auth = AuthService();  //instance of AuthService
   
   @override
@@ -31,13 +32,8 @@ class _LoginState extends State<Login> {
                     "Exercise\nTracker",
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        .copyWith(
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w700,
-                          color: kTextColor_light
-                        ),
+                      .textTheme
+                      .headline3
                   ),
                 ),
               ),
@@ -48,6 +44,7 @@ class _LoginState extends State<Login> {
           ),
         ),
       ),
+      //TODO:
       /*dynamic result = await _auth.signInAnon();  //return null or a user
       if(result == null)
         print("Error while sigining in !");

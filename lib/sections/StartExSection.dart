@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
-import 'package:fyp_app/theme_LightDark.dart';
-import 'package:fyp_app/widgets/ExerciseBtn.dart';
+import 'package:fyp_app/widgets/exerciseBtn.dart';
 
 class StartExSection extends StatelessWidget {
   const StartExSection({
@@ -17,7 +16,7 @@ class StartExSection extends StatelessWidget {
       margin: EdgeInsets.only(top: 10.0, bottom: 20.0),
       padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: modeChanger(modeSwitch),
+        color: Theme.of(context).indicatorColor,
         borderRadius: BorderRadius.circular(36.0),
       ),
       child: Column(
@@ -27,7 +26,7 @@ class StartExSection extends StatelessWidget {
           Text(
             "Start an Exercise".toUpperCase(),
             style: TextStyle(
-              color: modeSwitch? kTextColor_dark : kTextColor_light,
+              color: modeSwitch? kTitleColor_dark : kTitleColor_light,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),

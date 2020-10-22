@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/sections/StartExSection.dart';
-import 'package:fyp_app/sections/SummarySection.dart';
+import 'package:fyp_app/darkProvider.dart';
+import 'package:fyp_app/sections/startExSection.dart';
+import 'package:fyp_app/sections/summarySection.dart';
 import 'package:fyp_app/constants.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,14 +13,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String _profileImage = "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260";
-  
-  //default: light mode
-  bool modeSwitch = false;
 
   @override
   Widget build(BuildContext context) {
+    DarkProvider modeSwitch = Provider.of<DarkProvider>(context);
+    
     return Scaffold(
-      backgroundColor: modeSwitch? kColorBehind_dark : kColorBehind_light,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -31,27 +32,32 @@ class _HomeState extends State<Home> {
               child: Container(
                 child: Row(
                   children: <Widget>[
+                    //mode switcher
                     IconButton(
+                      //TODO:Explain in report
                       onPressed: (){
                         setState((){
-                          modeSwitch = !modeSwitch;
+                          modeSwitch.themeData = !modeSwitch.themeData;
                         });
                       },
-                      icon: modeSwitch
+                      icon: modeSwitch.themeData
                         ? Icon(
+                            //sunny icon in dark mode
                             Icons.wb_sunny,
                             size: 20.0,
-                            color: modeSwitch? kSectionBackground_light : kSectionBackground_dark,
+                            color: kSectionBackground_light,
                         )
                         : Icon(
+                            //moon icon in light mode
                             Icons.brightness_2,
                             size: 20.0,
-                            color: modeSwitch? kSectionBackground_light : kSectionBackground_dark,
+                            color: kSectionBackground_dark,
                         ),
                     ),
 
                     Spacer(),
 
+                    //TODO:Profile Settings
                     //profile settings
                     Container(
                       height: 32.0,
@@ -70,10 +76,10 @@ class _HomeState extends State<Home> {
             ),
 
             //Today's Summary
-            SummarySection(modeSwitch: modeSwitch),
+            SummarySection(modeSwitch: modeSwitch.themeData),
 
             //Start an Exercise
-            StartExSection(modeSwitch: modeSwitch),
+            StartExSection(modeSwitch: modeSwitch.themeData),
 
 
 

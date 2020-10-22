@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 
 class ExerciseBtn extends StatelessWidget {
+  final bool modeSwitch;
   final String type;
   final Function press;
   
@@ -11,8 +12,6 @@ class ExerciseBtn extends StatelessWidget {
     this.type,
     this.press,
   }) : super(key: key);
-
-  final bool modeSwitch;
 
   @override
   Widget build(BuildContext context) {
@@ -56,30 +55,34 @@ class ExerciseBtn extends StatelessWidget {
   }
 }
 
+//check the exercise type and return icon
 Widget _typeIcon(String type) {
+  final icolor = Colors.lightBlueAccent;
+  final double isize = 30.0;
+  
   if(type == "Walking"){
     return Icon(
       Icons.directions_walk_outlined,
-      color: Colors.lightBlueAccent,
-      size: 30.0,
+      color: icolor,
+      size: isize,
     );
   }else if (type == "Running"){
     return Icon(
       Icons.directions_run_outlined,
-      color: Colors.lightBlueAccent,
-      size: 30.0,
+      color: icolor,
+      size: isize,
     );
   }else if(type == "Biking"){
     return Icon(
       Icons.directions_bike_outlined,
-      color: Colors.lightBlueAccent,
-      size: 30.0,
+      color: icolor,
+      size: isize,
     );
   }else{
     return Icon(
       Icons.more_horiz_outlined,
-      color: Colors.lightBlueAccent,
-      size: 30.0,
+      color: icolor,
+      size: isize,
     );
   }
 }

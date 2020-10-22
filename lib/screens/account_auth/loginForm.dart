@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
-import 'package:fyp_app/widgets/Buttons.dart';
+import 'package:fyp_app/widgets/buttons.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -53,6 +52,7 @@ class _LoginFormState extends State<LoginForm> {
 
           SizedBox(height: 25),
 
+          //login button
           Buttons(
             name: "Login",
             press: (){},

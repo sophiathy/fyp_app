@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
-import 'package:fyp_app/theme_LightDark.dart';
 
 class SummarySection extends StatelessWidget {
   const SummarySection({
@@ -16,7 +15,7 @@ class SummarySection extends StatelessWidget {
       margin: EdgeInsets.only(top: 10.0, bottom: 20.0),
       padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: modeChanger(modeSwitch),
+        color: Theme.of(context).indicatorColor,
         borderRadius: BorderRadius.circular(36.0),
       ),
       child: Column(
@@ -26,7 +25,7 @@ class SummarySection extends StatelessWidget {
           Text(
             "Today's Summary".toUpperCase(),
             style: TextStyle(
-              color: modeSwitch? kTextColor_dark : kTextColor_light,
+              color: modeSwitch? kTitleColor_dark : kTitleColor_light,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
 
 class Buttons extends StatelessWidget {
   final String name;
@@ -17,13 +16,14 @@ class Buttons extends StatelessWidget {
       width: double.infinity,
       height: 60.0,
       child: FlatButton(
-        color: kIndigoColor,
+        color: Theme.of(context).buttonColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         onPressed: press,
         child: Text(
           name,
           style: TextStyle(
             fontSize: 28.0,
+            //TODO: think of the text color for button
             color: Colors.white,
           ),
         ),

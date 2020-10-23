@@ -11,17 +11,18 @@ ThemeData lightTheme(BuildContext context){
       headline3: TextStyle(
         fontStyle: FontStyle.italic,
         fontWeight: FontWeight.w700,
-        color: kTitleColor_light,
+        color: kPrimaryColor_light,
       ),
-      bodyText2: TextStyle(color: kTitleColor_light),
+      bodyText2: TextStyle(color: kPrimaryColor_light),
     ),
 
     backgroundColor: kBackground_light,
+    primaryColor: kPrimaryColor_light,
 
     indicatorColor: kSectionBackground_light,
 
     inputDecorationTheme: inputDecorationTheme(),
-    buttonColor: kInputBoxColor,
+    buttonColor: kPrimaryColor_light,
   );
 }
 
@@ -35,12 +36,13 @@ ThemeData darkTheme(BuildContext context){
       headline3: TextStyle(
         fontStyle: FontStyle.italic,
         fontWeight: FontWeight.w700,
-        color: kTitleColor_dark,
+        color: kPrimaryColor_dark,
       ),
-      bodyText2: TextStyle(color: kTitleColor_dark),
+      bodyText2: TextStyle(color: kPrimaryColor_dark),
     ),
 
     backgroundColor: kBackground_dark,
+    primaryColor: kPrimaryColor_dark,
 
     indicatorColor: kSectionBackground_dark,
 
@@ -52,12 +54,12 @@ ThemeData darkTheme(BuildContext context){
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(20),
-    borderSide: BorderSide(color: kInputBoxColor),
+    borderSide: BorderSide(color: kPrimaryColor_light),
     gapPadding: 10,
   );
   
   return InputDecorationTheme(
-    contentPadding: EdgeInsets.symmetric(horizontal: 42, vertical: 20),
+    contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 25),
     enabledBorder: outlineInputBorder,
     focusedBorder: outlineInputBorder,
     border: outlineInputBorder,

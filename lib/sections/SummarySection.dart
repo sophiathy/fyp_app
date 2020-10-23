@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 
 class SummarySection extends StatelessWidget {
+  final bool modeSwitch;
+  
   const SummarySection({
     Key key,
     @required this.modeSwitch,
   }) : super(key: key);
-
-  final bool modeSwitch;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class SummarySection extends StatelessWidget {
           Text(
             "Today's Summary".toUpperCase(),
             style: TextStyle(
-              color: modeSwitch? kTitleColor_dark : kTitleColor_light,
+              color: modeSwitch? kPrimaryColor_dark : kPrimaryColor_light,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),

@@ -19,6 +19,8 @@ const String kEmailNull = "Please enter your email.";
 const String kPasswordNull = "Please enter your password.";
 const String kEmailInvalid = "Invalid email. Please enter again.";
 const String kPasswordInvalid = "Wrong password. Please enter again.";
+const String kAccountNotFound = "Invalid email or password. Please enter again.";
+const String kAnonymousLoginError = "Error while logging in...";
 
 //error messages used in registerForm
 const String kShortPassword = "Password is too short. Please enter again.";

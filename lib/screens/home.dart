@@ -4,6 +4,7 @@ import 'package:fyp_app/darkProvider.dart';
 import 'package:fyp_app/sections/startExSection.dart';
 import 'package:fyp_app/sections/summarySection.dart';
 import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/services/authAccount.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -17,7 +18,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     DarkProvider modeSwitch = Provider.of<DarkProvider>(context);
-    
+
+    final AuthService _authenticate = AuthService();
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
@@ -59,14 +62,23 @@ class _HomeState extends State<Home> {
 
                     //TODO:Profile Settings
                     //profile settings
-                    Container(
-                      height: 32.0,
-                      width: 32.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(_profileImage),
-                          fit: BoxFit.fill,
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20.0),
+                        onTap: () async{
+                          await _authenticate.logout();   //update the stream to null
+                        },
+                        child: Container(
+                          height: 32.0,
+                          width: 32.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: NetworkImage(_profileImage),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
                         ),
                       ),
                     ),

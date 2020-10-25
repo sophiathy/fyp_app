@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_app/darkProvider.dart';
-import 'package:fyp_app/screens/account_auth/login.dart';
+import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/screens/home.dart';
-import 'package:fyp_app/checkLogin.dart';
+import 'package:fyp_app/screens/checkLogin.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/theme.dart';
 import 'package:provider/provider.dart';

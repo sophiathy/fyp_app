@@ -39,9 +39,7 @@ class _HomeState extends State<Home> {
                     IconButton(
                       //TODO:Explain in report
                       onPressed: (){
-                        setState((){
-                          modeSwitch.themeData = !modeSwitch.themeData;
-                        });
+                        setState(() => modeSwitch.themeData = !modeSwitch.themeData);
                       },
                       icon: modeSwitch.themeData
                         ? Icon(
@@ -67,6 +65,10 @@ class _HomeState extends State<Home> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(20.0),
                         onTap: () async{
+                          setState(() {
+                            modeSwitch.themeData = false;  //reset to light mode
+                            print("Logout Successfully.");
+                          });
                           await _authenticate.logout();   //update the stream to null
                         },
                         child: Container(

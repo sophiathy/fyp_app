@@ -51,17 +51,24 @@ ThemeData darkTheme(BuildContext context){
   );
 }
 
+//used in Login
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(20),
     borderSide: BorderSide(color: kPrimaryColor_light),
     gapPadding: 10,
   );
-  
+
   return InputDecorationTheme(
     contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 25),
+    border: outlineInputBorder,
     enabledBorder: outlineInputBorder,
     focusedBorder: outlineInputBorder,
-    border: outlineInputBorder,
+    errorBorder: outlineInputBorder,
+    focusedErrorBorder: outlineInputBorder,
+    errorStyle: TextStyle(
+      height: 0,
+      color: kPrimaryColor_light,
+    ),
   );
 }

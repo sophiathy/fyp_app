@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService{
   final FirebaseAuth _authenticate = FirebaseAuth.instance;
-  
+
   //Create an object of the custom UserProperties based on User
   UserProperties _firebaseUser(User u){
     //if user exists in Firebase, then return uid
@@ -26,9 +26,9 @@ class AuthService{
       return null;
     }
   }
-  
+
   //login (email and password)
-  Future signInEmailPassword(String email, String password) async{
+  Future loginEmailPassword(String email, String password) async{
     try{
       UserCredential result = await _authenticate.signInWithEmailAndPassword(email: email, password: password);
       User u = result.user;    //get Firebase user
@@ -40,7 +40,7 @@ class AuthService{
   }
 
   //login (anonymous)
-  Future signInAnon() async{
+  Future loginAnon() async{
     try{
       UserCredential result = await _authenticate.signInAnonymously();
       User u = result.user;    //get Firebase user

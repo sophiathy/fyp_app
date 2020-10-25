@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
-import 'package:fyp_app/screens/account_auth/errorMessage.dart';
+import 'package:fyp_app/screens/account/errorMessage.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/loading.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   final AuthService _authenticate = AuthService();
 
   final _formKey = GlobalKey <FormState>();
   final List <String> errors = [];
 
   bool loginLoading = false;
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +31,13 @@ class _LoginState extends State<Login> {
             shrinkWrap: true,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 80.0),
+                padding: const EdgeInsets.symmetric(vertical: 50.0),
                 child: SafeArea(
                   top: true,
                   left: true,
                   right: true,
                   child: Text(
-                    "Exercise\nTracker",
+                    "Register an Account",
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                       .textTheme
@@ -67,6 +69,7 @@ class _LoginState extends State<Login> {
                       validator: (data){
                         if(data.isEmpty && !errors.contains(kEmailNull)){
                           setState(() {
+                            email = data;
                             errors.add(kEmailNull); //if the message is not inside the List "errors", then add
                           });
                         }
@@ -91,6 +94,7 @@ class _LoginState extends State<Login> {
                       validator: (data){
                         if(data.isEmpty && !errors.contains(kPasswordNull)){
                           setState(() {
+                            password = data;
                             errors.add(kPasswordNull);
                           });
                         }
@@ -104,16 +108,18 @@ class _LoginState extends State<Login> {
 
                     SizedBox(height: 15),
 
-                    //login button
+                    //register button
                     Buttons(
-                      name: "Login",
+                      name: "Register",
                       press: (){
                         if(_formKey.currentState.validate())
+                          print(email);
+                          print(password);
                           _formKey.currentState.save();
-                          /*TODO:Login button
+                          /*TODO:Register button
                           setState(() => loginLoading = true);
 
-                          dynamic getResult = await _authenticate.signInWithEmailAndPassword(email, pwd); //null or Firebase user
+                          dynamic getResult = await _authenticate.signInWithEmailAndPassword(email, password); //null or Firebase user
 
                           if(getResult == null){
                             setState((){
@@ -125,42 +131,6 @@ class _LoginState extends State<Login> {
                       },
                     ),
 
-                    SizedBox(height: 15),
-
-                    //TODO: Redesign button: login (anonymous)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50.0,
-                      child: FlatButton(
-                        color: Colors.indigo[300],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                        onPressed: () async {
-                          setState(() => loginLoading = true);
-
-                          dynamic getResult = await _authenticate.signInAnon(); //null or Firebase user
-
-                          if(getResult != null){
-                            print("Logged In as");
-                            print(getResult);
-                          }else{
-                            print("Error while logging in...");
-                            setState((){
-                              if(!errors.contains(kAnonymousLoginError))
-                                errors.add(kAnonymousLoginError);
-                              loginLoading = false;
-                            });
-                          }
-                        },
-                        child: Text(
-                          "Login Anonymously",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            //TODO: think of the text color of button
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

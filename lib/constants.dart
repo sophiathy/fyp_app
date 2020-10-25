@@ -14,15 +14,21 @@ const kSectionBackground_dark = Color(0xFF212121);
 const kIconBg_light = Color(0xFFEEEEEE);
 const kIconBg_dark = Color(0xFF424242);
 
-//error messages used in loginForm
+//regular experssion
+final RegExp emailRegExp = RegExp(r"^[A-Za-z0-9.!#$%&’*+/=?^_`{|}~-]+@[A-Za-z0-9]+\.[A-Za-z]+");
+
+//error messages used in login
 const String kEmailNull = "Please enter your email.";
 const String kPasswordNull = "Please enter your password.";
-const String kEmailInvalid = "Invalid email. Please enter again.";
-const String kPasswordInvalid = "Wrong password. Please enter again.";
-const String kAccountNotFound = "Invalid email or password. Please enter again.";
+
+const String kInvalidEmail = "Invalid email. Please enter again.";
+const String kInvalidPassword = "Invalid password. Please enter again.";
+
+const String kAccountNotFound = "Invalid email or wrong password.";
+
 const String kAnonymousLoginError = "Error while logging in...";
 
-//error messages used in registerForm
+//error messages used in register
 const String kShortPassword = "Password is too short. Please enter again.";
 const String kMatchPassword = "Password is not match. Please enter again.";
 

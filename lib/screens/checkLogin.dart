@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/screens/home.dart';
-import 'package:fyp_app/screens/account_auth/login.dart';
+import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:provider/provider.dart';
 

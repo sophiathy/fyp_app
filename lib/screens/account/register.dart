@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 import 'package:fyp_app/screens/account/errorMessage.dart';
+import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/loading.dart';
@@ -19,122 +20,302 @@ class _RegisterState extends State<Register> {
   bool loginLoading = false;
   String email = "";
   String password = "";
+  String confirmPassword = "";
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _passwordController = new TextEditingController();
+  final TextEditingController _confirmPasswordController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return loginLoading ? Loading() : Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          width: double.infinity,
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50.0),
-                child: SafeArea(
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap:(){
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            width: double.infinity,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                SafeArea(
                   top: true,
                   left: true,
                   right: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(30.0),
+                          splashColor: Colors.indigo[50],
+                          onTap: (() => Navigator.pop(context)),
+                          child:Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: Colors.indigo[300],
+                              size: 25.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
                   child: Text(
                     "Register an Account",
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                       .textTheme
-                      .headline3
+                      .headline5
                   ),
                 ),
-              ),
 
-              //login form
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //email field
-                    TextFormField(
-                      //keyboard for typing email address
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                        //prefixIcon color based on primaryColor
-                        prefixIcon: Icon(
-                          Icons.email_rounded,
+                //register form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //email field
+                      TextFormField(
+                        //keyboard for typing email address
+                        keyboardType: TextInputType.emailAddress,
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: "Email",
+                          //prefixIcon color based on primaryColor
+                          prefixIcon: Icon(
+                            Icons.email_rounded,
+                          ),
+                          hintText: "Enter your email",
+                          suffixIcon: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30.0),
+                              splashColor: Colors.indigo[50],
+                              onTap: (){
+                                this.setState(() => _emailController.clear());
+                              },
+                              child: Icon(
+                                Icons.backspace_rounded,
+                                color: Colors.indigo[100],
+                                size: 25.0,
+                              ),
+                            ),
+                          ),
+                          //floatingLabel must be added here, it won't work in theme.dart
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        hintText: "Enter your email",
-                        //floatingLabel must be added here, it won't work in theme.dart
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        validator: (data){
+                          if(data.isEmpty){
+                            setState(() => errors.remove(kInvalidEmail));
+
+                            if(!errors.contains(kEmailNull))
+                              setState(() => errors.add(kEmailNull)); //if the message is not inside the List "errors", then add
+
+                            print(kEmailNull);
+                            return "";                              //return email = ""
+                          }else if(!emailRegExp.hasMatch(data)){
+                            setState(() => errors.remove(kEmailNull));
+
+                            if(!errors.contains(kInvalidEmail))
+                              setState(() => errors.add(kInvalidEmail));
+
+                            print(kInvalidEmail);
+                            return "";
+                          }
+
+                          return null;
+                        },
+                        onSaved: (data) => email = data,  //when the form is saved, capture the value
+                        onChanged: (data){
+                          setState(() => errors.remove(kAccountExists));
+
+                          if(data.isNotEmpty)
+                            setState(() => errors.remove(kEmailNull));
+
+                          if(emailRegExp.hasMatch(data))
+                            setState(() => errors.remove(kInvalidEmail));
+                          return null;
+                        },
                       ),
-                      validator: (data){
-                        if(data.isEmpty && !errors.contains(kEmailNull)){
-                          setState(() {
-                            email = data;
-                            errors.add(kEmailNull); //if the message is not inside the List "errors", then add
-                          });
-                        }
-                        return null;
-                      },
-                    ),
 
-                    SizedBox(height: 25),
+                      SizedBox(height: 25),
 
-                    //password field
-                    TextFormField(
-                      //hide password
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        prefixIcon: Icon(
-                          Icons.lock_rounded,
+                      //password field
+                      TextFormField(
+                        //hide password
+                        obscureText: true,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: "Password",
+                          prefixIcon: Icon(
+                            Icons.lock_rounded,
+                          ),
+                          hintText: "Enter your password",
+                          suffixIcon: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30.0),
+                              splashColor: Colors.indigo[50],
+                              onTap: (){
+                                this.setState(() => _passwordController.clear());
+                              },
+                              child: Icon(
+                                Icons.backspace_rounded,
+                                color: Colors.indigo[100],
+                                size: 25.0,
+                              ),
+                            ),
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        hintText: "Enter your password",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                      ),
-                      validator: (data){
-                        if(data.isEmpty && !errors.contains(kPasswordNull)){
+                        validator: (data){
                           setState(() {
-                            password = data;
-                            errors.add(kPasswordNull);
+                            errors.remove(kAccountExists);
+                            errors.remove(kNotMatchPassword);
                           });
-                        }
-                        return null;
-                      },
-                    ),
 
-                    SizedBox(height: 25),
+                          if(data.isEmpty){
+                            if(!errors.contains(kPasswordNull))
+                              setState(() => errors.add(kPasswordNull));
 
-                    ErrorMessage(errors: errors),
+                            print(kPasswordNull);
+                            return "";                  //return password = ""
+                          }else if(data.length < 6){
+                            if(!errors.contains(kShortPassword))
+                              setState(() => errors.add(kShortPassword));
 
-                    SizedBox(height: 15),
+                            print(kShortPassword);
+                            return "";                  //return password = ""
+                          }
 
-                    //register button
-                    Buttons(
-                      name: "Register",
-                      press: (){
-                        if(_formKey.currentState.validate())
-                          print(email);
-                          print(password);
-                          _formKey.currentState.save();
-                          /*TODO:Register button
-                          setState(() => loginLoading = true);
+                          return null;
+                        },
+                        onSaved: (data) => password = data,  //when the form is saved, capture the value
+                        onChanged: (data){
+                          setState(() => errors.remove(kAccountExists));
 
-                          dynamic getResult = await _authenticate.signInWithEmailAndPassword(email, password); //null or Firebase user
+                          if(data.isNotEmpty){
+                            setState(() => errors.remove(kPasswordNull));
+                            if(data.length >= 6)
+                              setState(() => errors.remove(kShortPassword));
+                          }
 
-                          if(getResult == null){
-                            setState((){
-                              if(!errors.contains(kAccountNotFound))
-                                errors.add(kAccountNotFound);
-                              loginLoading = false;
+                          password = data;
+                        },
+                      ),
+
+                      SizedBox(height: 25),
+
+                      //confirm password field
+                      TextFormField(
+                        //hide password
+                        obscureText: true,
+                        controller: _confirmPasswordController,
+                        decoration: InputDecoration(
+                          labelText: "Confirm Password",
+                          prefixIcon: Icon(
+                            Icons.lock_rounded,
+                          ),
+                          hintText: "Re-enter your password",
+                          suffixIcon: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30.0),
+                              splashColor: Colors.indigo[50],
+                              onTap: (){
+                                this.setState(() => _confirmPasswordController.clear());
+                              },
+                              child: Icon(
+                                Icons.backspace_rounded,
+                                color: Colors.indigo[100],
+                                size: 25.0,
+                              ),
+                            ),
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                        ),
+                        validator: (data){
+                          setState(() => errors.remove(kAccountExists));
+
+                          if(data.isEmpty){
+                            if(!errors.contains(kConfirmPasswordNull))
+                              setState(() => errors.add(kConfirmPasswordNull));
+
+                            print(kConfirmPasswordNull);
+                            return "";                  //return confirmPassword = ""
+                          }else if(data != password){
+                            if(!errors.contains(kNotMatchPassword))
+                              setState(() => errors.add(kNotMatchPassword));
+
+                            print(kNotMatchPassword);
+                            return "";                  //return confirmPassword = ""
+                          }
+
+                          return null;
+                        },
+                        onSaved: (data) => confirmPassword = data,  //when the form is saved, capture the value
+                        onChanged: (data){
+                          setState(() => errors.remove(kAccountExists));
+
+                          if(data.isNotEmpty){
+                            setState(() {
+                              errors.remove(kConfirmPasswordNull);
+                              errors.remove(kNotMatchPassword);
                             });
-                          }*/
-                      },
-                    ),
+                          }
 
-                  ],
+                          confirmPassword = data;
+                        },
+                      ),
+
+                      SizedBox(height: 20),
+
+                      ErrorMessage(errors: errors),
+
+                      SizedBox(height: 15),
+
+                      //create account button
+                      Buttons(
+                        name: "Create Account",
+                        press: () async{
+                          if(_formKey.currentState.validate()){
+                            _formKey.currentState.save();
+
+                            dynamic getResult = await _authenticate.registerEmailPassword(email, password); //null or Firebase user
+
+                            if(getResult != null){
+                              setState(() {
+                                errors.remove(kAccountExists);
+                                print("Registered account: " + email);
+                                loginLoading = true;
+                                Navigator.popAndPushNamed(context, '/home');
+                              });
+                            }else{
+                              setState((){
+                                if(!errors.contains(kAccountExists)){
+                                  errors.add(kAccountExists);
+                                  print(kAccountExists);
+                                }
+
+                                loginLoading = false;
+                              });
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

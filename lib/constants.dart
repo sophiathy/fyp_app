@@ -29,8 +29,10 @@ const String kAccountNotFound = "Invalid email or wrong password.";
 const String kAnonymousLoginError = "Error while logging in...";
 
 //error messages used in register
-const String kShortPassword = "Password is too short. Please enter again.";
-const String kMatchPassword = "Password is not match. Please enter again.";
+const String kAccountExists = "The account has been registered.";
+const String kShortPassword = "Password is too short. (at least 6 chars)";
+const String kNotMatchPassword = "Password is not match. Please enter again.";
+const String kConfirmPasswordNull = "Please enter your confirm password.";
 
 
 /* //not in used

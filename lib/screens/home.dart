@@ -22,6 +22,7 @@ class _HomeState extends State<Home> {
     final AuthService _authenticate = AuthService();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,6 +71,7 @@ class _HomeState extends State<Home> {
                             print("Logout Successfully.");
                           });
                           await _authenticate.logout();   //update the stream to null
+                          Navigator.of(context).popAndPushNamed('/login');
                         },
                         child: Container(
                           height: 32.0,

@@ -13,6 +13,10 @@ ThemeData lightTheme(BuildContext context){
         fontWeight: FontWeight.w700,
         color: kPrimaryColor_light,
       ),
+      headline5: TextStyle(
+        fontWeight: FontWeight.w700,
+        color: kPrimaryColor_light,
+      ),
       bodyText2: TextStyle(color: kPrimaryColor_light),
     ),
 
@@ -32,9 +36,12 @@ ThemeData darkTheme(BuildContext context){
     brightness: Brightness.dark,
     fontFamily: "Noto_Sans_JP",
     textTheme: TextTheme(
-      //login page: app name title
       headline3: TextStyle(
         fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.w700,
+        color: kPrimaryColor_dark,
+      ),
+      headline5: TextStyle(
         fontWeight: FontWeight.w700,
         color: kPrimaryColor_dark,
       ),

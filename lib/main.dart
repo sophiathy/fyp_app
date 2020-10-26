@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_app/darkProvider.dart';
 import 'package:fyp_app/screens/account/login.dart';
+import 'package:fyp_app/screens/account/register.dart';
 import 'package:fyp_app/screens/home.dart';
 import 'package:fyp_app/screens/checkLogin.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/theme.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 //TODO:Solvig No Firebase App 'DEFAULT' has been created
@@ -57,11 +59,28 @@ class _MyAppState extends State <MyApp> {
             darkTheme: darkTheme(context),
             themeMode: modeProvider.themeData ? ThemeMode.dark : ThemeMode.light,
             home: CheckLogin(),
-            routes: {
-              "checkLogin": (context) => CheckLogin(),
-              "login": (context) => Login(),
-              "home": (context) => Home(),
+            onGenerateRoute: (page) {
+              switch (page.name) {
+                case '/login':
+                  return PageTransition(child: Login(), type: PageTransitionType.fade);
+                  break;
+                case '/register':
+                  return PageTransition(child: Register(), type: PageTransitionType.rightToLeftWithFade);
+                  break;
+                case '/home':
+                  return PageTransition(child: Home(), type: PageTransitionType.fade);
+                  break;
+                default:
+                  return null;
+              }
             },
+            //FIXME:route
+            // routes: {
+            //   "/checkLogin": (context) => CheckLogin(),
+            //   "/login": (context) => Login(),
+            //   "/register": (context) => Register(),
+            //   "/home": (context) => Home(),
+            // },
           ),
         );
       }),

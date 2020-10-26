@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 import 'package:fyp_app/screens/account/errorMessage.dart';
+import 'package:fyp_app/screens/account/register.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/loading.dart';
@@ -17,7 +18,6 @@ class _LoginState extends State<Login> {
   final List <String> errors = [];
 
   bool loginLoading = false;
-  bool attempt = false;
   String email = "";
   String password = "";
   final TextEditingController _emailController = new TextEditingController();
@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
               shrinkWrap: true,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 80.0),
+                  padding: const EdgeInsets.symmetric(vertical: 60.0),
                   child: SafeArea(
                     top: true,
                     left: true,
@@ -113,14 +113,12 @@ class _LoginState extends State<Login> {
                         },
                         onSaved: (data) => email = data,  //when the form is saved, capture the value
                         onChanged: (data){
-                          if(attempt){
-                            setState(() => errors.remove(kAccountNotFound));
-                            attempt = false;
-                          }
+                          setState(() => errors.remove(kAccountNotFound));
 
                           if(data.isNotEmpty)
                             setState(() => errors.remove(kEmailNull));
-                          else if(emailRegExp.hasMatch(data))
+
+                          if(emailRegExp.hasMatch(data))
                             setState(() => errors.remove(kInvalidEmail));
                           return null;
                         },
@@ -157,6 +155,8 @@ class _LoginState extends State<Login> {
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
                         validator: (data){
+                          setState(() => errors.remove(kAccountNotFound));
+
                           if(data.isEmpty){
                             if(!errors.contains(kPasswordNull))
                               setState(() => errors.add(kPasswordNull));
@@ -169,10 +169,7 @@ class _LoginState extends State<Login> {
                         },
                         onSaved: (data) => password = data,  //when the form is saved, capture the value
                         onChanged: (data){
-                          if(attempt){
-                            setState(() => errors.remove(kAccountNotFound));
-                            attempt = false;
-                          }
+                          setState(() => errors.remove(kAccountNotFound));
 
                           if(data.isNotEmpty)
                             setState(() => errors.remove(kPasswordNull));
@@ -187,7 +184,7 @@ class _LoginState extends State<Login> {
 
                       SizedBox(height: 15),
 
-                      //login button
+                      //login (email & password)
                       Buttons(
                         name: "Login",
                         press: () async{
@@ -197,19 +194,18 @@ class _LoginState extends State<Login> {
                             dynamic getResult = await _authenticate.loginEmailPassword(email, password); //null or Firebase user
 
                             if(getResult != null){
-                              if(errors.contains(kAccountNotFound))
-                                  errors.remove(kAccountNotFound);
-                              print("Logged in as: " + email);
-                              loginLoading = true;
+                              setState(() {
+                                errors.remove(kAccountNotFound);
+                                print("Logged in as: " + email);
+                                loginLoading = true;
+                              });
                             }else{
                               setState((){
-                                //FIXME: if empty email and password, still return this result
                                 if(!errors.contains(kAccountNotFound)){
                                   errors.add(kAccountNotFound);
                                   print(kAccountNotFound);
                                 }
 
-                                attempt = true;
                                 loginLoading = false;
                               });
                             }
@@ -217,40 +213,90 @@ class _LoginState extends State<Login> {
                         },
                       ),
 
-                      SizedBox(height: 15),
+                      SizedBox(height: 40),
 
-                      //TODO: Redesign button: login (anonymous)
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50.0,
-                        child: FlatButton(
-                          color: Colors.indigo[300],
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                          onPressed: () async {
-                            setState(() => loginLoading = true);
-
-                            dynamic getResult = await _authenticate.loginAnon(); //null or Firebase user
-
-                            if(getResult != null){
-                              print("Logged in as: " + getResult.uid);
-                            }else{
-                              print("Error while logging in...");
-                              setState((){
-                                if(!errors.contains(kAnonymousLoginError))
-                                  errors.add(kAnonymousLoginError);
-                                loginLoading = false;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Login Anonymously",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              //TODO: think of the text color of button
-                              color: Colors.white,
-                            ),
+                      Center(
+                        child: Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.indigo[300],
                           ),
                         ),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      //TODO: Redesign button
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 130.0,
+                            height: 50.0,
+                            child: FlatButton(
+                              color: Colors.indigo[300],
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                              onPressed: (() => Navigator.pushNamed(context, '/register')),
+                              child: Text(
+                                "Register",
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  //TODO: think of the text color of button
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: 10.0),
+
+                          Text(
+                            "or",
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.indigo[300],
+                            ),
+                          ),
+
+                          SizedBox(width: 10.0),
+
+                          //login (anonymous)
+                          SizedBox(
+                            width: 200.0,
+                            height: 50.0,
+                            child: FlatButton(
+                              color: Colors.indigo[300],
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                              onPressed: () async {
+                                setState(() => loginLoading = true);
+
+                                dynamic getResult = await _authenticate.loginAnon(); //null or Firebase user
+
+                                if(getResult != null){
+                                  print("Logged in as: " + getResult.uid);
+                                  Navigator.pushNamed(context, '/home');
+                                }else{
+                                  print("Error while logging in...");
+                                  setState((){
+                                    if(!errors.contains(kAnonymousLoginError))
+                                      errors.add(kAnonymousLoginError);
+                                    loginLoading = false;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                "Login Anonymously",
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  //TODO: think of the text color of button
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

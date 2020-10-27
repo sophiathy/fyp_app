@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 import 'package:fyp_app/screens/account/errorMessage.dart';
-import 'package:fyp_app/screens/account/register.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/loading.dart';
@@ -17,15 +16,23 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey <FormState>();
   final List <String> errors = [];
 
-  bool loginLoading = false;
+  bool _loginLoading = true;
   String email = "";
   String password = "";
   final TextEditingController _emailController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
 
   @override
+  void initState(){
+    super.initState();
+    Future.delayed(Duration(seconds: 3), (){
+      setState(() => _loginLoading = false);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return loginLoading ? Loading() : Scaffold(
+    return _loginLoading ? Loading() : Scaffold(
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap:(){
@@ -197,16 +204,14 @@ class _LoginState extends State<Login> {
                               setState(() {
                                 errors.remove(kAccountNotFound);
                                 print("Logged in as: " + email);
-                                loginLoading = true;
                               });
+                              Navigator.of(context).pushNamed('/home');
                             }else{
                               setState((){
                                 if(!errors.contains(kAccountNotFound)){
                                   errors.add(kAccountNotFound);
                                   print(kAccountNotFound);
                                 }
-
-                                loginLoading = false;
                               });
                             }
                           }
@@ -238,7 +243,7 @@ class _LoginState extends State<Login> {
                             child: FlatButton(
                               color: Colors.indigo[300],
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                              onPressed: (() => Navigator.pushNamed(context, '/register')),
+                              onPressed: (() => Navigator.of(context).pushNamed('/register')),
                               child: Text(
                                 "Register",
                                 style: TextStyle(
@@ -270,19 +275,16 @@ class _LoginState extends State<Login> {
                               color: Colors.indigo[300],
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                               onPressed: () async {
-                                setState(() => loginLoading = true);
-
                                 dynamic getResult = await _authenticate.loginAnon(); //null or Firebase user
 
                                 if(getResult != null){
                                   print("Logged in as: " + getResult.uid);
-                                  Navigator.pushNamed(context, '/home');
+                                  Navigator.of(context).pushNamed('/home');
                                 }else{
                                   print("Error while logging in...");
                                   setState((){
                                     if(!errors.contains(kAnonymousLoginError))
                                       errors.add(kAnonymousLoginError);
-                                    loginLoading = false;
                                   });
                                 }
                               },

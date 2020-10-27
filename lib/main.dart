@@ -24,13 +24,13 @@ class MyApp extends StatefulWidget{
 
 class _MyAppState extends State <MyApp> {
   DarkProvider modeProvider = new DarkProvider();
-  
+
   //get the current theme from the Preferences
   //set value back to the Provider
   void getCurrentTheme() async{
     modeProvider.themeData = await modeProvider.dPref.getDark();
   }
-  
+
   @override
   void initState(){
     super.initState();
@@ -58,17 +58,20 @@ class _MyAppState extends State <MyApp> {
             theme: lightTheme(context),
             darkTheme: darkTheme(context),
             themeMode: modeProvider.themeData ? ThemeMode.dark : ThemeMode.light,
-            home: CheckLogin(),
+            initialRoute: '/checkLogin',
             onGenerateRoute: (page) {
               switch (page.name) {
+                case '/checkLogin':
+                  return PageTransition(child: CheckLogin(), type: PageTransitionType.rightToLeftWithFade);
+                  break;
                 case '/login':
-                  return PageTransition(child: Login(), type: PageTransitionType.fade);
+                  return PageTransition(child: Login(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/register':
                   return PageTransition(child: Register(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/home':
-                  return PageTransition(child: Home(), type: PageTransitionType.fade);
+                  return PageTransition(child: Home(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:
                   return null;

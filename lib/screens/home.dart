@@ -5,6 +5,7 @@ import 'package:fyp_app/sections/startExSection.dart';
 import 'package:fyp_app/sections/summarySection.dart';
 import 'package:fyp_app/constants.dart';
 import 'package:fyp_app/services/authAccount.dart';
+import 'package:fyp_app/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -14,6 +15,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String _profileImage = "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260";
+  bool _loading = true;
+
+  @override
+  void initState(){
+    super.initState();
+    Future.delayed(Duration(seconds: 3), (){
+      setState(() => _loading = false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +31,7 @@ class _HomeState extends State<Home> {
 
     final AuthService _authenticate = AuthService();
 
-    return Scaffold(
+    return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
@@ -70,8 +80,9 @@ class _HomeState extends State<Home> {
                             modeSwitch.themeData = false;  //reset to light mode
                             print("Logout Successfully.");
                           });
+
                           await _authenticate.logout();   //update the stream to null
-                          Navigator.of(context).popAndPushNamed('/login');
+                          Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
                         },
                         child: Container(
                           height: 32.0,

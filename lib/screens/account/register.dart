@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/constants.dart';
 import 'package:fyp_app/screens/account/errorMessage.dart';
-import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
-import 'package:fyp_app/widgets/loading.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -17,7 +15,6 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey <FormState>();
   final List <String> errors = [];
 
-  bool loginLoading = false;
   String email = "";
   String password = "";
   String confirmPassword = "";
@@ -27,7 +24,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return loginLoading ? Loading() : Scaffold(
+    return Scaffold(
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap:(){
@@ -40,6 +37,7 @@ class _RegisterState extends State<Register> {
             child: ListView(
               shrinkWrap: true,
               children: <Widget>[
+                //return to Login
                 SafeArea(
                   top: true,
                   left: true,
@@ -53,7 +51,7 @@ class _RegisterState extends State<Register> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(30.0),
                           splashColor: Colors.indigo[50],
-                          onTap: (() => Navigator.pop(context)),
+                          onTap: (() => Navigator.of(context).pop()),
                           child:Icon(
                               Icons.arrow_back_ios_rounded,
                               color: Colors.indigo[300],
@@ -295,17 +293,14 @@ class _RegisterState extends State<Register> {
                               setState(() {
                                 errors.remove(kAccountExists);
                                 print("Registered account: " + email);
-                                loginLoading = true;
-                                Navigator.popAndPushNamed(context, '/home');
                               });
+                              Navigator.of(context).popAndPushNamed('/home');
                             }else{
                               setState((){
                                 if(!errors.contains(kAccountExists)){
                                   errors.add(kAccountExists);
                                   print(kAccountExists);
                                 }
-
-                                loginLoading = false;
                               });
                             }
                           }

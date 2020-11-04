@@ -1,7 +1,6 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/services/authAccount.dart';
-import 'package:provider/provider.dart';
 
 class CheckLogin extends StatefulWidget {
   @override
@@ -12,9 +11,8 @@ class _CheckLoginState extends State<CheckLogin> {
   @override
   void initState(){
     super.initState();
-    Timer(Duration(seconds: 3), (){
-      final user = Provider.of<UserProperties>(context, listen: false);
-      navigate(user);
+    new Future.delayed(const Duration(seconds: 3), (){
+      navigate();
     });
   }
 
@@ -38,12 +36,14 @@ class _CheckLoginState extends State<CheckLogin> {
     );
   }
 
-  void navigate(final user) async{
-    print(user);
-    //return Login page or Home screen
-    if(user == null)
-      Navigator.of(context).pushReplacementNamed('/login');
-    else
-      Navigator.of(context).pushReplacementNamed('/home');
+  void navigate() async{
+    FirebaseAuth.instance.authStateChanges().listen((User u){
+      print(u);
+      //return Login page or Home screen
+      if(u == null)
+        Navigator.of(context).pushReplacementNamed('/login');
+      else
+        Navigator.of(context).pushReplacementNamed('/home');
+    });
   }
 }

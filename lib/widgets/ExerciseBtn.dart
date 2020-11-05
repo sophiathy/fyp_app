@@ -30,7 +30,9 @@ class ExerciseBtn extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
-          onTap: press,
+          onTap: (){
+            Navigator.of(context).pushNamed('/workingOut');
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
             child: Column(

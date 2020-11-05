@@ -5,6 +5,7 @@ import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/screens/account/register.dart';
 import 'package:fyp_app/screens/home.dart';
 import 'package:fyp_app/screens/checkLogin.dart';
+import 'package:fyp_app/screens/workingOut.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/theme.dart';
 import 'package:page_transition/page_transition.dart';
@@ -72,6 +73,9 @@ class _MyAppState extends State <MyApp> {
                   break;
                 case '/home':
                   return PageTransition(child: Home(), type: PageTransitionType.rightToLeftWithFade);
+                  break;
+                case '/workingOut':
+                  return PageTransition(child: WorkingOut(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:
                   return null;

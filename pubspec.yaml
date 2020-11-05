@@ -41,6 +41,8 @@ dependencies:
   flutter_svg: ^0.19.1
   #locate user
   geolocator: ^6.1.1
+  #display google map
+  google_maps_flutter: ^1.0.6
 
 dev_dependencies:
   flutter_test:

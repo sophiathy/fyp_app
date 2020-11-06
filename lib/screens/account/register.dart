@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/screens/account/errorMessage.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
@@ -294,7 +294,7 @@ class _RegisterState extends State<Register> {
                                 errors.remove(kAccountExists);
                                 print("Registered account: " + email);
                               });
-                              Navigator.of(context).popAndPushNamed('/home');
+                              Navigator.of(context).pushReplacementNamed('/home');
                             }else{
                               setState((){
                                 if(!errors.contains(kAccountExists)){

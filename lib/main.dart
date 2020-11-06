@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/darkProvider.dart';
+import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/screens/account/register.dart';
 import 'package:fyp_app/screens/home.dart';
 import 'package:fyp_app/screens/checkLogin.dart';
 import 'package:fyp_app/screens/workingOut.dart';
 import 'package:fyp_app/services/authAccount.dart';
-import 'package:fyp_app/theme.dart';
+import 'package:fyp_app/theme/theme.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 

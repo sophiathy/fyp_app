@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/darkPref.dart';
+import 'package:fyp_app/theme/darkPref.dart';
 
 class DarkProvider with ChangeNotifier{
   //default: light mode

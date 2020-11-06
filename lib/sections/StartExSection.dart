@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/exerciseBtn.dart';
 
 class StartExSection extends StatelessWidget {

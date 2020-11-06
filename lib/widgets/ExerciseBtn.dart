@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/theme/constants.dart';
 
 class ExerciseBtn extends StatelessWidget {
   final bool modeSwitch;
@@ -31,7 +31,7 @@ class ExerciseBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
           onTap: (){
-            Navigator.of(context).pushNamed('/workingOut');
+            Navigator.of(context).pushReplacementNamed('/workingOut');
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),

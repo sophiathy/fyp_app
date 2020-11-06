@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/darkProvider.dart';
+import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:fyp_app/sections/startExSection.dart';
 import 'package:fyp_app/sections/summarySection.dart';
-import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/loading.dart';
 import 'package:provider/provider.dart';

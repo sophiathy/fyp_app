@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/constants.dart';
+import 'package:fyp_app/theme/constants.dart';
 
 class SummarySection extends StatelessWidget {
   final bool modeSwitch;

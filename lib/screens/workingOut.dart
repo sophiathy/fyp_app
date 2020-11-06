@@ -42,7 +42,7 @@ class _WorkingOutState extends State<WorkingOut> {
               Buttons(
                 name: "End",
                 press: (){
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed('/home');
                 },
               ),
             ],

@@ -45,5 +45,11 @@
 	<string>This app needs access to location when open.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This application tracks your steps.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing...</string>
+	</array>
 </dict>
 </plist>

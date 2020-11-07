@@ -75,7 +75,7 @@ class _MyAppState extends State <MyApp> {
                   return PageTransition(child: Home(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workingOut':
-                  return PageTransition(child: WorkingOut(), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(child: WorkingOut(workoutType: page.arguments), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:
                   return null;

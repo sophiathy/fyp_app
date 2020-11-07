@@ -39,6 +39,10 @@ dependencies:
   page_transition: ^1.1.7+2
   #use svg in the app
   flutter_svg: ^0.19.1
+  #accelerometer and gyroscope
+  sensors: ^0.4.2+6
+  #pedometer used for counting steps
+  pedometer: ^2.0.2
   #locate user
   geolocator: ^6.1.1
   #display google map

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/exerciseBtn.dart';
+import 'package:fyp_app/widgets/sectionCard.dart';
 
 class StartExSection extends StatelessWidget {
   final bool modeSwitch;
-  
+
   const StartExSection({
     Key key,
     @required this.modeSwitch,
@@ -12,30 +12,17 @@ class StartExSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10.0, bottom: 20.0),
-      padding: EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).indicatorColor,
-        borderRadius: BorderRadius.circular(36.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            "Start an Exercise".toUpperCase(),
-            style: TextStyle(
-              color: modeSwitch? kPrimaryColor_dark : kPrimaryColor_light,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return Stack(
+      children: [
+        SectionCard(
+          height: 180.0,
+          title: "Start an Exercise",
+        ),
 
-          SizedBox(height: 20.0),
-
-          //buttons of exercise
-          SingleChildScrollView(
+        //buttons of exercise
+        Padding(
+          padding: const EdgeInsets.only(top: 70.0, left: 24.0, right: 24.0),
+          child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: <Widget>[
@@ -65,8 +52,8 @@ class StartExSection extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

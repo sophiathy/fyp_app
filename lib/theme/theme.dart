@@ -7,17 +7,26 @@ ThemeData lightTheme(BuildContext context){
     brightness: Brightness.light,
     fontFamily: "Noto_Sans_JP",
     textTheme: TextTheme(
-      //login page: app name title
+      //login: app name title
       headline3: TextStyle(
         fontStyle: FontStyle.italic,
         fontWeight: FontWeight.w700,
         color: kPrimaryColor_light,
       ),
+      //register: title
       headline5: TextStyle(
         fontWeight: FontWeight.w700,
         color: kPrimaryColor_light,
       ),
-      bodyText2: TextStyle(color: kPrimaryColor_light),
+      //section card title
+      headline6: TextStyle(
+        fontWeight: FontWeight.w700,
+        color: kPrimaryColor_light,
+      ),
+      bodyText2: TextStyle(
+        fontWeight: FontWeight.w500,
+        color: kPrimaryColor_light,
+      ),
     ),
 
     backgroundColor: kBackground_light,
@@ -45,7 +54,14 @@ ThemeData darkTheme(BuildContext context){
         fontWeight: FontWeight.w700,
         color: kPrimaryColor_dark,
       ),
-      bodyText2: TextStyle(color: kPrimaryColor_dark),
+      headline6: TextStyle(
+        fontWeight: FontWeight.w700,
+        color: kPrimaryColor_dark,
+      ),
+      bodyText2: TextStyle(
+        fontWeight: FontWeight.w500,
+        color: kPrimaryColor_dark,
+      ),
     ),
 
     backgroundColor: kBackground_dark,

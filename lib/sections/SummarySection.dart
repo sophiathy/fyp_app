@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/theme/constants.dart';
+import 'package:fyp_app/widgets/sectionCard.dart';
 
 class SummarySection extends StatelessWidget {
   final bool modeSwitch;
-  
+
   const SummarySection({
     Key key,
     @required this.modeSwitch,
@@ -11,34 +12,21 @@ class SummarySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10.0, bottom: 20.0),
-      padding: EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).indicatorColor,
-        borderRadius: BorderRadius.circular(36.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            "Today's Summary".toUpperCase(),
-            style: TextStyle(
-              color: modeSwitch? kPrimaryColor_dark : kPrimaryColor_light,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return Stack(
+      children: <Widget>[
+        SectionCard(
+          height: 250.0,
+          title: "Today's Summary",
+        ),
 
-          SizedBox(height: 20.0),
-
-          Container(
+        Padding(
+          padding: const EdgeInsets.only(top: 70.0, left: 24.0, right: 24.0),
+          child: Container(
             height: 150.0,
             child: Row(
               children: <Widget>[
                 SizedBox(width: 10.0),
-                
+
                 //graph
                 Flexible(
                   flex: 1,
@@ -52,9 +40,9 @@ class SummarySection extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(width: 20.0),
-                
+
                 //workout minutes & burned calories
                 Flexible(
                   flex: 2,
@@ -141,8 +129,8 @@ class SummarySection extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

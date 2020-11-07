@@ -31,86 +31,93 @@ class _HomeState extends State<Home> {
 
     final AuthService _authenticate = AuthService();
 
-    return _loading ? Loading() : Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            //app bar
-            SafeArea(
-              top: true,
-              left: true,
-              right: true,
-              child: Container(
-                child: Row(
-                  children: <Widget>[
-                    //mode switcher
-                    IconButton(
-                      //TODO:Explain in report
-                      onPressed: (){
-                        setState(() => modeSwitch.themeData = !modeSwitch.themeData);
-                      },
-                      icon: modeSwitch.themeData
-                        ? Icon(
-                            //sunny icon in dark mode
-                            Icons.wb_sunny,
-                            size: 20.0,
-                            color: kSectionBackground_light,
-                        )
-                        : Icon(
-                            //moon icon in light mode
-                            Icons.brightness_2,
-                            size: 20.0,
-                            color: kSectionBackground_dark,
-                        ),
-                    ),
-
-                    Spacer(),
-
-                    //TODO:Profile Settings
-                    //profile settings
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20.0),
-                        onTap: () async{
-                          setState(() {
-                            modeSwitch.themeData = false;  //reset to light mode
-                            print("Logout Successfully.");
-                          });
-
-                          await _authenticate.logout();   //update the stream to null
-                          Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    return _loading ? Loading() : new WillPopScope(
+      onWillPop: () async => false,       //disable the system back button
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              //app bar
+              SafeArea(
+                top: true,
+                left: true,
+                right: true,
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      //mode switcher
+                      IconButton(
+                        //TODO:Explain in report
+                        onPressed: (){
+                          setState(() => modeSwitch.themeData = !modeSwitch.themeData);
                         },
-                        child: Container(
-                          height: 32.0,
-                          width: 32.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: NetworkImage(_profileImage),
-                              fit: BoxFit.fill,
+                        icon: modeSwitch.themeData
+                          ? Icon(
+                              //sunny icon in dark mode
+                              Icons.wb_sunny,
+                              size: 20.0,
+                              color: kSectionBackground_light,
+                          )
+                          : Icon(
+                              //moon icon in light mode
+                              Icons.brightness_2,
+                              size: 20.0,
+                              color: kSectionBackground_dark,
+                          ),
+                      ),
+
+                      Spacer(),
+
+                      //TODO:Profile Settings
+                      //profile settings
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20.0),
+                          onTap: () async{
+                            setState(() {
+                              modeSwitch.themeData = false;  //reset to light mode
+                              print("Logout Successfully.");
+                            });
+
+                            await _authenticate.logout();   //update the stream to null
+                            Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+                          },
+                          child: Container(
+                            height: 32.0,
+                            width: 32.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: NetworkImage(_profileImage),
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            //Today's Summary
-            SummarySection(modeSwitch: modeSwitch.themeData),
+              //Today's Summary
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
+                child: SummarySection(modeSwitch: modeSwitch.themeData),
+              ),
 
-            //Start an Exercise
-            StartExSection(modeSwitch: modeSwitch.themeData),
+              //Start an Exercise
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
+                child: StartExSection(modeSwitch: modeSwitch.themeData),
+              ),
 
-
-
-          ],
+            ],
+          ),
         ),
       ),
     );

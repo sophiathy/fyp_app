@@ -1,7 +1,0 @@
-0 Walking
-1 Standing
-2 Jogging
-3 Sitting
-4 Biking
-5 Upstairs
-6 Downstairs

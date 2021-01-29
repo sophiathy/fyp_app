@@ -26,7 +26,7 @@ apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 29
 
     lintOptions {
         disable 'InvalidPackage'
@@ -36,7 +36,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.fyp_55293157.exercise_tracker"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -47,12 +47,6 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
-    }
-
-    //added for using tensorflow lite model
-    aaptOptions {
-        noCompress 'tflite'
-        noCompress 'lite'
     }
 }
 
@@ -69,4 +63,6 @@ dependencies {
     //declare the dependencies for Firebase Authentication and Cloud Firestore
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
+    // TODO: Tensorflow model
+    implementation 'org.tensorflow:tensorflow-android:1.8.0'
 }

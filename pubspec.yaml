@@ -47,8 +47,10 @@ dependencies:
   geolocator: ^6.1.1
   #display google map
   google_maps_flutter: ^1.0.6
-  #Tensorflow Lite model
-  tflite: ^1.1.1
+  #grant permission from user (set for Android only)
+  permission_handler: ^5.0.1+1
+  #splash screen animation
+  animated_text_kit: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -67,8 +69,6 @@ flutter:
   assets:
     - assets/images/
     - assets/map/
-    - assets/model/activityRecognizer.tflite
-    - assets/model/labels.txt
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

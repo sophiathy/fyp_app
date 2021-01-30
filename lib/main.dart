@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_app/screens/workoutSummary.dart';
+import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:fyp_app/screens/account/login.dart';
 import 'package:fyp_app/screens/account/register.dart';
@@ -62,6 +63,7 @@ class _MyAppState extends State <MyApp> {
             themeMode: modeProvider.themeData ? ThemeMode.dark : ThemeMode.light,
             initialRoute: '/checkLogin',
             onGenerateRoute: (page) {
+              ScreenArguments args = page.arguments;
               switch (page.name) {
                 case '/checkLogin':
                   return PageTransition(child: CheckLogin(), type: PageTransitionType.rightToLeftWithFade);
@@ -76,10 +78,10 @@ class _MyAppState extends State <MyApp> {
                   return PageTransition(child: Home(), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workingOut':
-                  return PageTransition(child: WorkingOut(workoutType: page.arguments), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(child: WorkingOut(workoutType: args.workoutType), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workoutSummary':
-                  return PageTransition(child: WorkoutSummary(workoutType: page.arguments), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(child: WorkoutSummary(workoutType: args.workoutType, duration: args.duration), type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:
                   return null;

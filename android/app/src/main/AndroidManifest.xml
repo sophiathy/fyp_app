@@ -58,6 +58,7 @@
     </application>
     <!-- Permisson to geolocator -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- Permisson to pedometer-->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 </manifest>

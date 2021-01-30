@@ -23,9 +23,13 @@ class _ShowMapState extends State<ShowMap> {
   bool mapCreated = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     geo.getPosStream().listen((pos) => keepUserCenter(pos));
+  }
+
+  Future<void> mapStyle(GoogleMapController gc, String path) async {
+    gc.setMapStyle(await rootBundle.loadString(path));
   }
 
   @override
@@ -35,41 +39,36 @@ class _ShowMapState extends State<ShowMap> {
     return Scaffold(
       body: Center(
         child: GoogleMap(
-          onMapCreated: (GoogleMapController gc){
+          onMapCreated: (GoogleMapController gc) {
             mapCreated = true;
             _mapController.complete(gc);
-            setState(() async{
-              if(modeSwitch.themeData)
-                gc.setMapStyle(await rootBundle.loadString('assets/map/darkMap.json'));  //dark mode Map
-            });
+            if (modeSwitch.themeData)
+              mapStyle(gc, "assets/map/darkMap.json"); //dark mode Map
+            setState((){});
           },
           myLocationEnabled: true,
-          mapType: MapType.normal,                //TODO: comment
+          mapType: MapType.normal, //TODO: comment
           initialCameraPosition: CameraPosition(
             zoom: 18.0,
-            target: LatLng(
-              widget.startPos.latitude,
-              widget.startPos.longitude),
-            ),
+            target: LatLng(widget.startPos.latitude, widget.startPos.longitude),
+          ),
         ),
       ),
     );
   }
 
-  Future <void> keepUserCenter(Position movingPos) async{
+  Future<void> keepUserCenter(Position movingPos) async {
     final GoogleMapController gc = await _mapController.future;
-    bool isLocationServiceEnabled  = await Geolocator.isLocationServiceEnabled();
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
     //TODO: add dialog for location permission
-    if(!isLocationServiceEnabled)
+    if (!isLocationServiceEnabled)
       LocationPermission permission = await Geolocator.requestPermission();
 
     gc.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         zoom: 18.0,
-        target: LatLng(
-          movingPos.latitude,
-          movingPos.longitude),
+        target: LatLng(movingPos.latitude, movingPos.longitude),
       ),
     ));
   }

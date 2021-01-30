@@ -124,7 +124,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
             data.addAll(lz.subList(0,TIME_STAMP));
 
             results = classifier.predictProbabilities(toFloatArray(data));
-            Log.i(TAG, "predictActivity: "+ Arrays.toString(results));
+            //Log.i(TAG, "predictActivity: "+ Arrays.toString(results));
 
             data.clear();
             ax.clear(); ay.clear(); az.clear();

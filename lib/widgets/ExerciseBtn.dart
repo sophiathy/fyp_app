@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/constants.dart';
 
 class ExerciseBtn extends StatelessWidget {
@@ -31,7 +32,7 @@ class ExerciseBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
           onTap: (){
-            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: type);
+            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(type, "00:00:00"));
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),

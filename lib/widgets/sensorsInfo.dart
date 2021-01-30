@@ -25,6 +25,8 @@ class _SensorsInfoState extends State<SensorsInfo> {
   List<double> _gyroVal;
   String _steps;
 
+  Timer _timer;
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +34,9 @@ class _SensorsInfoState extends State<SensorsInfo> {
     setUpAccelerometerGyroscope();
     //stream subscriptions on Pedometer
     setUpPedometer();
-    checkPermissionActivity();
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      if (mounted) checkPermission();
+    });
   }
 
   @override
@@ -56,8 +60,7 @@ class _SensorsInfoState extends State<SensorsInfo> {
         SizedBox(height: 10.0),
         Text('Gyroscope: $gyroscope'),
         SizedBox(height: 10.0),
-        if (widget.workoutType == "Walking" ||
-            widget.workoutType == "Running")
+        if (widget.workoutType == "Walking" || widget.workoutType == "Running")
           Text('Steps taken: $_steps'),
       ],
     );
@@ -88,10 +91,14 @@ class _SensorsInfoState extends State<SensorsInfo> {
     setState(() => _steps = "0"); //reset to zero at the beginning
   }
 
-  checkPermissionActivity() async {
+  checkPermission() async {
     var activityStatus = await Permission.activityRecognition.status;
+    var locationStatus = await Permission.location.status;
 
     if (!activityStatus.isGranted)
       await Permission.activityRecognition.request();
+
+    if (!locationStatus.isGranted)
+      await Permission.location.request();
   }
 }

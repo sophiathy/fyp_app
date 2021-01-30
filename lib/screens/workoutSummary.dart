@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/widgets/buttons.dart';
-import 'package:fyp_app/widgets/map.dart';
+import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutSummary extends StatefulWidget {
   final String workoutType;
+  final String duration;
 
   const WorkoutSummary({
     Key key,
-    @required this.workoutType,
+    @required this.workoutType, this.duration,
   }) : super(key: key);
 
   @override
@@ -102,7 +103,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                                     ),
                               ),
                               Text(
-                                '30 mins',
+                                '${widget.duration}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2

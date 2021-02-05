@@ -10,24 +10,25 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final AuthService _authenticate = AuthService();
+  final AuthAccount _authenticate = AuthAccount();
 
-  final _formKey = GlobalKey <FormState>();
-  final List <String> errors = [];
+  final _formKey = GlobalKey<FormState>();
+  final List<String> errors = [];
 
   String email = "";
   String password = "";
   String confirmPassword = "";
   final TextEditingController _emailController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
-  final TextEditingController _confirmPasswordController = new TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap:(){
+        onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Padding(
@@ -52,10 +53,10 @@ class _RegisterState extends State<Register> {
                           borderRadius: BorderRadius.circular(30.0),
                           splashColor: Colors.indigo[50],
                           onTap: (() => Navigator.of(context).pop()),
-                          child:Icon(
-                              Icons.arrow_back_ios_rounded,
-                              color: Colors.indigo[300],
-                              size: 25.0,
+                          child: Icon(
+                            Icons.arrow_back_ios_rounded,
+                            color: Colors.indigo[300],
+                            size: 25.0,
                           ),
                         ),
                       ),
@@ -65,13 +66,9 @@ class _RegisterState extends State<Register> {
 
                 Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: Text(
-                    "Register an Account",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                      .textTheme
-                      .headline5
-                  ),
+                  child: Text("Register an Account",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5),
                 ),
 
                 //register form
@@ -97,7 +94,7 @@ class _RegisterState extends State<Register> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(30.0),
                               splashColor: Colors.indigo[50],
-                              onTap: (){
+                              onTap: () {
                                 this.setState(() => _emailController.clear());
                               },
                               child: Icon(
@@ -110,19 +107,20 @@ class _RegisterState extends State<Register> {
                           //floatingLabel must be added here, it won't work in theme.dart
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        validator: (data){
-                          if(data.isEmpty){
+                        validator: (data) {
+                          if (data.isEmpty) {
                             setState(() => errors.remove(kInvalidEmail));
 
-                            if(!errors.contains(kEmailNull))
-                              setState(() => errors.add(kEmailNull)); //if the message is not inside the List "errors", then add
+                            if (!errors.contains(kEmailNull))
+                              setState(() => errors.add(
+                                  kEmailNull)); //if the message is not inside the List "errors", then add
 
                             print(kEmailNull);
-                            return "";                              //return email = ""
-                          }else if(!emailRegExp.hasMatch(data)){
+                            return ""; //return email = ""
+                          } else if (!emailRegExp.hasMatch(data)) {
                             setState(() => errors.remove(kEmailNull));
 
-                            if(!errors.contains(kInvalidEmail))
+                            if (!errors.contains(kInvalidEmail))
                               setState(() => errors.add(kInvalidEmail));
 
                             print(kInvalidEmail);
@@ -131,14 +129,15 @@ class _RegisterState extends State<Register> {
 
                           return null;
                         },
-                        onSaved: (data) => email = data,  //when the form is saved, capture the value
-                        onChanged: (data){
+                        onSaved: (data) => email =
+                            data, //when the form is saved, capture the value
+                        onChanged: (data) {
                           setState(() => errors.remove(kAccountExists));
 
-                          if(data.isNotEmpty)
+                          if (data.isNotEmpty)
                             setState(() => errors.remove(kEmailNull));
 
-                          if(emailRegExp.hasMatch(data))
+                          if (emailRegExp.hasMatch(data))
                             setState(() => errors.remove(kInvalidEmail));
                           return null;
                         },
@@ -162,8 +161,9 @@ class _RegisterState extends State<Register> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(30.0),
                               splashColor: Colors.indigo[50],
-                              onTap: (){
-                                this.setState(() => _passwordController.clear());
+                              onTap: () {
+                                this.setState(
+                                    () => _passwordController.clear());
                               },
                               child: Icon(
                                 Icons.backspace_rounded,
@@ -174,35 +174,36 @@ class _RegisterState extends State<Register> {
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        validator: (data){
+                        validator: (data) {
                           setState(() {
                             errors.remove(kAccountExists);
                             errors.remove(kNotMatchPassword);
                           });
 
-                          if(data.isEmpty){
-                            if(!errors.contains(kPasswordNull))
+                          if (data.isEmpty) {
+                            if (!errors.contains(kPasswordNull))
                               setState(() => errors.add(kPasswordNull));
 
                             print(kPasswordNull);
-                            return "";                  //return password = ""
-                          }else if(data.length < 6){
-                            if(!errors.contains(kShortPassword))
+                            return ""; //return password = ""
+                          } else if (data.length < 6) {
+                            if (!errors.contains(kShortPassword))
                               setState(() => errors.add(kShortPassword));
 
                             print(kShortPassword);
-                            return "";                  //return password = ""
+                            return ""; //return password = ""
                           }
 
                           return null;
                         },
-                        onSaved: (data) => password = data,  //when the form is saved, capture the value
-                        onChanged: (data){
+                        onSaved: (data) => password =
+                            data, //when the form is saved, capture the value
+                        onChanged: (data) {
                           setState(() => errors.remove(kAccountExists));
 
-                          if(data.isNotEmpty){
+                          if (data.isNotEmpty) {
                             setState(() => errors.remove(kPasswordNull));
-                            if(data.length >= 6)
+                            if (data.length >= 6)
                               setState(() => errors.remove(kShortPassword));
                           }
 
@@ -228,8 +229,9 @@ class _RegisterState extends State<Register> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(30.0),
                               splashColor: Colors.indigo[50],
-                              onTap: (){
-                                this.setState(() => _confirmPasswordController.clear());
+                              onTap: () {
+                                this.setState(
+                                    () => _confirmPasswordController.clear());
                               },
                               child: Icon(
                                 Icons.backspace_rounded,
@@ -240,30 +242,31 @@ class _RegisterState extends State<Register> {
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                         ),
-                        validator: (data){
+                        validator: (data) {
                           setState(() => errors.remove(kAccountExists));
 
-                          if(data.isEmpty){
-                            if(!errors.contains(kConfirmPasswordNull))
+                          if (data.isEmpty) {
+                            if (!errors.contains(kConfirmPasswordNull))
                               setState(() => errors.add(kConfirmPasswordNull));
 
                             print(kConfirmPasswordNull);
-                            return "";                  //return confirmPassword = ""
-                          }else if(data != password){
-                            if(!errors.contains(kNotMatchPassword))
+                            return ""; //return confirmPassword = ""
+                          } else if (data != password) {
+                            if (!errors.contains(kNotMatchPassword))
                               setState(() => errors.add(kNotMatchPassword));
 
                             print(kNotMatchPassword);
-                            return "";                  //return confirmPassword = ""
+                            return ""; //return confirmPassword = ""
                           }
 
                           return null;
                         },
-                        onSaved: (data) => confirmPassword = data,  //when the form is saved, capture the value
-                        onChanged: (data){
+                        onSaved: (data) => confirmPassword =
+                            data, //when the form is saved, capture the value
+                        onChanged: (data) {
                           setState(() => errors.remove(kAccountExists));
 
-                          if(data.isNotEmpty){
+                          if (data.isNotEmpty) {
                             setState(() {
                               errors.remove(kConfirmPasswordNull);
                               errors.remove(kNotMatchPassword);
@@ -283,21 +286,24 @@ class _RegisterState extends State<Register> {
                       //create account button
                       Buttons(
                         name: "Create Account",
-                        press: () async{
-                          if(_formKey.currentState.validate()){
+                        press: () async {
+                          if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
 
-                            dynamic getResult = await _authenticate.registerEmailPassword(email, password); //null or Firebase user
+                            dynamic getResult =
+                                await _authenticate.registerEmailPassword(
+                                    email, password); //null or Firebase user
 
-                            if(getResult != null){
+                            if (getResult != null) {
                               setState(() {
                                 errors.remove(kAccountExists);
                                 print("Registered account: " + email);
                               });
-                              Navigator.of(context).pushReplacementNamed('/home');
-                            }else{
-                              setState((){
-                                if(!errors.contains(kAccountExists)){
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            } else {
+                              setState(() {
+                                if (!errors.contains(kAccountExists)) {
                                   errors.add(kAccountExists);
                                   print(kAccountExists);
                                 }

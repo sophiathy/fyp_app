@@ -1,22 +1,29 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/services/screenArguments.dart';
-import 'package:fyp_app/widgets/buttons.dart';
+import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
-import 'package:fyp_app/widgets/sensorsInfo.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:sensors/sensors.dart';
 
 class WorkingOut extends StatefulWidget {
   final String workoutType;
+  final String duration;
+  final List<List<String>> csvRows;
 
   const WorkingOut({
     Key key,
     @required this.workoutType,
+    this.duration,
+    this.csvRows,
   }) : super(key: key);
 
   @override
@@ -37,19 +44,43 @@ class _WorkingOutState extends State<WorkingOut> {
       _walking = "";
 
   Timer _timer;
+  Timer _countdown;
   Timer _sw;
+  Timer _record;
+
+  //sensors
+  List<StreamSubscription<dynamic>> _streamSub =
+      <StreamSubscription<dynamic>>[];
+  List<double> _accelVal;
+  List<double> _gyroVal;
+
+  //countdown timer
+  int counter = 3;
+  String readyCountdown = "Get Ready!";
 
   //stopwatch
   bool startPressed = false;
-  String stopwatchTime = "00:00:00";
+  String stopwatchTime = "";
   var sw = Stopwatch();
-  final duration = const Duration(seconds: 1);
+  final refresh = const Duration(seconds: 1);
+
+  //record sensors' data
+  bool recording = false;
+  List<List<String>> rows = [];
+  List<String> row = [];
+  final sensorUpdate = const Duration(milliseconds: 10);
 
   @override
   void initState() {
     super.initState();
+    //stream subscriptions on Accelerometer and Gyroscope
+    setUpAccelerometerGyroscope();
+    setState(() {
+      stopwatchTime = widget.duration;
+    });
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (mounted) {
+        checkPermission();
         _getResults();
       }
     });
@@ -58,8 +89,10 @@ class _WorkingOutState extends State<WorkingOut> {
   @override
   void dispose() {
     super.dispose();
+    for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
     _timer.cancel();
     if (_sw != null) _sw.cancel();
+    if (_record != null) _record.cancel();
   }
 
   Future<void> _getResults() async {
@@ -95,8 +128,64 @@ class _WorkingOutState extends State<WorkingOut> {
     });
   }
 
+  checkPermission() async {
+    var activityStatus = await Permission.activityRecognition.status;
+    var locationStatus = await Permission.location.status;
+    // var storageStatus = await Permission.storage.status;
+
+    if (!activityStatus.isGranted)
+      await Permission.activityRecognition.request();
+
+    if (!locationStatus.isGranted) await Permission.location.request();
+
+    // if (!storageStatus.isGranted) await Permission.storage.request();
+  }
+
+  //sensors
+  void setUpAccelerometerGyroscope() {
+    _streamSub.add(accelerometerEvents.listen((AccelerometerEvent e) {
+      setState(() => _accelVal = <double>[e.x, e.y, e.z]);
+    }));
+
+    _streamSub.add(gyroscopeEvents.listen((GyroscopeEvent e) {
+      setState(() => _gyroVal = <double>[e.x, e.y, e.z]);
+    }));
+  }
+
+  List<String> getAccelerometer() {
+    return _accelVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  List<String> getGyroscope() {
+    return _gyroVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  //countdown timer (3 seconds)
+  void startCountdown() {
+    setState(() {
+      startPressed = true;
+      print(readyCountdown);
+    });
+
+    _countdown = Timer.periodic(refresh, (timer) {
+      setState(() {
+        readyCountdown = counter.toString();
+        if (counter > 0) {
+          print(readyCountdown);
+          counter--;
+        } else {
+          _countdown.cancel();
+          //start the stopwatch and record sensors' data after 3 seconds
+          startStopwatch();
+          startRecording();
+        }
+      });
+    });
+  }
+
+  //stopwatch (workout duration)
   void runningWatch() {
-    if (sw.isRunning) _sw = Timer(duration, runningWatch);
+    if (sw.isRunning) _sw = Timer(refresh, runningWatch);
 
     //if the width of string of hours/minutes/seconds is less than 2, then add "0" to its left
     //remainder of 60s = minutes
@@ -110,13 +199,10 @@ class _WorkingOutState extends State<WorkingOut> {
   }
 
   void startStopwatch() {
-    setState(() {
-      startPressed = true;
-    });
     print("Start to workout... ");
     sw.start();
     _sw =
-        Timer(duration, runningWatch); //runningWatch is invoked in every second
+        Timer(refresh, runningWatch); //runningWatch is invoked in every second
   }
 
   void stopStopwatch() {
@@ -129,8 +215,53 @@ class _WorkingOutState extends State<WorkingOut> {
           arguments: ScreenArguments(
             widget.workoutType,
             stopwatchTime,
+            rows,
           ));
     }
+  }
+
+  void startRecording() {
+    print("Start recording sensors' data... ");
+
+    setState(() {
+      recording = true;
+      row.add("Timestamp");
+      row.add("Ax");
+      row.add("Ay");
+      row.add("Az");
+      row.add("Gx");
+      row.add("Gy");
+      row.add("Gz");
+      row.add("Activity");
+
+      rows.add(row); //header row
+    });
+
+    _record = Timer.periodic(sensorUpdate, (timer) {
+      row = []; //reset
+
+      String timestamp =
+          new DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      row.add(timestamp);
+
+      List<String> accel = getAccelerometer();
+      List<String> gyro = getGyroscope();
+
+      //accelerometer (x, y, z)
+      row.add(accel[0]);
+      row.add(accel[1]);
+      row.add(accel[2]);
+
+      //gyroscope (x, y, z)
+      row.add(gyro[0]);
+      row.add(gyro[1]);
+      row.add(gyro[2]);
+
+      //activity
+      row.add(widget.workoutType);
+
+      rows.add(row);
+    });
   }
 
   @override
@@ -186,7 +317,6 @@ class _WorkingOutState extends State<WorkingOut> {
                           padding: const EdgeInsets.all(6.0),
                           children: <Widget>[
                             SizedBox(height: 6.0),
-
                             Center(
                               child: Container(
                                 height: 7.0,
@@ -197,9 +327,7 @@ class _WorkingOutState extends State<WorkingOut> {
                                 ),
                               ),
                             ),
-
                             SizedBox(height: 12.0),
-
                             Stack(
                               children: <Widget>[
                                 SectionCard(
@@ -218,19 +346,30 @@ class _WorkingOutState extends State<WorkingOut> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         children: <Widget>[
-                                          Text(
-                                            stopwatchTime,
-                                            style: TextStyle(
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.bold,
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                readyCountdown == "0"
+                                                    ? stopwatchTime
+                                                    : readyCountdown,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      readyCountdown == "0"
+                                                          ? 30.0
+                                                          : 25.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          SizedBox(width: 15.0),
+                                          SizedBox(width: 10.0),
                                           RaisedButton(
-                                            onPressed: startStopwatch,
+                                            onPressed: startCountdown,
                                             color: startPressed
-                                                ? Colors.blueGrey[300]
-                                                : Colors.greenAccent[400],
+                                                ? kDisabled
+                                                : kOkOrStart,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -250,9 +389,9 @@ class _WorkingOutState extends State<WorkingOut> {
                                           SizedBox(width: 5.0),
                                           RaisedButton(
                                             onPressed: stopStopwatch,
-                                            color: startPressed
-                                                ? Colors.redAccent
-                                                : Colors.blueGrey[300],
+                                            color: recording
+                                                ? kCancelOrStop
+                                                : kReturn,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -261,7 +400,9 @@ class _WorkingOutState extends State<WorkingOut> {
                                                 horizontal: 10.0,
                                                 vertical: 10.0),
                                             child: Text(
-                                              "Stop".toUpperCase(),
+                                              recording
+                                                  ? "Stop".toUpperCase()
+                                                  : "Leave".toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 20.0,
                                                 fontWeight: FontWeight.bold,
@@ -271,11 +412,6 @@ class _WorkingOutState extends State<WorkingOut> {
                                           ),
                                         ],
                                       ),
-
-                                      SizedBox(height: 10.0),
-
-                                      SensorsInfo(
-                                          workoutType: widget.workoutType),
 
                                       //classifying the type of physical activities
                                       SizedBox(height: 10.0),
@@ -298,15 +434,6 @@ class _WorkingOutState extends State<WorkingOut> {
                                 ),
                               ],
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(24.0),
-                            //   child: Buttons(
-                            //     name: "End",
-                            //     press: (() => Navigator.of(context).pushReplacementNamed(
-                            //         '/workoutSummary',
-                            //         arguments: widget.workoutType)),
-                            //   ),
-                            // ),
                           ],
                         ),
                       );

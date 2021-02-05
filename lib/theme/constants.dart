@@ -14,8 +14,14 @@ const kSectionBackground_dark = Color(0xFF212121);
 const kIconBg_light = Color(0xFFEEEEEE);
 const kIconBg_dark = Color(0xFF424242);
 
+const kOkOrStart = Color(0xFF00CA71);
+const kCancelOrStop = Colors.redAccent;
+const kReturn = Colors.indigoAccent;
+const kDisabled = Color(0xFF90A4AE);
+
 //regular experssion
-final RegExp emailRegExp = RegExp(r"^[A-Za-z0-9.!#$%&’*+/=?^_`{|}~-]+@[A-Za-z0-9]+\.[A-Za-z]+");
+final RegExp emailRegExp =
+    RegExp(r"^[A-Za-z0-9.!#$%&’*+/=?^_`{|}~-]+@[A-Za-z0-9]+\.[A-Za-z]+");
 
 //error messages used in login
 const String kEmailNull = "Please enter your email.";
@@ -33,7 +39,6 @@ const String kAccountExists = "The account has been registered.";
 const String kShortPassword = "Password is too short. (at least 6 chars)";
 const String kNotMatchPassword = "Password is not match. Please enter again.";
 const String kConfirmPasswordNull = "Please enter your confirm password.";
-
 
 /* //not in used
 const kActiveIconColor = Color(0xFFE68342);

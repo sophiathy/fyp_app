@@ -4,13 +4,13 @@ import 'package:fyp_app/theme/constants.dart';
 
 class ExerciseBtn extends StatelessWidget {
   final bool modeSwitch;
-  final String type;
+  final String workoutType;
   final Function press;
-  
+
   const ExerciseBtn({
     Key key,
     @required this.modeSwitch,
-    this.type,
+    this.workoutType,
     this.press,
   }) : super(key: key);
 
@@ -32,18 +32,18 @@ class ExerciseBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
           onTap: (){
-            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(type, "00:00:00"));
+            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, "00:00:00", []));
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
             child: Column(
               children: <Widget>[
-                _typeIcon(type),
+                _typeIcon(workoutType),
 
                 SizedBox(height: 5.0),
                 
                 Text(
-                  type.toUpperCase(),
+                  workoutType.toUpperCase(),
                   style: TextStyle(
                     color: Colors.lightBlueAccent,
                     fontSize: 12.0,

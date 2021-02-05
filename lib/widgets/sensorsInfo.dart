@@ -25,7 +25,7 @@ class _SensorsInfoState extends State<SensorsInfo> {
   List<double> _gyroVal;
   String _steps;
 
-  Timer _timer;
+  // Timer _timer;
 
   @override
   void initState() {
@@ -34,16 +34,63 @@ class _SensorsInfoState extends State<SensorsInfo> {
     setUpAccelerometerGyroscope();
     //stream subscriptions on Pedometer
     setUpPedometer();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (mounted) checkPermission();
-    });
+    // _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    //   if (mounted) checkPermission();
+    // });
   }
 
   @override
   void dispose() {
     super.dispose();
     for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
+    // _timer.cancel();
   }
+
+  void setUpAccelerometerGyroscope() {
+    _streamSub.add(accelerometerEvents.listen((AccelerometerEvent e) {
+      setState(() => _accelVal = <double>[e.x, e.y, e.z]);
+    }));
+
+    _streamSub.add(gyroscopeEvents.listen((GyroscopeEvent e) {
+      setState(() => _gyroVal = <double>[e.x, e.y, e.z]);
+    }));
+  }
+
+  List<String> getAccelerometer() {
+    return _accelVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  List<String> getGyroscope() {
+    return _gyroVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  void stepCount(StepCount e) => setState(() => _steps = e.steps.toString());
+
+  void stepError(error) {
+    setState(() {
+      print("Cannot count steps: $error");
+      _steps = "Not available for counting steps.";
+    });
+  }
+
+  void setUpPedometer() {
+    _streamSub
+        .add(Pedometer.stepCountStream.listen(stepCount, onError: stepError));
+    setState(() => _steps = "0"); //reset to zero at the beginning
+  }
+
+  // checkPermission() async {
+  //   var activityStatus = await Permission.activityRecognition.status;
+  //   var locationStatus = await Permission.location.status;
+  //   var storageStatus = await Permission.storage.status;
+
+  //   if (!activityStatus.isGranted)
+  //     await Permission.activityRecognition.request();
+
+  //   if (!locationStatus.isGranted) await Permission.location.request();
+
+  //   if (!storageStatus.isGranted) await Permission.storage.request();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,41 +111,5 @@ class _SensorsInfoState extends State<SensorsInfo> {
           Text('Steps taken: $_steps'),
       ],
     );
-  }
-
-  void setUpAccelerometerGyroscope() {
-    _streamSub.add(accelerometerEvents.listen((AccelerometerEvent e) {
-      setState(() => _accelVal = <double>[e.x, e.y, e.z]);
-    }));
-
-    _streamSub.add(gyroscopeEvents.listen((GyroscopeEvent e) {
-      setState(() => _gyroVal = <double>[e.x, e.y, e.z]);
-    }));
-  }
-
-  void stepCount(StepCount e) => setState(() => _steps = e.steps.toString());
-
-  void stepError(error) {
-    setState(() {
-      print("Cannot count steps: $error");
-      _steps = "Not available for counting steps.";
-    });
-  }
-
-  void setUpPedometer() {
-    _streamSub
-        .add(Pedometer.stepCountStream.listen(stepCount, onError: stepError));
-    setState(() => _steps = "0"); //reset to zero at the beginning
-  }
-
-  checkPermission() async {
-    var activityStatus = await Permission.activityRecognition.status;
-    var locationStatus = await Permission.location.status;
-
-    if (!activityStatus.isGranted)
-      await Permission.activityRecognition.request();
-
-    if (!locationStatus.isGranted)
-      await Permission.location.request();
   }
 }

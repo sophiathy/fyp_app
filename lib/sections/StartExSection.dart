@@ -28,25 +28,25 @@ class StartExSection extends StatelessWidget {
               children: <Widget>[
                 ExerciseBtn(
                   modeSwitch: modeSwitch,
-                  type: "Walking",
+                  workoutType: "Walking",
                   press: () {},
                 ),
 
                 ExerciseBtn(
                   modeSwitch: modeSwitch,
-                  type: "Running",
+                  workoutType: "Running",
                   press: () {},
                 ),
 
                 ExerciseBtn(
                   modeSwitch: modeSwitch,
-                  type: "Biking",
+                  workoutType: "Biking",
                   press: () {},
                 ),
 
                 ExerciseBtn(
                   modeSwitch: modeSwitch,
-                  type: "Others",
+                  workoutType: "Others",
                   press: () {},
                 ),
               ],

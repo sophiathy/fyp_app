@@ -14,28 +14,28 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 //TODO:Solvig No Firebase App 'DEFAULT' has been created
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State <MyApp> {
+class _MyAppState extends State<MyApp> {
   DarkProvider modeProvider = new DarkProvider();
 
   //get the current theme from the Preferences
   //set value back to the Provider
-  void getCurrentTheme() async{
+  void getCurrentTheme() async {
     modeProvider.themeData = await modeProvider.dPref.getDark();
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getCurrentTheme();
   }
@@ -46,42 +46,61 @@ class _MyAppState extends State <MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<DarkProvider>(
-          create: (context){
+          create: (context) {
             return modeProvider;
           },
         ),
       ],
       //TODO: important! this fixes all the problems of dark mode
       child: Consumer<DarkProvider>(
-        builder: (BuildContext context, value, Widget child){
+          builder: (BuildContext context, value, Widget child) {
         return StreamProvider<UserProperties>.value(
-          value: AuthService().user,    //accessing the user stream
+          value: AuthAccount().user, //accessing the user stream
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: lightTheme(context),
             darkTheme: darkTheme(context),
-            themeMode: modeProvider.themeData ? ThemeMode.dark : ThemeMode.light,
+            themeMode:
+                modeProvider.themeData ? ThemeMode.dark : ThemeMode.light,
             initialRoute: '/checkLogin',
             onGenerateRoute: (page) {
               ScreenArguments args = page.arguments;
               switch (page.name) {
                 case '/checkLogin':
-                  return PageTransition(child: CheckLogin(), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: CheckLogin(),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/login':
-                  return PageTransition(child: Login(), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: Login(),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/register':
-                  return PageTransition(child: Register(), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: Register(),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/home':
-                  return PageTransition(child: Home(), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: Home(),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workingOut':
-                  return PageTransition(child: WorkingOut(workoutType: args.workoutType), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: WorkingOut(
+                          workoutType: args.workoutType,
+                          duration: args.duration,
+                          csvRows: args.csvRows),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workoutSummary':
-                  return PageTransition(child: WorkoutSummary(workoutType: args.workoutType, duration: args.duration), type: PageTransitionType.rightToLeftWithFade);
+                  return PageTransition(
+                      child: WorkoutSummary(
+                          workoutType: args.workoutType,
+                          duration: args.duration,
+                          csvRows: args.csvRows),
+                      type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:
                   return null;
@@ -100,4 +119,3 @@ class _MyAppState extends State <MyApp> {
     );
   }
 }
-

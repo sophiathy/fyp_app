@@ -10,6 +10,7 @@ import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sensors/sensors.dart';
@@ -34,14 +35,18 @@ class _WorkingOutState extends State<WorkingOut> {
   final geo = GeoService();
   static const platform = const MethodChannel('flutter.native/classifier');
 
-  List<String> _results = [];
-  String _biking = "",
-      _downstairs = "",
-      _jogging = "",
-      _sitting = "",
-      _standing = "",
-      _upstairs = "",
-      _walking = "";
+  // List<String> _results = [];
+  // String _biking = "",
+  //     _downstairs = "",
+  //     _jogging = "",
+  //     _sitting = "",
+  //     _standing = "",
+  //     _upstairs = "",
+  //     _walking = "";
+  // String _detectedActivity = "";
+  // String _detectedActivityStatus = "";
+  // String _detectedActivityTime = "";
+  String _result = ""; //store the result returned by the tflite model
 
   Timer _timer;
   Timer _countdown;
@@ -53,6 +58,9 @@ class _WorkingOutState extends State<WorkingOut> {
       <StreamSubscription<dynamic>>[];
   List<double> _accelVal;
   List<double> _gyroVal;
+
+  //pedometer
+  String _steps;
 
   //countdown timer
   int counter = 3;
@@ -75,13 +83,15 @@ class _WorkingOutState extends State<WorkingOut> {
     super.initState();
     //stream subscriptions on Accelerometer and Gyroscope
     setUpAccelerometerGyroscope();
+    //stream subscriptions on Pedometer
+    setUpPedometer();
     setState(() {
-      stopwatchTime = widget.duration;
+      stopwatchTime = widget.duration; //00:00:00
     });
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (mounted) {
         checkPermission();
-        _getResults();
+        _getResult();
       }
     });
   }
@@ -95,38 +105,67 @@ class _WorkingOutState extends State<WorkingOut> {
     if (_record != null) _record.cancel();
   }
 
-  Future<void> _getResults() async {
-    String biking, downstairs, jogging, sitting, standing, upstairs, walking;
+  //get the result from the tflite model
+  Future<void> _getResult() async {
+    // String biking, downstairs, jogging, sitting, standing, upstairs, walking;
+    String res;
 
     try {
-      _results = await platform.invokeListMethod('getResults');
-      biking = "Biking: \t" + _results[0];
-      downstairs = "Downstairs: \t" + _results[1];
-      jogging = "Jogging: \t" + _results[2];
-      sitting = "Sitting: \t" + _results[3];
-      standing = "Standing: \t" + _results[4];
-      upstairs = "Upstairs: \t" + _results[5];
-      walking = "Walking: \t" + _results[6];
+      res = await platform.invokeMethod('classify');
+      // _results = await platform.invokeListMethod('classify');
+      // biking = "Biking: \t" + _results[0];
+      // downstairs = "Downstairs: \t" + _results[1];
+      // jogging = "Jogging: \t" + _results[2];
+      // sitting = "Sitting: \t" + _results[3];
+      // standing = "Standing: \t" + _results[4];
+      // upstairs = "Upstairs: \t" + _results[5];
+      // walking = "Walking: \t" + _results[6];
     } on PlatformException catch (e) {
-      biking = "Failed to get the result: '${e.message}'";
-      downstairs = "Failed to get the result: '${e.message}'";
-      jogging = "Failed to get the result: '${e.message}'";
-      sitting = "Failed to get the result: '${e.message}'";
-      standing = "Failed to get the result: '${e.message}'";
-      upstairs = "Failed to get the result: '${e.message}'";
-      walking = "Failed to get the result: '${e.message}'";
+      res = "Failed to get the result: '${e.message}'";
+      // biking = "Failed to get the result: '${e.message}'";
+      // downstairs = "Failed to get the result: '${e.message}'";
+      // jogging = "Failed to get the result: '${e.message}'";
+      // sitting = "Failed to get the result: '${e.message}'";
+      // standing = "Failed to get the result: '${e.message}'";
+      // upstairs = "Failed to get the result: '${e.message}'";
+      // walking = "Failed to get the result: '${e.message}'";
     }
 
     setState(() {
-      _biking = biking;
-      _downstairs = downstairs;
-      _jogging = jogging;
-      _sitting = sitting;
-      _standing = standing;
-      _upstairs = upstairs;
-      _walking = walking;
+      _result = res;
+      // _biking = biking;
+      // _downstairs = downstairs;
+      // _jogging = jogging;
+      // _sitting = sitting;
+      // _standing = standing;
+      // _upstairs = upstairs;
+      // _walking = walking;
     });
   }
+
+  //google api
+  // Future<void> _getResults() async {
+  //   String detectedActivity, detectedActivityStatus, detectedActivityTime;
+
+  //   try {
+  //     _results = await platform.invokeListMethod('getResults');
+  //     if (_results.isNotEmpty) {
+  //       detectedActivity = _results[0];
+  //       detectedActivityStatus = _results[1];
+  //       detectedActivityTime = _results[2];
+  //     }
+  //   } on PlatformException catch (err) {
+  //     detectedActivity = "An error occurred: ${err.message}";
+  //     detectedActivityStatus = "An error occurred: ${err.message}";
+  //     detectedActivityTime = "An error occurred: ${err.message}";
+  //   }
+
+  //   setState(() {
+  //     _detectedActivity = detectedActivity;
+  //     _detectedActivityStatus = detectedActivityStatus;
+  //     _detectedActivityTime = detectedActivityTime;
+  //   });
+  // }
 
   checkPermission() async {
     var activityStatus = await Permission.activityRecognition.status;
@@ -158,6 +197,21 @@ class _WorkingOutState extends State<WorkingOut> {
 
   List<String> getGyroscope() {
     return _gyroVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  void setUpPedometer() {
+    _streamSub
+        .add(Pedometer.stepCountStream.listen(stepCount, onError: stepError));
+    setState(() => _steps = "0"); //reset to zero at the beginning
+  }
+
+  void stepCount(StepCount e) => setState(() => _steps = e.steps.toString());
+
+  void stepError(error) {
+    setState(() {
+      print("Cannot count steps: $error");
+      _steps = "Not available for counting steps.";
+    });
   }
 
   //countdown timer (3 seconds)
@@ -209,7 +263,8 @@ class _WorkingOutState extends State<WorkingOut> {
     print("Duration of workout: " + stopwatchTime);
     sw.stop();
     if (_sw == null)
-      Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).pushReplacementNamed(
+          '/home'); //stopwatch had not started = no record of workout
     else {
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
@@ -413,22 +468,73 @@ class _WorkingOutState extends State<WorkingOut> {
                                         ],
                                       ),
 
-                                      //classifying the type of physical activities
+                                      //TODO: classifying the type of physical activities
                                       SizedBox(height: 10.0),
-                                      Text(_biking),
+                                      Text(
+                                        "Current Activity:\t" + _result,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2
+                                            .copyWith(
+                                              fontSize: 20.0,
+                                            ),
+                                      ),
+
                                       SizedBox(height: 10.0),
-                                      Text(_downstairs),
-                                      SizedBox(height: 10.0),
-                                      Text(_jogging),
-                                      SizedBox(height: 10.0),
-                                      Text(_sitting),
-                                      SizedBox(height: 10.0),
-                                      Text(_standing),
-                                      SizedBox(height: 10.0),
-                                      Text(_upstairs),
-                                      SizedBox(height: 10.0),
-                                      Text(_walking),
-                                      SizedBox(height: 10.0),
+
+                                      if (widget.workoutType == "Walking" ||
+                                          widget.workoutType == "Running")
+                                        Text(
+                                          "Steps taken:\t" + _steps,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2
+                                              .copyWith(
+                                                fontSize: 20.0,
+                                              ),
+                                        ),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_biking),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_downstairs),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_jogging),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_sitting),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_standing),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_upstairs),
+                                      // SizedBox(height: 10.0),
+                                      // Text(_walking),
+                                      // SizedBox(height: 10.0),
+
+                                      //google api
+                                      // SizedBox(height: 20.0),
+                                      // _results.isEmpty
+                                      //     ? Text(
+                                      //         "Tracking...",
+                                      //         style: Theme.of(context)
+                                      //             .textTheme
+                                      //             .bodyText2
+                                      //             .copyWith(
+                                      //               fontSize: 20.0,
+                                      //             ),
+                                      //       )
+                                      //     : Text(
+                                      //         "Detected: \t" +
+                                      //             _detectedActivity +
+                                      //             "\t" +
+                                      //             _detectedActivityStatus +
+                                      //             "\t" +
+                                      //             _detectedActivityTime,
+                                      //         style: Theme.of(context)
+                                      //             .textTheme
+                                      //             .bodyText2
+                                      //             .copyWith(
+                                      //               fontSize: 20.0,
+                                      //             ),
+                                      //       ),
                                     ],
                                   ),
                                 ),

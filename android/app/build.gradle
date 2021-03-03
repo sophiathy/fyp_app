@@ -32,6 +32,10 @@ android {
         disable 'InvalidPackage'
     }
 
+    aaptOptions {
+        noCompress "tflite"
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.fyp_55293157.exercise_tracker"
@@ -63,6 +67,12 @@ dependencies {
     //declare the dependencies for Firebase Authentication and Cloud Firestore
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
-    // TODO: Tensorflow model
-    implementation 'org.tensorflow:tensorflow-android:1.8.0'
+    //Tensorflow lite model
+    implementation 'org.tensorflow:tensorflow-lite:+'
+
+    //Tensorflow 1.13.1 pb file
+    // implementation 'org.tensorflow:tensorflow-android:1.8.0'
+    //activity recognition api
+    // implementation 'com.google.android.gms:play-services-location:17.0.0'
+    // implementation 'androidx.appcompat:appcompat:1.1.0'
 }

@@ -6,7 +6,7 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     
-    <!--TODO:-->
+    <!-- Sensors -->
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
@@ -59,6 +59,8 @@
     <!-- Permisson to geolocator -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Permisson to pedometer-->
+    <!-- Required for 28 and below. -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <!-- Required for 29+. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 </manifest>

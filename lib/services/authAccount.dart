@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fyp_app/services/database.dart';
 
 class AuthAccount {
   final FirebaseAuth _authenticate = FirebaseAuth.instance;
@@ -22,6 +23,10 @@ class AuthAccount {
       UserCredential result = await _authenticate
           .createUserWithEmailAndPassword(email: email, password: password);
       User u = result.user; //get Firebase user
+
+      //create document in Firestore for new user
+      await Database(uid: u.uid).updatePersonalData(u.email, '', '');
+
       return _firebaseUser(u); //return custom user object
     } catch (e) {
       print(e.toString());
@@ -35,6 +40,7 @@ class AuthAccount {
       UserCredential result = await _authenticate.signInWithEmailAndPassword(
           email: email, password: password);
       User u = result.user; //get Firebase user
+
       return _firebaseUser(u); //return custom user object
     } catch (e) {
       print(e.toString());

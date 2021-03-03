@@ -25,19 +25,19 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.3
   #Firebase Firestore
-  cloud_firestore: ^0.16.0
+  cloud_firestore: ^0.16.0+1
   firebase_analytics: ^7.0.1
-  firebase_auth: ^0.20.0+1
+  firebase_auth: ^0.20.1
   firebase_core: ^0.7.0
   firebase_storage: ^7.0.0
   #state management
-  provider: ^4.3.2+2
+  provider: ^4.3.3
   #remember user settings
-  shared_preferences: ^0.5.12+2
+  shared_preferences: ^0.5.12+4
   #loading widget
   flutter_spinkit: ^4.1.2+1
   #transition between pages
-  page_transition: ^1.1.7+2
+  page_transition: ^1.1.7+6
   #use svg in the app
   flutter_svg: ^0.19.1
   #accelerometer and gyroscope
@@ -45,13 +45,13 @@ dependencies:
   #pedometer used for counting steps
   pedometer: ^2.0.2
   #locate user
-  geolocator: ^6.1.14
+  geolocator: ^6.2.1
   #display google map
-  google_maps_flutter: ^1.0.6
+  google_maps_flutter: ^1.2.0
   #grant permission from user (set for Android only)
-  permission_handler: ^5.0.1+1
+  permission_handler: ^5.1.0+2
   #splash screen animation
-  animated_text_kit: ^3.1.0
+  animated_text_kit: ^3.1.2
   #generate csv file to store the sensors' data
   csv: ^4.1.0
   path_provider: ^1.6.27

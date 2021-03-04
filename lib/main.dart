@@ -10,6 +10,8 @@ import 'package:fyp_app/screens/checkLogin.dart';
 import 'package:fyp_app/screens/workingOut.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/theme/theme.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,8 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await Hive.initFlutter();             //path of hive stored
+  await Hive.openBox<int>('steps');     //store last saved timestamp and steps counted
   runApp(MyApp());
 }
 
@@ -91,7 +95,8 @@ class _MyAppState extends State<MyApp> {
                       child: WorkingOut(
                           workoutType: args.workoutType,
                           duration: args.duration,
-                          csvRows: args.csvRows),
+                          csvRows: args.csvRows,
+                          todaySteps: args.todaySteps),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workoutSummary':
@@ -99,7 +104,8 @@ class _MyAppState extends State<MyApp> {
                       child: WorkoutSummary(
                           workoutType: args.workoutType,
                           duration: args.duration,
-                          csvRows: args.csvRows),
+                          csvRows: args.csvRows,
+                          todaySteps: args.todaySteps),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:

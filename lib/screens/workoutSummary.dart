@@ -6,8 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_app/services/geoService.dart';
-import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/buttons.dart';
+import 'package:fyp_app/widgets/detailRow.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,12 +19,14 @@ class WorkoutSummary extends StatefulWidget {
   final String workoutType;
   final String duration;
   final List<List<String>> csvRows;
+  final String todaySteps;
 
   const WorkoutSummary({
     Key key,
     @required this.workoutType,
     this.duration,
     this.csvRows,
+    this.todaySteps,
   }) : super(key: key);
 
   @override
@@ -182,83 +184,28 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                       padding: const EdgeInsets.only(
                           top: 70.0, left: 24.0, right: 24.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Workout Type :',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                              Text(
-                                '${widget.workoutType}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                            ],
-                          ),
+                          DetailRow(title: 'Workout Type :', content: widget.workoutType),
+
                           SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Duration :',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                              Text(
-                                '${widget.duration}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                            ],
-                          ),
+
+                          DetailRow(title: 'Duration :', content: widget.duration),
+
                           SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Total Distance :',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                              Text(
-                                '100 m',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      fontSize: 20.0,
-                                    ),
-                              ),
-                            ],
-                          ),
+
+                          DetailRow(title: 'Total Distance :', content: "100 m"),
+
+                          (widget.workoutType == "Walking" || widget.workoutType == "Running")?
+                                Column(
+                                  children: <Widget>[
+                                    SizedBox(height: 10.0),
+                                    DetailRow(title: 'Total steps taken today :', content: "${widget.todaySteps} steps"),
+                                  ],
+                                )
+                                : SizedBox(height: 10.0),
+
                           SizedBox(height: 10.0),
-                          if (widget.workoutType == "Walking" ||
-                              widget.workoutType == "Running")
-                            Text('Steps taken: 100 steps'),
+
                         ],
                       ),
                     ),

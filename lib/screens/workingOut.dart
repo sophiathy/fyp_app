@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/constants.dart';
+import 'package:fyp_app/widgets/detailRow.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,12 +21,14 @@ class WorkingOut extends StatefulWidget {
   final String workoutType;
   final String duration;
   final List<List<String>> csvRows;
+  final String todaySteps;
 
   const WorkingOut({
     Key key,
     @required this.workoutType,
     this.duration,
     this.csvRows,
+    this.todaySteps,
   }) : super(key: key);
 
   @override
@@ -53,14 +57,16 @@ class _WorkingOutState extends State<WorkingOut> {
   Timer _sw;
   Timer _record;
 
-  //sensors
+  //accelerometer and gyroscope
   List<StreamSubscription<dynamic>> _streamSub =
       <StreamSubscription<dynamic>>[];
   List<double> _accelVal;
   List<double> _gyroVal;
 
   //pedometer
-  String _steps;
+  int _todaySteps;
+  String _steps = "0";
+  Box<int> pedoBox = Hive.box('steps'); //store last saved timestamp and steps
 
   //countdown timer
   int counter = 3;
@@ -180,7 +186,7 @@ class _WorkingOutState extends State<WorkingOut> {
     // if (!storageStatus.isGranted) await Permission.storage.request();
   }
 
-  //sensors
+  //accelerometer and gyroscope
   void setUpAccelerometerGyroscope() {
     _streamSub.add(accelerometerEvents.listen((AccelerometerEvent e) {
       setState(() => _accelVal = <double>[e.x, e.y, e.z]);
@@ -199,18 +205,65 @@ class _WorkingOutState extends State<WorkingOut> {
     return _gyroVal?.map((double v) => v.toStringAsFixed(1))?.toList();
   }
 
+  //pedometer
   void setUpPedometer() {
     _streamSub
-        .add(Pedometer.stepCountStream.listen(stepCount, onError: stepError));
-    setState(() => _steps = "0"); //reset to zero at the beginning
+        .add(Pedometer.stepCountStream.listen(stepsToday, onError: stepError));
   }
 
-  void stepCount(StepCount e) => setState(() => _steps = e.steps.toString());
+  Future<int> stepsToday(StepCount streamCount) async {
+    int lastSavedYearKey = 40;
+    int lastSavedMonthKey = 41;
+    int lastSavedDayKey = 42;
+    int lastSavedStepsKey = 43;
+    int todayYear = DateTime.now().year;
+    int todayMonth = DateTime.now().month;
+    int todayDay = DateTime.now().day; //1-31 = key in hive
+
+    int lastSavedYear = pedoBox.get(lastSavedYearKey, defaultValue: 0);
+    int lastSavedMonth = pedoBox.get(lastSavedMonthKey, defaultValue: 0);
+    int lastSavedDay = pedoBox.get(lastSavedDayKey, defaultValue: 0);
+
+    int lastSavedSteps = pedoBox.get(lastSavedStepsKey,
+        defaultValue: 0); //if does not exist in pedoBox, its value = 0
+
+    //pedometer will be reset when the device reboots => reset value to 0
+    if (lastSavedSteps > streamCount.steps) {
+      lastSavedSteps = 0;
+      pedoBox.put(lastSavedStepsKey, lastSavedSteps);
+    }
+
+    //save the most updated timestamp and steps counted
+    if (lastSavedYear < todayYear ||
+        lastSavedMonth < todayMonth ||
+        lastSavedDay < todayDay) {
+      lastSavedYear = todayYear;
+      lastSavedMonth = todayMonth;
+      lastSavedDay = todayDay;
+      lastSavedSteps = streamCount.steps;
+
+      pedoBox.put(lastSavedYearKey, lastSavedYear);
+      pedoBox.put(lastSavedMonthKey, lastSavedMonth);
+      pedoBox.put(lastSavedDayKey, lastSavedDay);
+      pedoBox.put(lastSavedStepsKey, lastSavedSteps);
+    }
+
+    //total steps counted by pedometer - last saved total = today's steps
+    setState(() {
+      _todaySteps = (streamCount.steps - lastSavedSteps);
+      _steps = _todaySteps.toString();
+    });
+
+    pedoBox.put(
+        todayDay, _todaySteps); //store back to one of the location 1-31 in hive
+
+    return _todaySteps; //return back to the pedometer stream
+  }
 
   void stepError(error) {
     setState(() {
       print("Cannot count steps: $error");
-      _steps = "Not available for counting steps.";
+      _steps = "N/A";
     });
   }
 
@@ -271,6 +324,7 @@ class _WorkingOutState extends State<WorkingOut> {
             widget.workoutType,
             stopwatchTime,
             rows,
+            _steps,
           ));
     }
   }
@@ -470,29 +524,23 @@ class _WorkingOutState extends State<WorkingOut> {
 
                                       //TODO: classifying the type of physical activities
                                       SizedBox(height: 10.0),
-                                      Text(
-                                        "Current Activity:\t" + _result,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2
-                                            .copyWith(
-                                              fontSize: 20.0,
-                                            ),
-                                      ),
+                                      DetailRow(
+                                          title: 'Current Activity :',
+                                          content: _result),
 
-                                      SizedBox(height: 10.0),
+                                      (widget.workoutType == "Walking" ||
+                                              widget.workoutType == "Running")
+                                          ? Column(
+                                              children: <Widget>[
+                                                SizedBox(height: 10.0),
+                                                DetailRow(
+                                                    title:
+                                                        'Total steps taken today :',
+                                                    content: _steps),
+                                              ],
+                                            )
+                                          : SizedBox(height: 10.0),
 
-                                      if (widget.workoutType == "Walking" ||
-                                          widget.workoutType == "Running")
-                                        Text(
-                                          "Steps taken:\t" + _steps,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText2
-                                              .copyWith(
-                                                fontSize: 20.0,
-                                              ),
-                                        ),
                                       // SizedBox(height: 10.0),
                                       // Text(_biking),
                                       // SizedBox(height: 10.0),

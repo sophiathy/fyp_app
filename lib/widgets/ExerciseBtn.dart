@@ -32,7 +32,7 @@ class ExerciseBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
           onTap: (){
-            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, "00:00:00", []));
+            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, "00:00:00", [], "0"));
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
@@ -41,7 +41,7 @@ class ExerciseBtn extends StatelessWidget {
                 _typeIcon(workoutType),
 
                 SizedBox(height: 5.0),
-                
+
                 Text(
                   workoutType.toUpperCase(),
                   style: TextStyle(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -50,6 +51,7 @@ class _WorkingOutState extends State<WorkingOut> {
   // String _detectedActivity = "";
   // String _detectedActivityStatus = "";
   // String _detectedActivityTime = "";
+
   String _result = ""; //store the result returned by the tflite model
 
   Timer _timer;
@@ -71,6 +73,8 @@ class _WorkingOutState extends State<WorkingOut> {
   //countdown timer
   int counter = 3;
   String readyCountdown = "Get Ready!";
+  bool tracking = false;
+  bool trackingDelay = true;
 
   //stopwatch
   bool startPressed = false;
@@ -87,28 +91,28 @@ class _WorkingOutState extends State<WorkingOut> {
   @override
   void initState() {
     super.initState();
-    //stream subscriptions on Accelerometer and Gyroscope
-    setUpAccelerometerGyroscope();
-    //stream subscriptions on Pedometer
-    setUpPedometer();
-    setState(() {
-      stopwatchTime = widget.duration; //00:00:00
-    });
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (mounted) {
-        checkPermission();
-        _getResult();
-      }
-    });
+    if(mounted){
+      //stream subscriptions on Accelerometer and Gyroscope
+      setUpAccelerometerGyroscope();
+      //stream subscriptions on Pedometer
+      setUpPedometer();
+      setState(() {
+        stopwatchTime = widget.duration; //00:00:00
+      });
+      _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+          checkPermission();
+          _getResult();
+      });
+    }
   }
 
   @override
   void dispose() {
-    super.dispose();
     for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
     _timer.cancel();
     if (_sw != null) _sw.cancel();
     if (_record != null) _record.cancel();
+    super.dispose();
   }
 
   //get the result from the tflite model
@@ -149,7 +153,7 @@ class _WorkingOutState extends State<WorkingOut> {
     });
   }
 
-  //google api
+  //Google api
   // Future<void> _getResults() async {
   //   String detectedActivity, detectedActivityStatus, detectedActivityTime;
 
@@ -285,6 +289,10 @@ class _WorkingOutState extends State<WorkingOut> {
           //start the stopwatch and record sensors' data after 3 seconds
           startStopwatch();
           startRecording();
+          setState(() => {tracking = true});
+          Future.delayed(const Duration(seconds: 2), () {
+            setState(() => {trackingDelay = false});
+          });
         }
       });
     });
@@ -329,6 +337,7 @@ class _WorkingOutState extends State<WorkingOut> {
     }
   }
 
+  //record sensors' data (used for generating csv file)
   void startRecording() {
     print("Start recording sensors' data... ");
 
@@ -523,23 +532,44 @@ class _WorkingOutState extends State<WorkingOut> {
                                       ),
 
                                       //TODO: classifying the type of physical activities
-                                      SizedBox(height: 10.0),
-                                      DetailRow(
-                                          title: 'Current Activity :',
-                                          content: _result),
+                                      SizedBox(height: 20.0),
+                                      tracking
+                                      ? TyperAnimatedTextKit(
+                                        text: [
+                                          "Tracking ...",
+                                        ],
+                                        textStyle: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      )
+                                      : SizedBox(height: 0.0),
 
-                                      (widget.workoutType == "Walking" ||
-                                              widget.workoutType == "Running")
-                                          ? Column(
-                                              children: <Widget>[
-                                                SizedBox(height: 10.0),
-                                                DetailRow(
-                                                    title:
-                                                        'Total steps taken today :',
-                                                    content: _steps),
-                                              ],
-                                            )
-                                          : SizedBox(height: 10.0),
+                                      trackingDelay
+                                      ? SizedBox(height: 0.0)
+                                      : Column(
+                                        children: [
+                                          SizedBox(height: 10.0),
+                                          DetailRow(
+                                                title: 'Current Activity :',
+                                                content: _result),
+
+                                          (widget.workoutType == "Walking" ||
+                                                widget.workoutType == "Running")
+                                            ? Column(
+                                                children: <Widget>[
+                                                  SizedBox(height: 10.0),
+                                                  DetailRow(
+                                                      title:
+                                                          'Total steps taken today :',
+                                                      content: _steps),
+                                                ],
+                                              )
+                                            : SizedBox(height: 10.0),
+                                        ],
+                                      ),
+
 
                                       // SizedBox(height: 10.0),
                                       // Text(_biking),

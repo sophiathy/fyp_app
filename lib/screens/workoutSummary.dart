@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
+import 'package:fyp_app/widgets/savedRecordDialog.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
@@ -96,48 +97,6 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
     }
   }
 
-  savedRecordDialog(BuildContext context) {
-    return AwesomeDialog(
-        context: context,
-        animType: AnimType.SCALE,
-        dialogType: DialogType.SUCCES,
-        headerAnimationLoop: false,
-        body: Column(
-          children: <Widget>[
-            SizedBox(height: 15.0),
-            Text(
-              'Well Done!',
-              style: Theme.of(context)
-                .textTheme
-                .headline6
-                .copyWith(
-                  fontSize: 20.0,
-                ),
-            ),
-            SizedBox(height: 20.0),
-            Text(
-              'Your workout record has been saved.',
-              style: Theme.of(context)
-                .textTheme
-                .bodyText2
-                .copyWith(
-                  fontSize: 16.0,
-                ),
-            ),
-            SizedBox(height: 10.0),
-          ],
-        ),
-        btnOkOnPress: () {
-          debugPrint('User pressed OK');
-        },
-        btnOkIcon: Icons.check_circle,
-        btnOkText: 'Nice',
-        onDissmissCallback: () {
-          debugPrint('Dialog Dismiss...');
-        },
-      )..show();
-  }
-
   @override
   Widget build(BuildContext context) {
     Future.delayed(
@@ -185,27 +144,27 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                           top: 70.0, left: 24.0, right: 24.0),
                       child: Column(
                         children: <Widget>[
-                          DetailRow(title: 'Workout Type :', content: widget.workoutType),
-
+                          DetailRow(
+                              title: 'Workout Type :',
+                              content: widget.workoutType),
                           SizedBox(height: 10.0),
-
-                          DetailRow(title: 'Duration :', content: widget.duration),
-
+                          DetailRow(
+                              title: 'Duration :', content: widget.duration),
                           SizedBox(height: 10.0),
-
-                          DetailRow(title: 'Total Distance :', content: "100 m"),
-
-                          (widget.workoutType == "Walking" || widget.workoutType == "Running")?
-                                Column(
+                          DetailRow(
+                              title: 'Total Distance :', content: "100 m"),
+                          (widget.workoutType == "Walking" ||
+                                  widget.workoutType == "Running")
+                              ? Column(
                                   children: <Widget>[
                                     SizedBox(height: 10.0),
-                                    DetailRow(title: 'Total steps taken today :', content: "${widget.todaySteps} steps"),
+                                    DetailRow(
+                                        title: 'Total steps taken today :',
+                                        content: "${widget.todaySteps} steps"),
                                   ],
                                 )
-                                : SizedBox(height: 10.0),
-
+                              : SizedBox(height: 10.0),
                           SizedBox(height: 10.0),
-
                         ],
                       ),
                     ),

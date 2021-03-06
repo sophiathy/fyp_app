@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,6 +9,7 @@ import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
+import 'package:fyp_app/widgets/noRecordToSaveDialog.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
@@ -324,8 +326,7 @@ class _WorkingOutState extends State<WorkingOut> {
     print("Duration of workout: " + stopwatchTime);
     sw.stop();
     if (_sw == null)
-      Navigator.of(context).pushReplacementNamed(
-          '/home'); //stopwatch had not started = no record of workout
+      noRecordToSaveDialog(context); //notify user that the no record will be saved
     else {
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(

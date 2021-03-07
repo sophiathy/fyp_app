@@ -30,7 +30,7 @@ class Database {
             (error) => print("Failed to update workout details: $error"));
   }
 
-  //get collection stream data
+  //get collection stream data of user's personal info
   Stream<QuerySnapshot> get usersData {
     return usersCollection.snapshots();
   }

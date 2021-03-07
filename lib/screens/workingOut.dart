@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -93,7 +92,7 @@ class _WorkingOutState extends State<WorkingOut> {
   @override
   void initState() {
     super.initState();
-    if(mounted){
+    if (mounted) {
       //stream subscriptions on Accelerometer and Gyroscope
       setUpAccelerometerGyroscope();
       //stream subscriptions on Pedometer
@@ -102,8 +101,8 @@ class _WorkingOutState extends State<WorkingOut> {
         stopwatchTime = widget.duration; //00:00:00
       });
       _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-          checkPermission();
-          _getResult();
+        checkPermission();
+        _getResult();
       });
     }
   }
@@ -326,7 +325,8 @@ class _WorkingOutState extends State<WorkingOut> {
     print("Duration of workout: " + stopwatchTime);
     sw.stop();
     if (_sw == null)
-      noRecordToSaveDialog(context); //notify user that the no record will be saved
+      noRecordToSaveDialog(
+          context); //notify user that the no record will be saved
     else {
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
@@ -535,42 +535,43 @@ class _WorkingOutState extends State<WorkingOut> {
                                       //TODO: classifying the type of physical activities
                                       SizedBox(height: 20.0),
                                       tracking
-                                      ? TyperAnimatedTextKit(
-                                        text: [
-                                          "Tracking ...",
-                                        ],
-                                        textStyle: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.start,
-                                      )
-                                      : SizedBox(height: 0.0),
+                                          ? TyperAnimatedTextKit(
+                                              text: [
+                                                "Tracking ...",
+                                              ],
+                                              textStyle: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.start,
+                                            )
+                                          : SizedBox(height: 0.0),
 
                                       trackingDelay
-                                      ? SizedBox(height: 0.0)
-                                      : Column(
-                                        children: [
-                                          SizedBox(height: 10.0),
-                                          DetailRow(
-                                                title: 'Current Activity :',
-                                                content: _result),
-
-                                          (widget.workoutType == "Walking" ||
-                                                widget.workoutType == "Running")
-                                            ? Column(
-                                                children: <Widget>[
-                                                  SizedBox(height: 10.0),
-                                                  DetailRow(
-                                                      title:
-                                                          'Total steps taken today :',
-                                                      content: _steps),
-                                                ],
-                                              )
-                                            : SizedBox(height: 10.0),
-                                        ],
-                                      ),
-
+                                          ? SizedBox(height: 0.0)
+                                          : Column(
+                                              children: [
+                                                SizedBox(height: 10.0),
+                                                DetailRow(
+                                                    title: 'Current Activity :',
+                                                    content: _result),
+                                                (widget.workoutType ==
+                                                            "Walking" ||
+                                                        widget.workoutType ==
+                                                            "Running")
+                                                    ? Column(
+                                                        children: <Widget>[
+                                                          SizedBox(
+                                                              height: 10.0),
+                                                          DetailRow(
+                                                              title:
+                                                                  'Total Steps Taken Today :',
+                                                              content: _steps),
+                                                        ],
+                                                      )
+                                                    : SizedBox(height: 10.0),
+                                              ],
+                                            ),
 
                                       // SizedBox(height: 10.0),
                                       // Text(_biking),

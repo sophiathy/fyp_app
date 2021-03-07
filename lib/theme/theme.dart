@@ -24,7 +24,7 @@ ThemeData lightTheme(BuildContext context){
         color: kPrimaryColor_light,
       ),
       bodyText2: TextStyle(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w300,
         color: kPrimaryColor_light,
       ),
     ),
@@ -59,7 +59,7 @@ ThemeData darkTheme(BuildContext context){
         color: kPrimaryColor_dark,
       ),
       bodyText2: TextStyle(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w300,
         color: kPrimaryColor_dark,
       ),
     ),

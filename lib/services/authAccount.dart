@@ -49,16 +49,16 @@ class AuthAccount {
   }
 
   //login (anonymous)
-  Future loginAnon() async {
-    try {
-      UserCredential result = await _authenticate.signInAnonymously();
-      User u = result.user; //get Firebase user
-      return _firebaseUser(u); //return custom user object
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  // Future loginAnon() async {
+  //   try {
+  //     UserCredential result = await _authenticate.signInAnonymously();
+  //     User u = result.user; //get Firebase user
+  //     return _firebaseUser(u); //return custom user object
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
   //logout
   Future logout() async {

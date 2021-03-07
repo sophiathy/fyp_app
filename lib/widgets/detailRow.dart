@@ -21,6 +21,7 @@ class DetailRow extends StatelessWidget {
               .bodyText2
               .copyWith(
                 fontSize: 20.0,
+                fontWeight: FontWeight.w500,
               ),
         ),
         Text(

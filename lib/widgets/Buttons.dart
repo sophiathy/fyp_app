@@ -20,10 +20,9 @@ class Buttons extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         onPressed: press,
         child: Text(
-          name,
+          name.toUpperCase(),
           style: TextStyle(
-            fontSize: 28.0,
-            //TODO: think of the text color for button
+            fontSize: 26.0,
             color: Colors.white,
           ),
         ),

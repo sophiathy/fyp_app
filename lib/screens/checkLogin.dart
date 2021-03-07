@@ -13,18 +13,26 @@ class CheckLogin extends StatefulWidget {
 
 class _CheckLoginState extends State<CheckLogin> {
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), (){
-      navigate();
-    });
+    if (mounted) {
+      Future.delayed(Duration(seconds: 3), () {
+        navigate();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     DarkProvider modeSwitch = Provider.of<DarkProvider>(context);
     return Scaffold(
-      backgroundColor: modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
+      backgroundColor:
+          modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
       body: Container(
         child: Center(
           child: TextLiquidFill(
@@ -32,7 +40,8 @@ class _CheckLoginState extends State<CheckLogin> {
             waveDuration: Duration(milliseconds: 1000),
             loadDuration: Duration(milliseconds: 2000),
             waveColor: Colors.white,
-            boxBackgroundColor: modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
+            boxBackgroundColor:
+                modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
             textStyle: TextStyle(
               fontSize: 40.0,
               fontStyle: FontStyle.italic,
@@ -53,11 +62,11 @@ class _CheckLoginState extends State<CheckLogin> {
     );
   }
 
-  void navigate() async{
-    FirebaseAuth.instance.authStateChanges().listen((User u){
+  void navigate() async {
+    FirebaseAuth.instance.authStateChanges().listen((User u) {
       print(u);
       //return Login page or Home screen
-      if(u == null)
+      if (u == null)
         Navigator.of(context).pushReplacementNamed('/login');
       else
         Navigator.of(context).pushReplacementNamed('/home');

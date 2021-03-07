@@ -1,6 +1,5 @@
 // import 'dart:io';
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -130,7 +129,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 30.0, horizontal: 16.0),
+                    vertical: 20.0, horizontal: 16.0),
                 child: Stack(
                   children: <Widget>[
                     SectionCard(
@@ -159,7 +158,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                                   children: <Widget>[
                                     SizedBox(height: 10.0),
                                     DetailRow(
-                                        title: 'Total steps taken today :',
+                                        title: 'Total Steps Taken Today :',
                                         content: "${widget.todaySteps} steps"),
                                   ],
                                 )

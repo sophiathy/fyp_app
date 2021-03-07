@@ -44,10 +44,13 @@ class ExerciseBtn extends StatelessWidget {
 
                 Text(
                   workoutType.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.lightBlueAccent,
-                    fontSize: 12.0,
-                  ),
+                  style: Theme.of(context)
+                          .textTheme
+                          .bodyText2
+                          .copyWith(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
                 ),
               ],
             ),

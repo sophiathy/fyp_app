@@ -128,7 +128,7 @@ class _SummarySectionState extends State<SummarySection> {
                         lineWidth: 12.0,
                         animateFromLastPercent: true,
                         circularStrokeCap: CircularStrokeCap.round,
-                        percent: (_steps != "N/A") ? (double.parse(_steps)/6000.0) : 0.0,
+                        percent: (_steps != "N/A") ? (double.parse(_steps)/10000.0) : 0.0,
                         center: Text(
                                   _steps,
                                   style: Theme.of(context)
@@ -144,7 +144,7 @@ class _SummarySectionState extends State<SummarySection> {
                         backgroundColor: widget.modeSwitch? kIconBg_dark : kIconBg_light,
                       ),
 
-                      SizedBox(height: 5.0),
+                      SizedBox(height: 10.0),
 
                       Text(
                         "Steps".toUpperCase(),
@@ -161,7 +161,7 @@ class _SummarySectionState extends State<SummarySection> {
                   ),
                 ),
 
-                SizedBox(width: 40.0),
+                SizedBox(width: 35.0),
 
                 //workout minutes & burned calories
                 Flexible(
@@ -187,20 +187,26 @@ class _SummarySectionState extends State<SummarySection> {
                             SizedBox(width: 10.0),
                             Text(
                               "70",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .copyWith(
+                                      color: Colors.blue,
+                                      fontSize: 28.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               "Workout\nMinutes".toUpperCase(),
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .copyWith(
+                                      color: Colors.blue,
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                             ),
                           ],
                         ),
@@ -223,21 +229,27 @@ class _SummarySectionState extends State<SummarySection> {
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              "834",
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              "8334",
+                              style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .copyWith(
+                                      color: Colors.amber,
+                                      fontSize: 28.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               "Burned\nCalories".toUpperCase(),
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .copyWith(
+                                      color: Colors.amber,
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                             ),
                           ],
                         ),

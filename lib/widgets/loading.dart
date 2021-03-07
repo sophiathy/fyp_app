@@ -26,11 +26,15 @@ class Loading extends StatelessWidget {
                 ),
                 SizedBox(height: 10.0),
                 Text(
-                  "Loading",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 18.0,
-                  ),
+                  "Loading".toUpperCase(),
+                  style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              .copyWith(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500,
+                              ),
                 ),
               ],
             ),

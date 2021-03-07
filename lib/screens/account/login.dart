@@ -37,6 +37,7 @@ class _LoginState extends State<Login> {
         : new WillPopScope(
             onWillPop: () async => false, //disable the system back button
             child: Scaffold(
+              // resizeToAvoidBottomInset: false,     //if use, cannot scroll the form
               body: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
@@ -237,24 +238,34 @@ class _LoginState extends State<Login> {
 
                               SizedBox(height: 40),
 
-                              Center(
-                                child: Text(
-                                  "Don't have an account?",
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.indigo[300],
-                                  ),
-                                ),
-                              ),
+                              // Center(
+                              //   child: Text(
+                              //     "Don't have an account?",
+                              //     style: TextStyle(
+                              //       fontSize: 20.0,
+                              //       color: Colors.indigo[300],
+                              //     ),
+                              //   ),
+                              // ),
 
-                              SizedBox(height: 20),
+                              // SizedBox(height: 20),
 
                               //TODO: Redesign button
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
+                                  Text(
+                                    "Don't have an account?",
+                                    style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          .copyWith(
+                                            color: Colors.indigo[300],
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                  ),
+                                  SizedBox(width: 15.0),
                                   SizedBox(
                                     width: 130.0,
                                     height: 50.0,
@@ -266,7 +277,7 @@ class _LoginState extends State<Login> {
                                       onPressed: (() => Navigator.of(context)
                                           .pushNamed('/register')),
                                       child: Text(
-                                        "Register",
+                                        "Register".toUpperCase(),
                                         style: TextStyle(
                                           fontSize: 18.0,
                                           //TODO: think of the text color of button
@@ -276,55 +287,54 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
 
-                                  SizedBox(width: 10.0),
+                                  // SizedBox(width: 10.0),
 
-                                  Text(
-                                    "or",
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.indigo[300],
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   "or",
+                                  //   style: TextStyle(
+                                  //     fontSize: 16.0,
+                                  //     color: Colors.indigo[300],
+                                  //   ),
+                                  // ),
 
-                                  SizedBox(width: 10.0),
+                                  // SizedBox(width: 10.0),
 
-                                  //login (anonymous)
-                                  SizedBox(
-                                    width: 200.0,
-                                    height: 50.0,
-                                    child: FlatButton(
-                                      color: Colors.indigo[300],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0)),
-                                      onPressed: () async {
-                                        dynamic getResult = await _authenticate
-                                            .loginAnon(); //null or Firebase user
+                                  // //login (anonymous)
+                                  // SizedBox(
+                                  //   width: 200.0,
+                                  //   height: 50.0,
+                                  //   child: FlatButton(
+                                  //     color: Colors.indigo[300],
+                                  //     shape: RoundedRectangleBorder(
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(15.0)),
+                                  //     onPressed: () async {
+                                  //       dynamic getResult = await _authenticate
+                                  //           .loginAnon(); //null or Firebase user
 
-                                        if (getResult != null) {
-                                          print(
-                                              "Logged in as: " + getResult.uid);
-                                          Navigator.of(context)
-                                              .pushNamed('/home');
-                                        } else {
-                                          print("Error while logging in...");
-                                          setState(() {
-                                            if (!errors
-                                                .contains(kAnonymousLoginError))
-                                              errors.add(kAnonymousLoginError);
-                                          });
-                                        }
-                                      },
-                                      child: Text(
-                                        "Login Anonymously",
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          //TODO: think of the text color of button
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  //       if (getResult != null) {
+                                  //         print(
+                                  //             "Logged in as: " + getResult.uid);
+                                  //         Navigator.of(context)
+                                  //             .pushNamed('/home');
+                                  //       } else {
+                                  //         print("Error while logging in...");
+                                  //         setState(() {
+                                  //           if (!errors
+                                  //               .contains(kAnonymousLoginError))
+                                  //             errors.add(kAnonymousLoginError);
+                                  //         });
+                                  //       }
+                                  //     },
+                                  //     child: Text(
+                                  //       "Login Anonymously",
+                                  //       style: TextStyle(
+                                  //         fontSize: 18.0,
+                                  //         color: Colors.white,
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],

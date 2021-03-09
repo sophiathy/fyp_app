@@ -11,6 +11,7 @@ import 'package:fyp_app/widgets/savedRecordDialog.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive/hive.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class WorkoutSummary extends StatefulWidget {
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
+  final double highestSpeed;
 
   const WorkoutSummary({
     Key key,
@@ -27,6 +29,7 @@ class WorkoutSummary extends StatefulWidget {
     this.duration,
     this.csvRows,
     this.todaySteps,
+    this.highestSpeed,
   }) : super(key: key);
 
   @override
@@ -36,11 +39,17 @@ class WorkoutSummary extends StatefulWidget {
 class _WorkoutSummaryState extends State<WorkoutSummary> {
   final geo = GeoService();
   final FirebaseAuth auth = FirebaseAuth.instance;
+  Box<int> workoutDurationBox =
+      Hive.box('workoutDuration'); //store last saved workout seconds
 
   @override
   void initState() {
     super.initState();
-    outputCSV(); //workout duration exists => can directly output the sensors' data csv
+    if (mounted) {
+      outputCSV(); //workout duration exists => can directly output the sensors' data csv
+      workoutDurationToday(
+          widget.duration); //calculate the sum of workout seconds today
+    }
   }
 
   void outputCSV() {
@@ -96,6 +105,51 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
     }
   }
 
+  workoutDurationToday(String workoutDuration) {
+    int h = int.parse(workoutDuration.substring(0, 2));
+    int m = int.parse(workoutDuration.substring(3, 5));
+    int s = int.parse(workoutDuration.substring(6));
+
+    int totalSeconds = (h * 60 + m) * 60 + s;
+
+    int lastSavedYearKey = 40;
+    int lastSavedMonthKey = 41;
+    int lastSavedDayKey = 42;
+
+    int todayYear = DateTime.now().year;
+    int todayMonth = DateTime.now().month;
+    int todayDay = DateTime.now().day; //1-31 = key in hive
+
+    int lastSavedYear =
+        workoutDurationBox.get(lastSavedYearKey, defaultValue: 0);
+    int lastSavedMonth =
+        workoutDurationBox.get(lastSavedMonthKey, defaultValue: 0);
+    int lastSavedDay = workoutDurationBox.get(lastSavedDayKey,
+        defaultValue:
+            0); //if does not exist in workoutDurationBox, its value = 0
+
+    if (lastSavedYear < todayYear ||
+        lastSavedMonth < todayMonth ||
+        lastSavedDay < todayDay) {
+      workoutDurationBox.put(lastSavedDay,
+          0); //reset to 0 if last saved is not today (one of the location 1-31 in hive)
+
+      lastSavedYear = todayYear;
+      lastSavedMonth = todayMonth;
+      lastSavedDay = todayDay;
+
+      //update last saved timestamp to today
+      workoutDurationBox.put(lastSavedYearKey, lastSavedYear);
+      workoutDurationBox.put(lastSavedMonthKey, lastSavedMonth);
+      workoutDurationBox.put(lastSavedDayKey, lastSavedDay);
+    }
+    //last saved date is today
+    int sum = workoutDurationBox.get(todayDay, defaultValue: 0) +
+        totalSeconds; //store the sum of seconds today
+
+    workoutDurationBox.put(todayDay, sum); //update total workout seconds today
+  }
+
   @override
   Widget build(BuildContext context) {
     Future.delayed(
@@ -146,24 +200,28 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                           DetailRow(
                               title: 'Workout Type :',
                               content: widget.workoutType),
+
                           SizedBox(height: 10.0),
                           DetailRow(
                               title: 'Duration :', content: widget.duration),
+
                           SizedBox(height: 10.0),
                           DetailRow(
                               title: 'Total Distance :', content: "100 m"),
-                          (widget.workoutType == "Walking" ||
-                                  widget.workoutType == "Running")
+
+                          (widget.workoutType == "Walking" || widget.workoutType == "Running")
                               ? Column(
                                   children: <Widget>[
                                     SizedBox(height: 10.0),
                                     DetailRow(
-                                        title: 'Total Steps Taken Today :',
+                                        title: 'Steps Taken Today :',
                                         content: "${widget.todaySteps} steps"),
+                                    SizedBox(height: 10.0),
                                   ],
                                 )
                               : SizedBox(height: 10.0),
-                          SizedBox(height: 10.0),
+
+                          DetailRow(title: 'Highest Speed :', content: "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
                         ],
                       ),
                     ),

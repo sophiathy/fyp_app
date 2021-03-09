@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class WorkingOut extends StatefulWidget {
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
+  final double highestSpeed;
 
   const WorkingOut({
     Key key,
@@ -31,6 +33,7 @@ class WorkingOut extends StatefulWidget {
     this.duration,
     this.csvRows,
     this.todaySteps,
+    this.highestSpeed,
   }) : super(key: key);
 
   @override
@@ -65,6 +68,10 @@ class _WorkingOutState extends State<WorkingOut> {
       <StreamSubscription<dynamic>>[];
   List<double> _accelVal;
   List<double> _gyroVal;
+
+  //speedometer
+  double _currentSpeed = 0.0;
+  double _highestSpeed = 0.0;
 
   //pedometer
   int _todaySteps;
@@ -200,6 +207,10 @@ class _WorkingOutState extends State<WorkingOut> {
     _streamSub.add(gyroscopeEvents.listen((GyroscopeEvent e) {
       setState(() => _gyroVal = <double>[e.x, e.y, e.z]);
     }));
+
+    _streamSub.add(userAccelerometerEvents.listen((UserAccelerometerEvent e) {
+      calculateSpeed(e);
+    }));
   }
 
   List<String> getAccelerometer() {
@@ -208,6 +219,20 @@ class _WorkingOutState extends State<WorkingOut> {
 
   List<String> getGyroscope() {
     return _gyroVal?.map((double v) => v.toStringAsFixed(1))?.toList();
+  }
+
+  //speedometer
+  void calculateSpeed(UserAccelerometerEvent e) {
+    double speed = sqrt(pow(e.x, 2) + pow(e.y, 2) + pow(e.z, 2));
+
+    //unchanged on current speed detected
+    if ((speed - _currentSpeed).abs() <= 0) return;
+
+    setState(() {
+      _currentSpeed = speed; //update current speed
+      if (_currentSpeed > _highestSpeed)
+        _highestSpeed = _currentSpeed; //update highest speed detected
+    });
   }
 
   //pedometer
@@ -334,6 +359,7 @@ class _WorkingOutState extends State<WorkingOut> {
             stopwatchTime,
             rows,
             _steps,
+            _highestSpeed,
           ));
     }
   }
@@ -565,11 +591,20 @@ class _WorkingOutState extends State<WorkingOut> {
                                                               height: 10.0),
                                                           DetailRow(
                                                               title:
-                                                                  'Total Steps Taken Today :',
-                                                              content: _steps),
+                                                                  'Steps Taken Today :',
+                                                              content: _steps +
+                                                                  " steps"),
+                                                          SizedBox(
+                                                              height: 10.0),
                                                         ],
                                                       )
                                                     : SizedBox(height: 10.0),
+                                                DetailRow(
+                                                    title: 'Current Speed :',
+                                                    content: _currentSpeed
+                                                            .toStringAsFixed(
+                                                                1) +
+                                                        " m/s\u00B2"),
                                               ],
                                             ),
 

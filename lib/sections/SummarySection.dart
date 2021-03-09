@@ -25,11 +25,12 @@ class _SummarySectionState extends State<SummarySection> {
   int _todaySteps;
   String _steps = "0";
   Box<int> pedoBox = Hive.box('steps'); //store last saved timestamp and steps
+  Box<int> workoutDurationBox = Hive.box('workoutDuration'); //store last saved workout seconds
 
   @override
   void initState() {
     super.initState();
-    if(mounted)
+    if (mounted)
       //stream subscriptions on Pedometer
       setUpPedometer();
   }
@@ -41,7 +42,8 @@ class _SummarySectionState extends State<SummarySection> {
   }
 
   void setUpPedometer() {
-    _streamSub = Pedometer.stepCountStream.listen(stepsToday, onError: stepError);
+    _streamSub =
+        Pedometer.stepCountStream.listen(stepsToday, onError: stepError);
   }
 
   Future<int> stepsToday(StepCount streamCount) async {
@@ -108,7 +110,6 @@ class _SummarySectionState extends State<SummarySection> {
           height: 270.0,
           title: "Today's Summary",
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
           child: Container(
@@ -128,34 +129,29 @@ class _SummarySectionState extends State<SummarySection> {
                         lineWidth: 12.0,
                         animateFromLastPercent: true,
                         circularStrokeCap: CircularStrokeCap.round,
-                        percent: (_steps != "N/A") ? (double.parse(_steps)/10000.0) : 0.0,
+                        percent: (_steps != "N/A")
+                            ? (double.parse(_steps) / 10000.0)
+                            : 0.0,
                         center: Text(
-                                  _steps,
-                                  style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2
-                                        .copyWith(
-                                          color: Colors.green,
-                                          fontSize: 25.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                        ),
-                        progressColor: Colors.green,
-                        backgroundColor: widget.modeSwitch? kIconBg_dark : kIconBg_light,
-                      ),
-
-                      SizedBox(height: 10.0),
-
-                      Text(
-                        "Steps".toUpperCase(),
-                        style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(
+                          _steps,
+                          style: Theme.of(context).textTheme.bodyText2.copyWith(
                                 color: Colors.green,
-                                fontSize: 18.0,
+                                fontSize: 25.0,
                                 fontWeight: FontWeight.bold,
                               ),
+                        ),
+                        progressColor: Colors.green,
+                        backgroundColor:
+                            widget.modeSwitch ? kIconBg_dark : kIconBg_light,
+                      ),
+                      SizedBox(height: 10.0),
+                      Text(
+                        "Steps".toUpperCase(),
+                        style: Theme.of(context).textTheme.bodyText2.copyWith(
+                              color: Colors.green,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
@@ -177,7 +173,9 @@ class _SummarySectionState extends State<SummarySection> {
                               width: 35.0,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: widget.modeSwitch? kIconBg_dark : kIconBg_light,
+                                color: widget.modeSwitch
+                                    ? kIconBg_dark
+                                    : kIconBg_light,
                               ),
                               child: Icon(
                                 Icons.timer,
@@ -186,32 +184,31 @@ class _SummarySectionState extends State<SummarySection> {
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              "70",
+                              (workoutDurationBox.get(DateTime.now().day, defaultValue: 0)~/60).toString(),
                               style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      color: Colors.blue,
-                                      fontSize: 28.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.blue,
+                                    fontSize: 28.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               "Workout\nMinutes".toUpperCase(),
                               style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      color: Colors.blue,
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.blue,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
                       ),
-
                       Container(
                         child: Row(
                           children: <Widget>[
@@ -220,7 +217,9 @@ class _SummarySectionState extends State<SummarySection> {
                               width: 35.0,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: widget.modeSwitch? kIconBg_dark : kIconBg_light,
+                                color: widget.modeSwitch
+                                    ? kIconBg_dark
+                                    : kIconBg_light,
                               ),
                               child: Icon(
                                 Icons.local_fire_department,
@@ -231,25 +230,25 @@ class _SummarySectionState extends State<SummarySection> {
                             Text(
                               "8334",
                               style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      color: Colors.amber,
-                                      fontSize: 28.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.amber,
+                                    fontSize: 28.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               "Burned\nCalories".toUpperCase(),
                               style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(
-                                      color: Colors.amber,
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.amber,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),

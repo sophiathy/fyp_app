@@ -66,7 +66,7 @@ class _RegisterState extends State<Register> {
 
                 Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: Text("Register an Account",
+                  child: Text("Register an Account".toUpperCase(),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5),
                 ),

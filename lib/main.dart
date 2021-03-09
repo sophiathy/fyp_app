@@ -15,12 +15,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
-//TODO:Solvig No Firebase App 'DEFAULT' has been created
+//TODO: Solving No Firebase App 'DEFAULT' has been created
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await Hive.initFlutter();             //path of hive stored
-  await Hive.openBox<int>('steps');     //store last saved timestamp and steps counted
+  await Hive.initFlutter(); //path of hive stored
+  await Hive.openBox<int>(
+      'steps'); //store last saved timestamp and steps counted
+  await Hive.openBox<int>('workoutDuration'); //store last saved workout seconds
   runApp(MyApp());
 }
 
@@ -96,7 +98,8 @@ class _MyAppState extends State<MyApp> {
                           workoutType: args.workoutType,
                           duration: args.duration,
                           csvRows: args.csvRows,
-                          todaySteps: args.todaySteps),
+                          todaySteps: args.todaySteps,
+                          highestSpeed: args.highestSpeed),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
                 case '/workoutSummary':
@@ -105,7 +108,8 @@ class _MyAppState extends State<MyApp> {
                           workoutType: args.workoutType,
                           duration: args.duration,
                           csvRows: args.csvRows,
-                          todaySteps: args.todaySteps),
+                          todaySteps: args.todaySteps,
+                          highestSpeed: args.highestSpeed),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
                 default:

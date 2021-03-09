@@ -40,7 +40,7 @@ class StartExSection extends StatelessWidget {
 
                 ExerciseBtn(
                   modeSwitch: modeSwitch,
-                  workoutType: "Biking",
+                  workoutType: "Cycling",
                   press: () {},
                 ),
 

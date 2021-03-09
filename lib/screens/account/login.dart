@@ -250,7 +250,6 @@ class _LoginState extends State<Login> {
 
                               // SizedBox(height: 20),
 
-                              //TODO: Redesign button
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -280,7 +279,6 @@ class _LoginState extends State<Login> {
                                         "Register".toUpperCase(),
                                         style: TextStyle(
                                           fontSize: 18.0,
-                                          //TODO: think of the text color of button
                                           color: Colors.white,
                                         ),
                                       ),

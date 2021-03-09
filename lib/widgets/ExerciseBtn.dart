@@ -32,10 +32,10 @@ class ExerciseBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.0),  //shape of tapping
           onTap: (){
-            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, "00:00:00", [], "0"));
+            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, "00:00:00", [], "0", 0.0));
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
             child: Column(
               children: <Widget>[
                 _typeIcon(workoutType),
@@ -64,8 +64,8 @@ class ExerciseBtn extends StatelessWidget {
 //check the exercise type and return icon
 Widget _typeIcon(String type) {
   final icolor = Colors.lightBlueAccent;
-  final double isize = 30.0;
-  
+  final double isize = 32.0;
+
   if(type == "Walking"){
     return Icon(
       Icons.directions_walk_outlined,
@@ -78,7 +78,7 @@ Widget _typeIcon(String type) {
       color: icolor,
       size: isize,
     );
-  }else if(type == "Biking"){
+  }else if(type == "Cycling"){
     return Icon(
       Icons.directions_bike_outlined,
       color: icolor,

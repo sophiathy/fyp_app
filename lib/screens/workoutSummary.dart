@@ -21,6 +21,7 @@ class WorkoutSummary extends StatefulWidget {
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
+  final double averageSpeed;
   final double highestSpeed;
 
   const WorkoutSummary({
@@ -29,6 +30,7 @@ class WorkoutSummary extends StatefulWidget {
     this.duration,
     this.csvRows,
     this.todaySteps,
+    this.averageSpeed,
     this.highestSpeed,
   }) : super(key: key);
 
@@ -159,6 +161,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
     return new WillPopScope(
       onWillPop: () async => false, //disable the system back button
       child: FutureProvider(
+        initialData: null,
         create: (content) =>
             geo.getCurrentLocation(), //current location of the user
         child: Scaffold(
@@ -187,7 +190,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                 child: Stack(
                   children: <Widget>[
                     SectionCard(
-                      height: 280.0,
+                      height: 330.0,
                       title: "Workout Summary",
                     ),
 
@@ -221,6 +224,9 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                                 )
                               : SizedBox(height: 10.0),
 
+                          DetailRow(title: 'Average Speed :', content: "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
+
+                          SizedBox(height: 10.0),
                           DetailRow(title: 'Highest Speed :', content: "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
                         ],
                       ),
@@ -229,7 +235,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 20.0),
                 child: Buttons(
                   name: "Return to Home",
                   press: (() =>

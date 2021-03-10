@@ -69,7 +69,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           SettingsOptions(
             icon: Icons.import_contacts_rounded,
             title: "User Manual",
-            tap: () {},
+            tap: () {
+              Navigator.of(context).pushNamed('/userManual');
+            },
           ),
           SettingsOptions(
             icon: Icons.info_rounded,
@@ -85,9 +87,11 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 print("Logout Successfully.");
               });
 
-              await _authenticate.logout(); //update the stream to null
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login', (Route<dynamic> route) => false);
+              //update the stream to null
+              await _authenticate.logout().then((_){
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+              });
+
             },
           ),
         ],

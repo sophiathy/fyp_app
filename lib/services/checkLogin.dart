@@ -12,6 +12,8 @@ class CheckLogin extends StatefulWidget {
 }
 
 class _CheckLoginState extends State<CheckLogin> {
+  StreamSubscription<User> _firebaseAuthSubs;
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +26,7 @@ class _CheckLoginState extends State<CheckLogin> {
 
   @override
   void dispose() {
+    _firebaseAuthSubs?.cancel();
     super.dispose();
   }
 
@@ -63,7 +66,7 @@ class _CheckLoginState extends State<CheckLogin> {
   }
 
   void navigate() async {
-    FirebaseAuth.instance.authStateChanges().listen((User u) {
+    _firebaseAuthSubs = FirebaseAuth.instance.authStateChanges().listen((User u) {
       print(u);
       //return Login page or Home screen
       if (u == null)

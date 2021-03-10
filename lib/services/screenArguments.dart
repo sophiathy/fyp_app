@@ -3,6 +3,7 @@ class ScreenArguments {
   String duration;
   List<List<String>> csvRows;
   String todaySteps;
+  double averageSpeed;
   double highestSpeed;
 
   ScreenArguments(
@@ -10,6 +11,7 @@ class ScreenArguments {
     this.duration,
     this.csvRows,
     this.todaySteps,
+    this.averageSpeed,
     this.highestSpeed,
   );
 }

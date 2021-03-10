@@ -25,42 +25,42 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.3
   #Firebase Firestore
-  cloud_firestore: ^0.16.0+1
-  firebase_analytics: ^7.0.1
-  firebase_auth: ^0.20.1
-  firebase_core: ^0.7.0
-  firebase_storage: ^7.0.0
+  cloud_firestore: ^1.0.1
+  firebase_analytics: ^7.1.1
+  firebase_auth: ^1.0.1
+  firebase_core: ^1.0.1
+  firebase_storage: ^8.0.0
   #state management
-  provider: ^4.3.3
+  provider: ^5.0.0
   #remember user settings
-  shared_preferences: ^0.5.12+4
-  hive: ^1.4.4+1
-  hive_flutter: ^0.3.1
+  shared_preferences: ^2.0.3
+  hive: ^2.0.0
+  hive_flutter: ^1.0.0
   #loading widget
-  flutter_spinkit: ^4.1.2+1
+  flutter_spinkit: ^5.0.0
   #transition between pages
   page_transition: ^1.1.7+6
   #use svg in the app
-  flutter_svg: ^0.19.1
+  flutter_svg: ^0.19.3
   #accelerometer and gyroscope
-  sensors: ^0.4.2+6
+  sensors: ^2.0.0
   #pedometer used for counting steps
-  pedometer: ^2.0.2
+  pedometer: ^2.1.0
   #locate user
-  geolocator: ^6.2.1
+  geolocator: ^7.0.1
   #display google map
-  google_maps_flutter: ^1.2.0
+  google_maps_flutter: ^2.0.1
   #grant permission from user (set for Android only)
-  permission_handler: ^5.1.0+2
+  permission_handler: ^6.0.1+1
   #splash screen animation
-  animated_text_kit: ^3.1.2
+  animated_text_kit: ^4.0.0
   #generate csv file to store the sensors' data
   csv: ^4.1.0
-  path_provider: ^1.6.27
+  path_provider: ^2.0.1
   #timestamp
-  intl: ^0.16.1
+  intl: ^0.17.0
   #dialog
-  awesome_dialog: ^1.3.1
+  awesome_dialog: ^1.3.2
   #used in today's summary
   percent_indicator: ^2.1.9+1
 

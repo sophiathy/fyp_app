@@ -25,6 +25,7 @@ class WorkingOut extends StatefulWidget {
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
+  final double averageSpeed;
   final double highestSpeed;
 
   const WorkingOut({
@@ -33,6 +34,7 @@ class WorkingOut extends StatefulWidget {
     this.duration,
     this.csvRows,
     this.todaySteps,
+    this.averageSpeed,
     this.highestSpeed,
   }) : super(key: key);
 
@@ -71,6 +73,8 @@ class _WorkingOutState extends State<WorkingOut> {
 
   //speedometer
   double _currentSpeed = 0.0;
+  List<double> _allSpeed = [];
+  double _averageSpeed = 0.0;
   double _highestSpeed = 0.0;
 
   //pedometer
@@ -118,8 +122,8 @@ class _WorkingOutState extends State<WorkingOut> {
   void dispose() {
     for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
     _timer.cancel();
-    if (_sw != null) _sw.cancel();
-    if (_record != null) _record.cancel();
+    _sw?.cancel();
+    _record?.cancel();
     super.dispose();
   }
 
@@ -224,6 +228,8 @@ class _WorkingOutState extends State<WorkingOut> {
   //speedometer
   void calculateSpeed(UserAccelerometerEvent e) {
     double speed = sqrt(pow(e.x, 2) + pow(e.y, 2) + pow(e.z, 2));
+
+    _allSpeed.add(speed);
 
     //unchanged on current speed detected
     if ((speed - _currentSpeed).abs() <= 0) return;
@@ -353,12 +359,19 @@ class _WorkingOutState extends State<WorkingOut> {
       noRecordToSaveDialog(
           context); //notify user that the no record will be saved
     else {
+      double sum = 0.0;
+      for (double s in _allSpeed)
+        sum += s;
+
+      setState(()=> _averageSpeed = sum / _allSpeed.length);
+
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
             widget.workoutType,
             stopwatchTime,
             rows,
             _steps,
+            _averageSpeed,
             _highestSpeed,
           ));
     }
@@ -414,6 +427,7 @@ class _WorkingOutState extends State<WorkingOut> {
     return new WillPopScope(
       onWillPop: () async => false, //disable the system back button
       child: FutureProvider(
+        initialData: null,
         create: (content) =>
             geo.getCurrentLocation(), //current location of the user
         child: Scaffold(

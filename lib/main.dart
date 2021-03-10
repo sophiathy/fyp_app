@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_app/screens/userManual.dart';
 import 'package:fyp_app/screens/workoutSummary.dart';
 import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/darkProvider.dart';
-import 'package:fyp_app/screens/account/login.dart';
-import 'package:fyp_app/screens/account/register.dart';
+import 'package:fyp_app/screens/login.dart';
+import 'package:fyp_app/screens/register.dart';
 import 'package:fyp_app/screens/home.dart';
-import 'package:fyp_app/screens/checkLogin.dart';
+import 'package:fyp_app/services/checkLogin.dart';
 import 'package:fyp_app/screens/workingOut.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/theme/theme.dart';
@@ -61,6 +62,7 @@ class _MyAppState extends State<MyApp> {
       child: Consumer<DarkProvider>(
           builder: (BuildContext context, value, Widget child) {
         return StreamProvider<UserProperties>.value(
+          initialData: null,
           value: AuthAccount().user, //accessing the user stream
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -87,6 +89,11 @@ class _MyAppState extends State<MyApp> {
                       child: Register(),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
+                case '/userManual':
+                  return PageTransition(
+                      child: UserManual(),
+                      type: PageTransitionType.rightToLeftWithFade);
+                  break;
                 case '/home':
                   return PageTransition(
                       child: Home(),
@@ -99,6 +106,7 @@ class _MyAppState extends State<MyApp> {
                           duration: args.duration,
                           csvRows: args.csvRows,
                           todaySteps: args.todaySteps,
+                          averageSpeed: args.averageSpeed,
                           highestSpeed: args.highestSpeed),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
@@ -109,6 +117,7 @@ class _MyAppState extends State<MyApp> {
                           duration: args.duration,
                           csvRows: args.csvRows,
                           todaySteps: args.todaySteps,
+                          averageSpeed: args.averageSpeed,
                           highestSpeed: args.highestSpeed),
                       type: PageTransitionType.rightToLeftWithFade);
                   break;
@@ -116,13 +125,6 @@ class _MyAppState extends State<MyApp> {
                   return null;
               }
             },
-            //FIXME:route
-            // routes: {
-            //   "/checkLogin": (context) => CheckLogin(),
-            //   "/login": (context) => Login(),
-            //   "/register": (context) => Register(),
-            //   "/home": (context) => Home(),
-            // },
           ),
         );
       }),

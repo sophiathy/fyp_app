@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_app/theme/constants.dart';
-import 'package:fyp_app/screens/account/errorMessage.dart';
+import 'package:fyp_app/widgets/errorMessage.dart';
 import 'package:fyp_app/services/authAccount.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 

@@ -82,9 +82,7 @@ class _HomeState extends State<Home> {
                               icon: Icon(
                                 Icons.settings,
                                 size: 35.0,
-                                color: modeSwitch.themeData
-                                    ? kPrimaryColor_dark
-                                    : kPrimaryColor_light,
+                                color: Theme.of(context).primaryColor,
                               ),
                               onPressed: (() =>
                                   _scaffoldKey.currentState.openEndDrawer()),

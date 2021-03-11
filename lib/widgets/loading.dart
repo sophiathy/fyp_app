@@ -7,7 +7,7 @@ class Loading extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
-        child:Container(
+        child: Container(
           padding: EdgeInsets.all(30.0),
           height: 200.0,
           width: 200.0,
@@ -27,14 +27,11 @@ class Loading extends StatelessWidget {
                 SizedBox(height: 10.0),
                 Text(
                   "Loading".toUpperCase(),
-                  style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ],
             ),

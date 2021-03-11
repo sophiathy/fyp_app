@@ -69,9 +69,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           SettingsOptions(
             icon: Icons.import_contacts_rounded,
             title: "User Manual",
-            tap: () {
-              Navigator.of(context).pushNamed('/userManual');
-            },
+            tap: (() => Navigator.of(context).pushReplacementNamed('/userManual')),
           ),
           SettingsOptions(
             icon: Icons.info_rounded,

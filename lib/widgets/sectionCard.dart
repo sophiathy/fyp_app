@@ -26,9 +26,7 @@ class SectionCard extends StatelessWidget {
         children: <Widget>[
           Text(
             title.toUpperCase(),
-            style: Theme.of(context)
-                      .textTheme
-                      .headline6,
+            style: Theme.of(context).textTheme.headline6,
           ),
         ],
       ),

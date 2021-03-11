@@ -300,7 +300,7 @@ class _RegisterState extends State<Register> {
                                 print("Registered account: " + email);
                               });
                               Navigator.of(context)
-                                  .pushReplacementNamed('/home');
+                                  .pushReplacementNamed('/userManual');
                             } else {
                               setState(() {
                                 if (!errors.contains(kAccountExists)) {

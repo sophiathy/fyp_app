@@ -452,7 +452,7 @@ class _WorkingOutState extends State<WorkingOut> {
                 child: DraggableScrollableSheet(
                     initialChildSize: 0.25,
                     minChildSize: 0.20,
-                    maxChildSize: 0.8,
+                    maxChildSize: 0.60,
                     builder: (BuildContext context, scrollCon) {
                       return Container(
                         padding: EdgeInsets.symmetric(

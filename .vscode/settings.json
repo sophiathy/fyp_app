@@ -1,9 +1,17 @@
 {
     "cSpell.ignoreWords": [
+        "draggable",
         "firestore",
+        "flutter",
         "jp",
         "noto",
         "pedo",
-        "sans"
+        "points",
+        "polyline",
+        "polylines",
+        "sans",
+        "scrollable",
+        "tflite",
+        "typer"
     ]
 }

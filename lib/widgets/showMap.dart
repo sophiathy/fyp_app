@@ -19,13 +19,21 @@ class ShowMap extends StatefulWidget {
 
 class _ShowMapState extends State<ShowMap> {
   final GeoService geo = GeoService();
+  StreamSubscription<Position> _position;
   Completer<GoogleMapController> _mapController = Completer();
   bool mapCreated = false;
 
   @override
   void initState() {
     super.initState();
-    geo.getPosStream().listen((pos) => keepUserCenter(pos));
+    if(mounted)
+      _position = geo.getPosStream().listen((pos) => keepUserCenter(pos));
+  }
+
+  @override
+  void dispose() {
+    _position.cancel();
+    super.dispose();
   }
 
   Future<void> mapStyle(GoogleMapController gc, String path) async {
@@ -44,10 +52,10 @@ class _ShowMapState extends State<ShowMap> {
             _mapController.complete(gc);
             if (modeSwitch.themeData)
               mapStyle(gc, "assets/map/darkMap.json"); //dark mode Map
-            setState((){});
+            setState(() {});
           },
           myLocationEnabled: true,
-          mapType: MapType.normal, //TODO: comment
+          mapType: MapType.normal,      //default: normal map for light mode
           initialCameraPosition: CameraPosition(
             zoom: 18.0,
             target: LatLng(widget.startPos.latitude, widget.startPos.longitude),

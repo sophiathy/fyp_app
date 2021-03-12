@@ -103,6 +103,7 @@ class _MyAppState extends State<MyApp> {
                   return PageTransition(
                       child: WorkingOut(
                           workoutType: args.workoutType,
+                          route: args.route,
                           duration: args.duration,
                           csvRows: args.csvRows,
                           todaySteps: args.todaySteps,
@@ -114,6 +115,7 @@ class _MyAppState extends State<MyApp> {
                   return PageTransition(
                       child: WorkoutSummary(
                           workoutType: args.workoutType,
+                          route: args.route,
                           duration: args.duration,
                           csvRows: args.csvRows,
                           todaySteps: args.todaySteps,

@@ -7,17 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
+import 'package:fyp_app/widgets/finalMap.dart';
 import 'package:fyp_app/widgets/savedRecordDialog.dart';
-import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 class WorkoutSummary extends StatefulWidget {
   final String workoutType;
+  final List<LatLng> route;
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
@@ -27,6 +27,7 @@ class WorkoutSummary extends StatefulWidget {
   const WorkoutSummary({
     Key key,
     @required this.workoutType,
+    this.route,
     this.duration,
     this.csvRows,
     this.todaySteps,
@@ -160,90 +161,125 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
             context)); //notify user that the record has been saved
     return new WillPopScope(
       onWillPop: () async => false, //disable the system back button
-      child: FutureProvider(
-        initialData: null,
-        create: (content) =>
-            geo.getCurrentLocation(), //current location of the user
-        child: Scaffold(
-          backgroundColor: Theme.of(context).backgroundColor,
-          body: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              SafeArea(
-                top: true,
-                left: true,
-                right: true,
-                child: Container(
-                  width: double.infinity,
-                  height: 400.0,
-                  child:
-                      Consumer<Position>(builder: (context, position, widget) {
-                    return (position == null)
-                        ? Center(child: CircularProgressIndicator())
-                        : ShowMap(position); //TODO: comment
-                  }),
-                ),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Stack(
+          children: <Widget>[
+            SafeArea(
+              top: true,
+              left: true,
+              right: true,
+              child: Align(
+                alignment: Alignment.center,
+                child: FinalMap(widget.route),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 16.0),
-                child: Stack(
-                  children: <Widget>[
-                    SectionCard(
-                      height: 330.0,
-                      title: "Workout Summary",
+            ),
+            SizedBox.expand(
+              child: DraggableScrollableSheet(
+                initialChildSize: 0.55,
+                minChildSize: 0.15,
+                maxChildSize: 0.55,
+                builder: (BuildContext context, scrollCon) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.0,
                     ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).backgroundColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(36.0),
+                        topRight: Radius.circular(36.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 10.0,
+                        )
+                      ],
+                    ),
+                    child: ListView(
+                      controller: scrollCon,
+                      padding: const EdgeInsets.all(6.0),
+                      children: <Widget>[
+                        SizedBox(height: 6.0),
+                        Center(
+                          child: Container(
+                            height: 7.0,
+                            width: 70.0,
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey[300],
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12.0),
+                        Stack(
+                          children: <Widget>[
+                            SectionCard(
+                              height: 330.0,
+                              title: "Workout Summary",
+                            ),
 
-                    //workout summary
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 70.0, left: 24.0, right: 24.0),
-                      child: Column(
-                        children: <Widget>[
-                          DetailRow(
-                              title: 'Workout Type :',
-                              content: widget.workoutType),
+                            //workout summary
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 70.0, left: 24.0, right: 24.0),
+                              child: Column(
+                                children: <Widget>[
+                                  DetailRow(
+                                    title: 'Workout Type :',
+                                    content: widget.workoutType),
+                                  SizedBox(height: 10.0),
 
-                          SizedBox(height: 10.0),
-                          DetailRow(
-                              title: 'Duration :', content: widget.duration),
+                                  DetailRow(
+                                    title: 'Duration :', content: widget.duration),
+                                  SizedBox(height: 10.0),
 
-                          SizedBox(height: 10.0),
-                          DetailRow(
-                              title: 'Total Distance :', content: "100 m"),
+                                  DetailRow(title: 'Total Distance :', content: "0.1 km"),
 
-                          (widget.workoutType == "Walking" || widget.workoutType == "Running")
-                              ? Column(
-                                  children: <Widget>[
-                                    SizedBox(height: 10.0),
-                                    DetailRow(
+                                  (widget.workoutType == "Walking" ||
+                                      widget.workoutType == "Running")
+                                  ? Column(
+                                    children: <Widget>[
+                                      SizedBox(height: 10.0),
+                                      DetailRow(
                                         title: 'Steps Taken Today :',
                                         content: "${widget.todaySteps} steps"),
-                                    SizedBox(height: 10.0),
-                                  ],
-                                )
-                              : SizedBox(height: 10.0),
+                                      SizedBox(height: 10.0),
+                                    ],
+                                  )
+                                  : SizedBox(height: 10.0),
 
-                          DetailRow(title: 'Average Speed :', content: "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                  DetailRow(
+                                    title: 'Average Speed :',
+                                    content:
+                                      "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                  SizedBox(height: 10.0),
 
-                          SizedBox(height: 10.0),
-                          DetailRow(title: 'Highest Speed :', content: "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
-                        ],
-                      ),
+                                  DetailRow(
+                                    title: 'Highest Speed :',
+                                    content:
+                                      "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding:
+                            const EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
+                          child: Buttons(
+                          name: "Return to Home",
+                          press: (() =>
+                            Navigator.of(context).pushReplacementNamed('/home')),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 20.0),
-                child: Buttons(
-                  name: "Return to Home",
-                  press: (() =>
-                      Navigator.of(context).pushReplacementNamed('/home')),
-                ),
-              ),
-            ],
-          ),
+                  );
+              }),
+            ),
+          ],
         ),
       ),
     );

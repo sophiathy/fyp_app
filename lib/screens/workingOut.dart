@@ -13,6 +13,7 @@ import 'package:fyp_app/widgets/noRecordToSaveDialog.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pedometer/pedometer.dart';
@@ -22,6 +23,7 @@ import 'package:sensors/sensors.dart';
 
 class WorkingOut extends StatefulWidget {
   final String workoutType;
+  final List<LatLng> route;
   final String duration;
   final List<List<String>> csvRows;
   final String todaySteps;
@@ -31,6 +33,7 @@ class WorkingOut extends StatefulWidget {
   const WorkingOut({
     Key key,
     @required this.workoutType,
+    this.route,
     this.duration,
     this.csvRows,
     this.todaySteps,
@@ -43,8 +46,14 @@ class WorkingOut extends StatefulWidget {
 }
 
 class _WorkingOutState extends State<WorkingOut> {
-  final geo = GeoService();
   static const platform = const MethodChannel('flutter.native/classifier');
+
+  //map and recording the workout route
+  final geo = GeoService();
+  List<LatLng> _route = [];
+  Timer _recordRoute;
+  final routeUpdate =
+      const Duration(seconds: 2); //the route will be more straighter on the map
 
   // List<String> _results = [];
   // String _biking = "",
@@ -61,9 +70,7 @@ class _WorkingOutState extends State<WorkingOut> {
   String _result = ""; //store the result returned by the tflite model
 
   Timer _timer;
-  Timer _countdown;
-  Timer _sw;
-  Timer _record;
+  final refresh = const Duration(seconds: 1); //used by _timer, _countdown, _sw
 
   //accelerometer and gyroscope
   List<StreamSubscription<dynamic>> _streamSub =
@@ -87,17 +94,19 @@ class _WorkingOutState extends State<WorkingOut> {
   String readyCountdown = "Get Ready!";
   bool tracking = false;
   bool trackingDelay = true;
+  Timer _countdown;
 
   //stopwatch
   bool startPressed = false;
   String stopwatchTime = "";
   var sw = Stopwatch();
-  final refresh = const Duration(seconds: 1);
+  Timer _sw;
 
   //record sensors' data
   bool recording = false;
   List<List<String>> rows = [];
   List<String> row = [];
+  Timer _recordSens;
   final sensorUpdate = const Duration(milliseconds: 10);
 
   @override
@@ -111,7 +120,7 @@ class _WorkingOutState extends State<WorkingOut> {
       setState(() {
         stopwatchTime = widget.duration; //00:00:00
       });
-      _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      _timer = Timer.periodic(refresh, (Timer t) {
         checkPermission();
         _getResult();
       });
@@ -121,9 +130,11 @@ class _WorkingOutState extends State<WorkingOut> {
   @override
   void dispose() {
     for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
+    //cancel the timers
     _timer.cancel();
     _sw?.cancel();
-    _record?.cancel();
+    _recordSens?.cancel();
+    _recordRoute?.cancel();
     super.dispose();
   }
 
@@ -318,10 +329,11 @@ class _WorkingOutState extends State<WorkingOut> {
           counter--;
         } else {
           _countdown.cancel();
-          //start the stopwatch and record sensors' data after 3 seconds
+          //start the stopwatch, record sensors' data and workout route after 3 seconds
           startStopwatch();
-          startRecording();
-          setState(() => {tracking = true});
+          startRecordingSensors();
+          startRecordingRoute();
+          setState(() => tracking = true);
           Future.delayed(const Duration(seconds: 2), () {
             setState(() => {trackingDelay = false});
           });
@@ -360,14 +372,14 @@ class _WorkingOutState extends State<WorkingOut> {
           context); //notify user that the no record will be saved
     else {
       double sum = 0.0;
-      for (double s in _allSpeed)
-        sum += s;
+      for (double s in _allSpeed) sum += s;
 
-      setState(()=> _averageSpeed = sum / _allSpeed.length);
+      _averageSpeed = sum / _allSpeed.length;
 
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
             widget.workoutType,
+            _route,
             stopwatchTime,
             rows,
             _steps,
@@ -378,7 +390,7 @@ class _WorkingOutState extends State<WorkingOut> {
   }
 
   //record sensors' data (used for generating csv file)
-  void startRecording() {
+  void startRecordingSensors() {
     print("Start recording sensors' data... ");
 
     setState(() {
@@ -395,7 +407,7 @@ class _WorkingOutState extends State<WorkingOut> {
       rows.add(row); //header row
     });
 
-    _record = Timer.periodic(sensorUpdate, (timer) {
+    _recordSens = Timer.periodic(sensorUpdate, (timer) {
       row = []; //reset
 
       String timestamp =
@@ -419,6 +431,24 @@ class _WorkingOutState extends State<WorkingOut> {
       row.add(widget.workoutType);
 
       rows.add(row);
+    });
+  }
+
+  //record route in every 2 seconds
+  void startRecordingRoute() async {
+    _recordRoute = Timer.periodic(routeUpdate, (timer) async {
+      Position currentLocation = await geo.getCurrentLocation();
+      LatLng current =
+          LatLng(currentLocation.latitude, currentLocation.longitude);
+
+      if (_route.isEmpty) {
+        _route.add(current); //source
+        print("Current Location on Map: $current");
+      } else if (current != _route.last) {
+        _route.add(
+            current); //if the user stands still, do not have to add the location again
+        print("Current Location on Map: $current");
+      }
     });
   }
 

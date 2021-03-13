@@ -44,7 +44,6 @@ class _FinalMapState extends State<FinalMap> {
 
   void initPins() async {
     sourcePin = await BitmapDescriptor.fromAssetImage(
-      // createLocalImageConfiguration(context),
       ImageConfiguration(devicePixelRatio: 2.5),
       "assets/images/sourcePin.png",
     );
@@ -76,7 +75,7 @@ class _FinalMapState extends State<FinalMap> {
   void setCameraOnPins() async {
     final GoogleMapController gc = await _mapController.future;
 
-    if (_source.latitude >= _destination.latitude) {
+    if (_source.latitude > _destination.latitude) {
       _southwest = _destination;
       _northeast = _source;
     } else {
@@ -92,7 +91,7 @@ class _FinalMapState extends State<FinalMap> {
             southwest: _southwest,
             northeast: _northeast,
           ),
-          50.0, //padding on map with two pins
+          100.0, //padding on map with two pins
         ),
       );
     });
@@ -104,7 +103,6 @@ class _FinalMapState extends State<FinalMap> {
         polylineId: PolylineId('path'),
         color: Colors.redAccent,
         points: widget.route,
-        width: 15,
       );
       _polylines.add(p);
     });

@@ -124,7 +124,7 @@ class _UserManualState extends State<UserManual> {
                                       )
                                     : SizedBox(width: 0.0),
                                 Spacer(),
-                                RaisedButton(
+                                ElevatedButton(
                                   onPressed: () {
                                     //last page > return home
                                     if (currentPageNo == guides.length - 1)
@@ -137,11 +137,17 @@ class _UserManualState extends State<UserManual> {
                                             const Duration(milliseconds: 200),
                                         curve: Curves.bounceIn);
                                   },
-                                  color: kPrimaryColor_light,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0)),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 10.0),
+                                  style: ElevatedButton.styleFrom(
+                                    //button background color
+                                    primary: kPrimaryColor_light,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 10.0),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(
+                                                10.0)),
+                                  ),
                                   child: Text(
                                     (currentPageNo == guides.length - 1)
                                         ? "Got it!".toUpperCase()

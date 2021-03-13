@@ -268,11 +268,15 @@ class _LoginState extends State<Login> {
                                   SizedBox(
                                     width: 130.0,
                                     height: 50.0,
-                                    child: FlatButton(
-                                      color: Colors.indigo[300],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0)),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        //button background color
+                                        primary: Colors.indigo[300],
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    15.0)),
+                                      ),
                                       onPressed: (() => Navigator.of(context)
                                           .pushNamed('/register')),
                                       child: Text(

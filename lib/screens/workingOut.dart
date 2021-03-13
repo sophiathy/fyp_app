@@ -25,6 +25,7 @@ class WorkingOut extends StatefulWidget {
   final String workoutType;
   final List<LatLng> route;
   final String duration;
+  final double totalDistance;
   final List<List<String>> csvRows;
   final String todaySteps;
   final double averageSpeed;
@@ -35,6 +36,7 @@ class WorkingOut extends StatefulWidget {
     @required this.workoutType,
     this.route,
     this.duration,
+    this.totalDistance,
     this.csvRows,
     this.todaySteps,
     this.averageSpeed,
@@ -48,12 +50,14 @@ class WorkingOut extends StatefulWidget {
 class _WorkingOutState extends State<WorkingOut> {
   static const platform = const MethodChannel('flutter.native/classifier');
 
-  //map and recording the workout route
+  //showing map, recording the workout route, calculating distance
   final geo = GeoService();
   List<LatLng> _route = [];
+  LatLng previous;
+  double _totalDistance = 0.0;
   Timer _recordRoute;
   final routeUpdate =
-      const Duration(seconds: 2); //the route will be more straighter on the map
+      const Duration(seconds: 5); //the route will be more straighter on the map
 
   // List<String> _results = [];
   // String _biking = "",
@@ -98,7 +102,7 @@ class _WorkingOutState extends State<WorkingOut> {
 
   //stopwatch
   bool startPressed = false;
-  String stopwatchTime = "";
+  String stopwatchTime = "00:00:00";
   var sw = Stopwatch();
   Timer _sw;
 
@@ -121,7 +125,7 @@ class _WorkingOutState extends State<WorkingOut> {
         stopwatchTime = widget.duration; //00:00:00
       });
       _timer = Timer.periodic(refresh, (Timer t) {
-        checkPermission();
+        // checkPermission();     //TODO: permission dialog
         _getResult();
       });
     }
@@ -250,6 +254,22 @@ class _WorkingOutState extends State<WorkingOut> {
       if (_currentSpeed > _highestSpeed)
         _highestSpeed = _currentSpeed; //update highest speed detected
     });
+  }
+
+  //calculate distance (km) between two coordinates by using Haversine formula
+  void calculateDistance(LatLng previousPoint, LatLng newPoint) {
+    double degToRad = pi / 180; //convert degree to radian
+
+    double tmp = 0.5 -
+        cos(degToRad * (newPoint.latitude - previousPoint.latitude)) / 2 +
+        cos(degToRad * previousPoint.latitude) *
+            cos(degToRad * newPoint.latitude) *
+            (1 -
+                cos(degToRad *
+                    (newPoint.longitude - previousPoint.longitude))) /
+            2;
+
+    setState(() => _totalDistance += 2 * 6371 * asin(sqrt(tmp)));   //6371 km = Earth radius
   }
 
   //pedometer
@@ -381,6 +401,7 @@ class _WorkingOutState extends State<WorkingOut> {
             widget.workoutType,
             _route,
             stopwatchTime,
+            _totalDistance,
             rows,
             _steps,
             _averageSpeed,
@@ -434,7 +455,7 @@ class _WorkingOutState extends State<WorkingOut> {
     });
   }
 
-  //record route in every 2 seconds
+  //record route in every 5 seconds
   void startRecordingRoute() async {
     _recordRoute = Timer.periodic(routeUpdate, (timer) async {
       Position currentLocation = await geo.getCurrentLocation();
@@ -442,12 +463,15 @@ class _WorkingOutState extends State<WorkingOut> {
           LatLng(currentLocation.latitude, currentLocation.longitude);
 
       if (_route.isEmpty) {
+        previous = current;
         _route.add(current); //source
         print("Current Location on Map: $current");
       } else if (current != _route.last) {
+        calculateDistance(previous, current);         //update total distance
         _route.add(
             current); //if the user stands still, do not have to add the location again
         print("Current Location on Map: $current");
+        previous = current;                           //replace previous point with current point
       }
     });
   }
@@ -482,7 +506,7 @@ class _WorkingOutState extends State<WorkingOut> {
                 child: DraggableScrollableSheet(
                     initialChildSize: 0.25,
                     minChildSize: 0.20,
-                    maxChildSize: 0.60,
+                    maxChildSize: 0.50,
                     builder: (BuildContext context, scrollCon) {
                       return Container(
                         padding: EdgeInsets.symmetric(
@@ -520,7 +544,7 @@ class _WorkingOutState extends State<WorkingOut> {
                             Stack(
                               children: <Widget>[
                                 SectionCard(
-                                  height: 460.0,
+                                  height: 360.0,
                                   title:
                                       "Workout Details (${widget.workoutType})",
                                 ),
@@ -553,19 +577,22 @@ class _WorkingOutState extends State<WorkingOut> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: 10.0),
-                                          RaisedButton(
+                                          SizedBox(width: 15.0),
+                                          ElevatedButton(
                                             onPressed: startCountdown,
-                                            color: startPressed
-                                                ? kDisabled
-                                                : kOkOrStart,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.0)),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 10.0),
+                                            style: ElevatedButton.styleFrom(
+                                              //button background color
+                                              primary: startPressed
+                                                        ? kDisabled
+                                                        : kOkOrStart,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.0,
+                                                  vertical: 10.0),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0)),
+                                            ),
                                             child: Text(
                                               "Start".toUpperCase(),
                                               style: TextStyle(
@@ -576,18 +603,21 @@ class _WorkingOutState extends State<WorkingOut> {
                                             ),
                                           ),
                                           SizedBox(width: 5.0),
-                                          RaisedButton(
+                                          ElevatedButton(
                                             onPressed: stopStopwatch,
-                                            color: recording
-                                                ? kCancelOrStop
-                                                : kReturn,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.0)),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 10.0),
+                                            style: ElevatedButton.styleFrom(
+                                              //button background color
+                                              primary: recording
+                                                        ? kCancelOrStop
+                                                        : kReturn,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.0,
+                                                  vertical: 10.0),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0)),
+                                            ),
                                             child: Text(
                                               recording
                                                   ? "Stop".toUpperCase()
@@ -625,6 +655,24 @@ class _WorkingOutState extends State<WorkingOut> {
                                                 DetailRow(
                                                     title: 'Current Activity :',
                                                     content: _result),
+
+                                                SizedBox(height: 10.0),
+                                                DetailRow(
+                                                  title:
+                                                      'Total Distance :',
+                                                  content: _totalDistance
+                                                          .toStringAsFixed(
+                                                              1) +
+                                                      " km"),
+
+                                                SizedBox(height: 10.0),
+                                                DetailRow(
+                                                    title: 'Current Speed :',
+                                                    content: _currentSpeed
+                                                            .toStringAsFixed(
+                                                                1) +
+                                                        " m/s\u00B2"),
+
                                                 (widget.workoutType ==
                                                             "Walking" ||
                                                         widget.workoutType ==
@@ -643,12 +691,6 @@ class _WorkingOutState extends State<WorkingOut> {
                                                         ],
                                                       )
                                                     : SizedBox(height: 10.0),
-                                                DetailRow(
-                                                    title: 'Current Speed :',
-                                                    content: _currentSpeed
-                                                            .toStringAsFixed(
-                                                                1) +
-                                                        " m/s\u00B2"),
                                               ],
                                             ),
 

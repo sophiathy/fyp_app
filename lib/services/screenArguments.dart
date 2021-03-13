@@ -4,6 +4,7 @@ class ScreenArguments {
   String workoutType;
   List<LatLng> route;
   String duration;
+  double totalDistance;
   List<List<String>> csvRows;
   String todaySteps;
   double averageSpeed;
@@ -13,6 +14,7 @@ class ScreenArguments {
     this.workoutType,
     this.route,
     this.duration,
+    this.totalDistance,
     this.csvRows,
     this.todaySteps,
     this.averageSpeed,

@@ -19,6 +19,7 @@ class WorkoutSummary extends StatefulWidget {
   final String workoutType;
   final List<LatLng> route;
   final String duration;
+  final double totalDistance;
   final List<List<String>> csvRows;
   final String todaySteps;
   final double averageSpeed;
@@ -29,6 +30,7 @@ class WorkoutSummary extends StatefulWidget {
     @required this.workoutType,
     this.route,
     this.duration,
+    this.totalDistance,
     this.csvRows,
     this.todaySteps,
     this.averageSpeed,
@@ -176,108 +178,112 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
             ),
             SizedBox.expand(
               child: DraggableScrollableSheet(
-                initialChildSize: 0.55,
-                minChildSize: 0.15,
-                maxChildSize: 0.55,
-                builder: (BuildContext context, scrollCon) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).backgroundColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(36.0),
-                        topRight: Radius.circular(36.0),
+                  initialChildSize: 0.55,
+                  minChildSize: 0.15,
+                  maxChildSize: 0.55,
+                  builder: (BuildContext context, scrollCon) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.0,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 10.0,
-                        )
-                      ],
-                    ),
-                    child: ListView(
-                      controller: scrollCon,
-                      padding: const EdgeInsets.all(6.0),
-                      children: <Widget>[
-                        SizedBox(height: 6.0),
-                        Center(
-                          child: Container(
-                            height: 7.0,
-                            width: 70.0,
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey[300],
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).backgroundColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(36.0),
+                          topRight: Radius.circular(36.0),
                         ),
-                        SizedBox(height: 12.0),
-                        Stack(
-                          children: <Widget>[
-                            SectionCard(
-                              height: 330.0,
-                              title: "Workout Summary",
-                            ),
-
-                            //workout summary
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 70.0, left: 24.0, right: 24.0),
-                              child: Column(
-                                children: <Widget>[
-                                  DetailRow(
-                                    title: 'Workout Type :',
-                                    content: widget.workoutType),
-                                  SizedBox(height: 10.0),
-
-                                  DetailRow(
-                                    title: 'Duration :', content: widget.duration),
-                                  SizedBox(height: 10.0),
-
-                                  DetailRow(title: 'Total Distance :', content: "0.1 km"),
-
-                                  (widget.workoutType == "Walking" ||
-                                      widget.workoutType == "Running")
-                                  ? Column(
-                                    children: <Widget>[
-                                      SizedBox(height: 10.0),
-                                      DetailRow(
-                                        title: 'Steps Taken Today :',
-                                        content: "${widget.todaySteps} steps"),
-                                      SizedBox(height: 10.0),
-                                    ],
-                                  )
-                                  : SizedBox(height: 10.0),
-
-                                  DetailRow(
-                                    title: 'Average Speed :',
-                                    content:
-                                      "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
-                                  SizedBox(height: 10.0),
-
-                                  DetailRow(
-                                    title: 'Highest Speed :',
-                                    content:
-                                      "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
-                                ],
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 10.0,
+                          )
+                        ],
+                      ),
+                      child: ListView(
+                        controller: scrollCon,
+                        padding: const EdgeInsets.all(6.0),
+                        children: <Widget>[
+                          SizedBox(height: 6.0),
+                          Center(
+                            child: Container(
+                              height: 7.0,
+                              width: 70.0,
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey[300],
+                                borderRadius: BorderRadius.circular(5.0),
                               ),
                             ),
-                          ],
-                        ),
-                        Padding(
-                          padding:
-                            const EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
-                          child: Buttons(
-                          name: "Return to Home",
-                          press: (() =>
-                            Navigator.of(context).pushReplacementNamed('/home')),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-              }),
+                          SizedBox(height: 12.0),
+                          Stack(
+                            children: <Widget>[
+                              SectionCard(
+                                height: 330.0,
+                                title: "Workout Summary",
+                              ),
+
+                              //workout summary
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 70.0, left: 24.0, right: 24.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    DetailRow(
+                                        title: 'Workout Type :',
+                                        content: widget.workoutType),
+                                    SizedBox(height: 10.0),
+                                    DetailRow(
+                                        title: 'Duration :',
+                                        content: widget.duration),
+                                    SizedBox(height: 10.0),
+                                    DetailRow(
+                                        title: 'Total Distance :',
+                                        content: widget.totalDistance
+                                                .toStringAsFixed(1) +
+                                            " km"),
+
+                                    SizedBox(height: 10.0),
+                                    DetailRow(
+                                        title: 'Average Speed :',
+                                        content:
+                                            "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                    SizedBox(height: 10.0),
+                                    DetailRow(
+                                        title: 'Highest Speed :',
+                                        content:
+                                            "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
+
+                                    (widget.workoutType == "Walking" ||
+                                            widget.workoutType == "Running")
+                                        ? Column(
+                                            children: <Widget>[
+                                              SizedBox(height: 10.0),
+                                              DetailRow(
+                                                  title: 'Steps Taken Today :',
+                                                  content:
+                                                      "${widget.todaySteps} steps"),
+                                              SizedBox(height: 10.0),
+                                            ],
+                                          )
+                                        : SizedBox(height: 10.0),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20.0, left: 16.0, right: 16.0),
+                            child: Buttons(
+                              name: "Return to Home",
+                              press: (() => Navigator.of(context)
+                                  .pushReplacementNamed('/home')),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
             ),
           ],
         ),

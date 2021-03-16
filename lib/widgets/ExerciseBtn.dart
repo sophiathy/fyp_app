@@ -17,43 +17,39 @@ class ExerciseBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 100.0,
+      width: 120.0,
       margin: EdgeInsets.only(right: 10.0),
-      padding: EdgeInsets.all(5.0),
+      padding: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: modeSwitch ? kIconBg_dark : kSectionBackground_light,
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
-          color: Colors.lightBlueAccent,
+          color: modeSwitch ? kIconBg_dark : kBorder_light,
         ),
       ),
-
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20.0),  //shape of tapping
-          onTap: (){
-            Navigator.of(context).pushReplacementNamed('/workingOut', arguments: ScreenArguments(workoutType, [], "00:00:00", 0.0, [], "0", 0.0, 0.0));
+          borderRadius: BorderRadius.circular(20.0), //shape of tapping
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed('/workingOut',
+                arguments: ScreenArguments(
+                    workoutType, [], [], "00:00:00", 0.0, [], "0", 0.0, 0.0));
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-            child: Column(
-              children: <Widget>[
-                _typeIcon(workoutType),
-
-                SizedBox(height: 5.0),
-
-                Text(
-                  workoutType.toUpperCase(),
-                  style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          .copyWith(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                ),
-              ],
-            ),
+          child: Column(
+            children: <Widget>[
+              _typeIcon(workoutType),
+              SizedBox(height: 5.0),
+              Text(
+                workoutType,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2.copyWith(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ],
           ),
         ),
       ),
@@ -63,30 +59,37 @@ class ExerciseBtn extends StatelessWidget {
 
 //check the exercise type and return icon
 Widget _typeIcon(String type) {
-  final icolor = Colors.lightBlueAccent;
-  final double isize = 32.0;
+  final icolor = Colors.lightBlueAccent[700];
+  final double isize = 50.0;
+  final double isizeStairs = 32.0;
 
-  if(type == "Walking"){
+  if (type == "Walking") {
     return Icon(
-      Icons.directions_walk_outlined,
+      Icons.directions_walk_rounded,
       color: icolor,
       size: isize,
     );
-  }else if (type == "Running"){
+  } else if (type == "Walking Upstairs") {
     return Icon(
-      Icons.directions_run_outlined,
+      Icons.trending_up_rounded,
+      color: icolor,
+      size: isizeStairs,
+    );
+  } else if (type == "Walking Downstairs") {
+    return Icon(
+      Icons.trending_down_rounded,
+      color: icolor,
+      size: isizeStairs,
+    );
+  } else if (type == "Running") {
+    return Icon(
+      Icons.directions_run_rounded,
       color: icolor,
       size: isize,
     );
-  }else if(type == "Cycling"){
+  } else if (type == "Cycling") {
     return Icon(
-      Icons.directions_bike_outlined,
-      color: icolor,
-      size: isize,
-    );
-  }else{
-    return Icon(
-      Icons.more_horiz_outlined,
+      Icons.directions_bike_rounded,
       color: icolor,
       size: isize,
     );

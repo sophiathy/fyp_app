@@ -8,6 +8,7 @@ savedRecordDialog(BuildContext context) {
         animType: AnimType.SCALE,
         dialogType: DialogType.SUCCES,
         headerAnimationLoop: false,
+        buttonsBorderRadius: BorderRadius.all(Radius.circular(10.0)),
         body: Column(
           children: <Widget>[
             SizedBox(height: 15.0),

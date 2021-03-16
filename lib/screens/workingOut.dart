@@ -23,6 +23,7 @@ import 'package:sensors/sensors.dart';
 
 class WorkingOut extends StatefulWidget {
   final String workoutType;
+  final List<int> countActivities;
   final List<LatLng> route;
   final String duration;
   final double totalDistance;
@@ -34,6 +35,7 @@ class WorkingOut extends StatefulWidget {
   const WorkingOut({
     Key key,
     @required this.workoutType,
+    this.countActivities,
     this.route,
     this.duration,
     this.totalDistance,
@@ -72,9 +74,11 @@ class _WorkingOutState extends State<WorkingOut> {
   // String _detectedActivityTime = "";
 
   String _result = ""; //store the result returned by the tflite model
+  List<String> _detectedActivities = []; //a list of detected activities
 
-  Timer _timer;
-  final refresh = const Duration(seconds: 1); //used by _timer, _countdown, _sw
+  Timer _modelTimer;
+  final refresh =
+      const Duration(seconds: 1); //used by _modelTimer, _countdown, _sw
 
   //accelerometer and gyroscope
   List<StreamSubscription<dynamic>> _streamSub =
@@ -91,7 +95,7 @@ class _WorkingOutState extends State<WorkingOut> {
   //pedometer
   int _todaySteps;
   String _steps = "0";
-  Box<int> pedoBox = Hive.box('steps'); //store last saved timestamp and steps
+  Box<int> pedoBox = Hive.box('steps'); //store last saved steps counted
 
   //countdown timer
   int counter = 3;
@@ -123,10 +127,12 @@ class _WorkingOutState extends State<WorkingOut> {
       setUpPedometer();
       setState(() {
         stopwatchTime = widget.duration; //00:00:00
-      });
-      _timer = Timer.periodic(refresh, (Timer t) {
-        // checkPermission();     //TODO: permission dialog
-        _getResult();
+        if (widget.workoutType == "Auto") {
+          _modelTimer = Timer.periodic(refresh, (Timer t) {
+            // checkPermission();     //TODO: permission dialog
+            _getResult(); //getting the result of identifying the current physical activity
+          });
+        }
       });
     }
   }
@@ -135,7 +141,7 @@ class _WorkingOutState extends State<WorkingOut> {
   void dispose() {
     for (StreamSubscription<dynamic> sub in _streamSub) sub.cancel();
     //cancel the timers
-    _timer.cancel();
+    _modelTimer?.cancel();
     _sw?.cancel();
     _recordSens?.cancel();
     _recordRoute?.cancel();
@@ -170,6 +176,7 @@ class _WorkingOutState extends State<WorkingOut> {
 
     setState(() {
       _result = res;
+      _detectedActivities.add(_result);
       // _biking = biking;
       // _downstairs = downstairs;
       // _jogging = jogging;
@@ -269,7 +276,8 @@ class _WorkingOutState extends State<WorkingOut> {
                     (newPoint.longitude - previousPoint.longitude))) /
             2;
 
-    setState(() => _totalDistance += 2 * 6371 * asin(sqrt(tmp)));   //6371 km = Earth radius
+    setState(() =>
+        _totalDistance += 2 * 6371 * asin(sqrt(tmp))); //6371 km = Earth radius
   }
 
   //pedometer
@@ -334,7 +342,7 @@ class _WorkingOutState extends State<WorkingOut> {
     });
   }
 
-  //countdown timer (3 seconds)
+  //countdown timer (3 seconds) + tracking delay (2 seconds)
   void startCountdown() {
     setState(() {
       startPressed = true;
@@ -342,23 +350,24 @@ class _WorkingOutState extends State<WorkingOut> {
     });
 
     _countdown = Timer.periodic(refresh, (timer) {
-      setState(() {
-        readyCountdown = counter.toString();
-        if (counter > 0) {
-          print(readyCountdown);
-          counter--;
-        } else {
-          _countdown.cancel();
-          //start the stopwatch, record sensors' data and workout route after 3 seconds
-          startStopwatch();
-          startRecordingSensors();
-          startRecordingRoute();
-          setState(() => tracking = true);
-          Future.delayed(const Duration(seconds: 2), () {
-            setState(() => {trackingDelay = false});
-          });
-        }
-      });
+      if(mounted)
+        setState(() {
+          readyCountdown = counter.toString();
+          if (counter > 0) {
+            print(readyCountdown);
+            counter--;
+          } else {
+            _countdown.cancel();
+            //start the stopwatch, record sensors' data and route after 3 seconds
+            startStopwatch();
+            startRecordingSensors();
+            startRecordingRoute();
+            setState(() => tracking = true);
+            Future.delayed(const Duration(seconds: 2), () {
+              if(mounted) setState(() => {trackingDelay = false});
+            });
+          }
+        });
     });
   }
 
@@ -368,13 +377,14 @@ class _WorkingOutState extends State<WorkingOut> {
 
     //if the width of string of hours/minutes/seconds is less than 2, then add "0" to its left
     //remainder of 60s = minutes
-    setState(() {
-      stopwatchTime = sw.elapsed.inHours.toString().padLeft(2, "0") +
-          ":" +
-          (sw.elapsed.inMinutes % 60).toString().padLeft(2, "0") +
-          ":" +
-          (sw.elapsed.inSeconds % 60).toString().padLeft(2, "0");
-    });
+    if(mounted)
+      setState(() {
+        stopwatchTime = sw.elapsed.inHours.toString().padLeft(2, "0") +
+            ":" +
+            (sw.elapsed.inMinutes % 60).toString().padLeft(2, "0") +
+            ":" +
+            (sw.elapsed.inSeconds % 60).toString().padLeft(2, "0");
+      });
   }
 
   void startStopwatch() {
@@ -385,20 +395,55 @@ class _WorkingOutState extends State<WorkingOut> {
   }
 
   void stopStopwatch() {
+    _countdown?.cancel(); //cancel countdown timer if user pressed "leave" while counting down
     print("Duration of workout: " + stopwatchTime);
     sw.stop();
-    if (_sw == null)
+    //pressed "leave" button or no data of user route (since refresh time of recording route is 5 seconds)
+    //early stopping
+    if (_sw == null || _route.isEmpty)
       noRecordToSaveDialog(
           context); //notify user that the no record will be saved
     else {
+      List<int> countActivities = [0, 0, 0, 0, 0, 0, 0]; //used when auto mode
       double sum = 0.0;
       for (double s in _allSpeed) sum += s;
 
       _averageSpeed = sum / _allSpeed.length;
 
+      if (widget.workoutType == "Auto") {
+        for (int i = 0; i < _detectedActivities.length; i++) {
+          switch (_detectedActivities[i]) {
+            case "Walking":
+              countActivities[0] += 1;
+              break;
+            case "Upstairs":
+              countActivities[1] += 1;
+              break;
+            case "Downstairs":
+              countActivities[2] += 1;
+              break;
+            case "Jogging":
+              countActivities[3] += 1;
+              break;
+            case "Biking":
+              countActivities[4] += 1;
+              break;
+            case "Standing":
+              countActivities[5] += 1;
+              break;
+            case "Sitting":
+              countActivities[6] += 1;
+              break;
+            default:
+              break;
+          }
+        }
+      }
+
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
             widget.workoutType,
+            countActivities,
             _route,
             stopwatchTime,
             _totalDistance,
@@ -449,7 +494,10 @@ class _WorkingOutState extends State<WorkingOut> {
       row.add(gyro[2]);
 
       //activity
-      row.add(widget.workoutType);
+      if (widget.workoutType != "Auto")
+        row.add(widget.workoutType); //manual input mode
+      else
+        row.add(_result); //auto tracking mode
 
       rows.add(row);
     });
@@ -467,11 +515,13 @@ class _WorkingOutState extends State<WorkingOut> {
         _route.add(current); //source
         print("Current Location on Map: $current");
       } else if (current != _route.last) {
-        calculateDistance(previous, current);         //update total distance
+        //TODO: explain why used "mounted"
+        if (mounted)
+          calculateDistance(previous, current); //update total distance
         _route.add(
             current); //if the user stands still, do not have to add the location again
         print("Current Location on Map: $current");
-        previous = current;                           //replace previous point with current point
+        previous = current; //replace previous point with current point
       }
     });
   }
@@ -506,7 +556,7 @@ class _WorkingOutState extends State<WorkingOut> {
                 child: DraggableScrollableSheet(
                     initialChildSize: 0.25,
                     minChildSize: 0.20,
-                    maxChildSize: 0.50,
+                    maxChildSize: widget.workoutType != "Auto" ? 0.50 : 0.45,
                     builder: (BuildContext context, scrollCon) {
                       return Container(
                         padding: EdgeInsets.symmetric(
@@ -544,9 +594,8 @@ class _WorkingOutState extends State<WorkingOut> {
                             Stack(
                               children: <Widget>[
                                 SectionCard(
-                                  height: 360.0,
-                                  title:
-                                      "Workout Details (${widget.workoutType})",
+                                  height: widget.workoutType != "Auto" ? 360.0 : 320.0,
+                                  title: "Workout Details",
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -579,12 +628,12 @@ class _WorkingOutState extends State<WorkingOut> {
                                           ),
                                           SizedBox(width: 15.0),
                                           ElevatedButton(
-                                            onPressed: startCountdown,
+                                            onPressed: startPressed ? (){} : startCountdown,
                                             style: ElevatedButton.styleFrom(
                                               //button background color
                                               primary: startPressed
-                                                        ? kDisabled
-                                                        : kOkOrStart,
+                                                  ? kDisabled
+                                                  : kOkOrStart,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.0,
                                                   vertical: 10.0),
@@ -608,8 +657,8 @@ class _WorkingOutState extends State<WorkingOut> {
                                             style: ElevatedButton.styleFrom(
                                               //button background color
                                               primary: recording
-                                                        ? kCancelOrStop
-                                                        : kReturn,
+                                                  ? kStopOrAutoBtn
+                                                  : kReturn,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.0,
                                                   vertical: 10.0),
@@ -619,7 +668,7 @@ class _WorkingOutState extends State<WorkingOut> {
                                                           10.0)),
                                             ),
                                             child: Text(
-                                              recording
+                                              tracking
                                                   ? "Stop".toUpperCase()
                                                   : "Leave".toUpperCase(),
                                               style: TextStyle(
@@ -652,19 +701,22 @@ class _WorkingOutState extends State<WorkingOut> {
                                           : Column(
                                               children: [
                                                 SizedBox(height: 10.0),
-                                                DetailRow(
-                                                    title: 'Current Activity :',
-                                                    content: _result),
-
+                                                widget.workoutType != "Auto"
+                                                    ? DetailRow(
+                                                        title: 'Workout Type :',
+                                                        content:
+                                                            widget.workoutType)
+                                                    : DetailRow(
+                                                        title:
+                                                            'Activity Detected :',
+                                                        content: _result),
                                                 SizedBox(height: 10.0),
                                                 DetailRow(
-                                                  title:
-                                                      'Total Distance :',
-                                                  content: _totalDistance
-                                                          .toStringAsFixed(
-                                                              1) +
-                                                      " km"),
-
+                                                    title: 'Total Distance :',
+                                                    content: _totalDistance
+                                                            .toStringAsFixed(
+                                                                1) +
+                                                        " km"),
                                                 SizedBox(height: 10.0),
                                                 DetailRow(
                                                     title: 'Current Speed :',
@@ -672,9 +724,12 @@ class _WorkingOutState extends State<WorkingOut> {
                                                             .toStringAsFixed(
                                                                 1) +
                                                         " m/s\u00B2"),
-
                                                 (widget.workoutType ==
                                                             "Walking" ||
+                                                        widget.workoutType ==
+                                                            "Walking Upstairs" ||
+                                                        widget.workoutType ==
+                                                            "Walking Downstairs" ||
                                                         widget.workoutType ==
                                                             "Running")
                                                     ? Column(

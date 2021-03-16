@@ -21,11 +21,12 @@ class SummarySection extends StatefulWidget {
 
 class _SummarySectionState extends State<SummarySection> {
   //pedometer
-  StreamSubscription<StepCount> _streamSub;
+  StreamSubscription<StepCount> _pedoSub;
   int _todaySteps;
   String _steps = "0";
-  Box<int> pedoBox = Hive.box('steps'); //store last saved timestamp and steps
+  Box<int> pedoBox = Hive.box('steps'); //store last saved steps counted
   Box<int> workoutDurationBox = Hive.box('workoutDuration'); //store last saved workout seconds
+  Box<double> workoutDistanceBox = Hive.box('workoutDistance'); //store last saved workout distance
 
   @override
   void initState() {
@@ -37,12 +38,12 @@ class _SummarySectionState extends State<SummarySection> {
 
   @override
   void dispose() {
-    // _streamSub.cancel();
+    // _pedoSub.cancel();     //if cancel, the pedometer will not update the steps value
     super.dispose();
   }
 
   void setUpPedometer() {
-    _streamSub =
+    _pedoSub =
         Pedometer.stepCountStream.listen(stepsToday, onError: stepError);
   }
 
@@ -115,6 +116,7 @@ class _SummarySectionState extends State<SummarySection> {
           child: Container(
             height: 200.0,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(width: 30.0),
 
@@ -146,7 +148,7 @@ class _SummarySectionState extends State<SummarySection> {
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        "Steps".toUpperCase(),
+                        "Steps",
                         style: Theme.of(context).textTheme.bodyText2.copyWith(
                               color: Colors.green,
                               fontSize: 18.0,
@@ -157,20 +159,23 @@ class _SummarySectionState extends State<SummarySection> {
                   ),
                 ),
 
-                SizedBox(width: 35.0),
+                SizedBox(width: 50.0),
 
-                //workout minutes & burned calories
+                //workout minutes & distance
                 Flexible(
                   flex: 2,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Container(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Container(
-                              height: 35.0,
-                              width: 35.0,
+                              height: 40.0,
+                              width: 40.0,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: widget.modeSwitch
@@ -178,25 +183,25 @@ class _SummarySectionState extends State<SummarySection> {
                                     : kIconBg_light,
                               ),
                               child: Icon(
-                                Icons.timer,
+                                Icons.timer_rounded,
                                 color: Colors.blue,
                               ),
                             ),
-                            SizedBox(width: 10.0),
+                            SizedBox(width: 15.0),
                             Text(
-                              (workoutDurationBox.get(DateTime.now().day, defaultValue: 0)~/60).toString(),
+                              (workoutDurationBox.get(DateTime.now().day, defaultValue: 0)~/60/60).toStringAsFixed(1),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2
                                   .copyWith(
                                     color: Colors.blue,
-                                    fontSize: 28.0,
+                                    fontSize: 30.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              "Workout\nMinutes".toUpperCase(),
+                              "hours",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2
@@ -211,10 +216,12 @@ class _SummarySectionState extends State<SummarySection> {
                       ),
                       Container(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Container(
-                              height: 35.0,
-                              width: 35.0,
+                              height: 40.0,
+                              width: 40.0,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: widget.modeSwitch
@@ -222,25 +229,25 @@ class _SummarySectionState extends State<SummarySection> {
                                     : kIconBg_light,
                               ),
                               child: Icon(
-                                Icons.local_fire_department,
+                                Icons.place_outlined,
                                 color: Colors.amber,
                               ),
                             ),
-                            SizedBox(width: 10.0),
+                            SizedBox(width: 15.0),
                             Text(
-                              "8334",
+                              workoutDistanceBox.get(DateTime.now().day, defaultValue: 0).toStringAsFixed(1),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2
                                   .copyWith(
                                     color: Colors.amber,
-                                    fontSize: 28.0,
+                                    fontSize: 30.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              "Burned\nCalories".toUpperCase(),
+                              "km",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2

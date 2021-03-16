@@ -136,7 +136,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
         // current.add(tmp);
 
-        //add to currentData if the timestep counter is less than TIME_STAMP
+        //add to currentData if the time step counter is less than TIME_STAMP
         if(count < TIME_STAMP){
             for(int i = 0; i < 6; i++)
                 currentData[count][i] = sensors[i];

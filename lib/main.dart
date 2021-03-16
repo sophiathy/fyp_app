@@ -21,9 +21,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter(); //path of hive stored
-  await Hive.openBox<int>(
-      'steps'); //store last saved timestamp and steps counted
+  await Hive.openBox<int>('trackingMode'); //store the tracking mode
+  await Hive.openBox<int>('steps'); //store last saved steps counted
   await Hive.openBox<int>('workoutDuration'); //store last saved workout seconds
+  await Hive.openBox<double>('workoutDistance'); //store last saved workout distance
   runApp(MyApp());
 }
 
@@ -103,6 +104,7 @@ class _MyAppState extends State<MyApp> {
                   return PageTransition(
                       child: WorkingOut(
                           workoutType: args.workoutType,
+                          countActivities: args.countActivities,
                           route: args.route,
                           duration: args.duration,
                           totalDistance: args.totalDistance,
@@ -116,6 +118,7 @@ class _MyAppState extends State<MyApp> {
                   return PageTransition(
                       child: WorkoutSummary(
                           workoutType: args.workoutType,
+                          countActivities: args.countActivities,
                           route: args.route,
                           duration: args.duration,
                           totalDistance: args.totalDistance,

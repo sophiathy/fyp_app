@@ -75,13 +75,29 @@ class _FinalMapState extends State<FinalMap> {
   void setCameraOnPins() async {
     final GoogleMapController gc = await _mapController.future;
 
-    if (_source.latitude > _destination.latitude) {
-      _southwest = _destination;
-      _northeast = _source;
-    } else {
-      _southwest = _source;
-      _northeast = _destination;
-    }
+    double minLat = _polylines.first.points.first.latitude;
+    double minLng = _polylines.first.points.first.longitude;
+    double maxLat = _polylines.first.points.first.latitude;
+    double maxLng = _polylines.first.points.first.longitude;
+
+    //southwest's lat and lng must be < than northeast's
+    _polylines.forEach((element) {
+      element.points.forEach((pt) {
+        if (pt.latitude < minLat)
+          minLat = pt.latitude;
+        if (pt.latitude > maxLat)
+          maxLat = pt.latitude;
+
+        if (pt.longitude < minLng)
+          minLng = pt.longitude;
+        if (pt.longitude > maxLng)
+          maxLng = pt.longitude;
+      });
+    });
+
+    //update values
+    _southwest = LatLng(minLat, minLng);
+    _northeast = LatLng(maxLat, maxLng);
 
     //must add a 1 second delay for the camera to update the location
     await Future.delayed(Duration(seconds: 1)).then((value) async {
@@ -91,7 +107,7 @@ class _FinalMapState extends State<FinalMap> {
             southwest: _southwest,
             northeast: _northeast,
           ),
-          100.0, //padding on map with two pins
+          20.0, //padding
         ),
       );
     });
@@ -121,14 +137,14 @@ class _FinalMapState extends State<FinalMap> {
             //when the map is ready, set the pins and polylines on map
             setPinsOnMap();
             setPolylinesOnMap();
-            setCameraOnPins();        //animate the camera to focus on the pins
+            setCameraOnPins(); //animate the camera to focus on the pins
             if (modeSwitch.themeData)
               mapStyle(gc, "assets/map/darkMap.json"); //dark mode Map
             setState(() {});
           },
-          mapType: MapType.normal,    //default: normal map for light mode
-          markers: _pins,             //source and destination pins
-          polylines: _polylines,      //sets of polylines
+          mapType: MapType.normal, //default: normal map for light mode
+          markers: _pins, //source and destination pins
+          polylines: _polylines, //sets of polylines
           initialCameraPosition: CameraPosition(
             zoom: 18.0,
             target: widget.route.elementAt(widget.route.length ~/ 2),

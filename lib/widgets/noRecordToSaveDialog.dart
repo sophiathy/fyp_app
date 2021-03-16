@@ -7,6 +7,7 @@ noRecordToSaveDialog(BuildContext context) {
         context: context,
         animType: AnimType.SCALE,
         headerAnimationLoop: false,
+        buttonsBorderRadius: BorderRadius.all(Radius.circular(10.0)),
         dialogType: DialogType.NO_HEADER,
         body: Column(
           children: <Widget>[

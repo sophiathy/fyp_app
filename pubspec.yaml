@@ -41,7 +41,7 @@ dependencies:
   #transition between pages
   page_transition: ^1.1.7+6
   #use svg in the app
-  flutter_svg: ^0.19.3
+  flutter_svg: ^0.21.0-nullsafety.0
   #accelerometer and gyroscope
   sensors: ^2.0.0
   #pedometer used for counting steps
@@ -63,6 +63,8 @@ dependencies:
   awesome_dialog: ^1.3.2
   #used in today's summary
   percent_indicator: ^2.1.9+1
+  #used in workout summary (auto tracking model)
+  fl_chart: ^0.20.1
 
 dev_dependencies:
   flutter_test:

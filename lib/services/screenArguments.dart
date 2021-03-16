@@ -2,6 +2,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ScreenArguments {
   String workoutType;
+  List<int> countActivities;
   List<LatLng> route;
   String duration;
   double totalDistance;
@@ -12,6 +13,7 @@ class ScreenArguments {
 
   ScreenArguments(
     this.workoutType,
+    this.countActivities,
     this.route,
     this.duration,
     this.totalDistance,

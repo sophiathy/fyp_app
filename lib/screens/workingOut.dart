@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:fyp_app/services/geoService.dart';
 import 'package:fyp_app/services/screenArguments.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
 import 'package:fyp_app/widgets/noRecordToSaveDialog.dart';
@@ -17,9 +18,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sensors/sensors.dart';
+import 'package:wakelock/wakelock.dart';
 
 class WorkingOut extends StatefulWidget {
   final String workoutType;
@@ -129,7 +130,6 @@ class _WorkingOutState extends State<WorkingOut> {
         stopwatchTime = widget.duration; //00:00:00
         if (widget.workoutType == "Auto") {
           _modelTimer = Timer.periodic(refresh, (Timer t) {
-            // checkPermission();     //TODO: permission dialog
             _getResult(); //getting the result of identifying the current physical activity
           });
         }
@@ -164,7 +164,7 @@ class _WorkingOutState extends State<WorkingOut> {
       // upstairs = "Upstairs: \t" + _results[5];
       // walking = "Walking: \t" + _results[6];
     } on PlatformException catch (e) {
-      res = "Failed to get the result: '${e.message}'";
+      res = "\nFailed to get the result: '${e.message}'";
       // biking = "Failed to get the result: '${e.message}'";
       // downstairs = "Failed to get the result: '${e.message}'";
       // jogging = "Failed to get the result: '${e.message}'";
@@ -210,19 +210,6 @@ class _WorkingOutState extends State<WorkingOut> {
   //     _detectedActivityTime = detectedActivityTime;
   //   });
   // }
-
-  checkPermission() async {
-    var activityStatus = await Permission.activityRecognition.status;
-    var locationStatus = await Permission.location.status;
-    // var storageStatus = await Permission.storage.status;
-
-    if (!activityStatus.isGranted)
-      await Permission.activityRecognition.request();
-
-    if (!locationStatus.isGranted) await Permission.location.request();
-
-    // if (!storageStatus.isGranted) await Permission.storage.request();
-  }
 
   //accelerometer and gyroscope
   void setUpAccelerometerGyroscope() {
@@ -342,6 +329,10 @@ class _WorkingOutState extends State<WorkingOut> {
     });
   }
 
+  Future<void> awakeSwitch(bool enable) async {
+    Wakelock.toggle(enable: enable);
+  }
+
   //countdown timer (3 seconds) + tracking delay (2 seconds)
   void startCountdown() {
     setState(() {
@@ -350,7 +341,7 @@ class _WorkingOutState extends State<WorkingOut> {
     });
 
     _countdown = Timer.periodic(refresh, (timer) {
-      if(mounted)
+      if (mounted)
         setState(() {
           readyCountdown = counter.toString();
           if (counter > 0) {
@@ -364,7 +355,7 @@ class _WorkingOutState extends State<WorkingOut> {
             startRecordingRoute();
             setState(() => tracking = true);
             Future.delayed(const Duration(seconds: 2), () {
-              if(mounted) setState(() => {trackingDelay = false});
+              if (mounted) setState(() => {trackingDelay = false});
             });
           }
         });
@@ -377,7 +368,7 @@ class _WorkingOutState extends State<WorkingOut> {
 
     //if the width of string of hours/minutes/seconds is less than 2, then add "0" to its left
     //remainder of 60s = minutes
-    if(mounted)
+    if (mounted)
       setState(() {
         stopwatchTime = sw.elapsed.inHours.toString().padLeft(2, "0") +
             ":" +
@@ -387,16 +378,18 @@ class _WorkingOutState extends State<WorkingOut> {
       });
   }
 
-  void startStopwatch() {
+  Future<void> startStopwatch() async {
+    await awakeSwitch(true); //keep the screen awake while tracking
     print("Start to workout... ");
     sw.start();
     _sw =
         Timer(refresh, runningWatch); //runningWatch is invoked in every second
   }
 
-  void stopStopwatch() {
-    _countdown?.cancel(); //cancel countdown timer if user pressed "leave" while counting down
-    print("Duration of workout: " + stopwatchTime);
+  Future<void> stopStopwatch() async {
+    await awakeSwitch(false); //disable screen awake
+    _countdown
+        ?.cancel(); //cancel countdown timer if user pressed "leave" while counting down
     sw.stop();
     //pressed "leave" button or no data of user route (since refresh time of recording route is 5 seconds)
     //early stopping
@@ -404,35 +397,31 @@ class _WorkingOutState extends State<WorkingOut> {
       noRecordToSaveDialog(
           context); //notify user that the no record will be saved
     else {
-      List<int> countActivities = [0, 0, 0, 0, 0, 0, 0]; //used when auto mode
+      print("Duration of workout: " + stopwatchTime);
+
+      List<int> countActivities = [0, 0, 0, 0]; //used when auto mode
       double sum = 0.0;
-      for (double s in _allSpeed) sum += s;
+      for (double s in _allSpeed) sum += s; //sum of speed
 
       _averageSpeed = sum / _allSpeed.length;
 
       if (widget.workoutType == "Auto") {
         for (int i = 0; i < _detectedActivities.length; i++) {
           switch (_detectedActivities[i]) {
-            case "Walking":
+            // case "Running":
+            //   countActivities[0] += 1;
+            //   break;
+            case "Standing":
               countActivities[0] += 1;
               break;
-            case "Upstairs":
+            case "Walking":
               countActivities[1] += 1;
               break;
-            case "Downstairs":
+            case "Walking Upstairs":
               countActivities[2] += 1;
               break;
-            case "Jogging":
+            case "Walking Downstairs":
               countActivities[3] += 1;
-              break;
-            case "Biking":
-              countActivities[4] += 1;
-              break;
-            case "Standing":
-              countActivities[5] += 1;
-              break;
-            case "Sitting":
-              countActivities[6] += 1;
               break;
             default:
               break;
@@ -442,6 +431,7 @@ class _WorkingOutState extends State<WorkingOut> {
 
       Navigator.of(context).pushReplacementNamed('/workoutSummary',
           arguments: ScreenArguments(
+            -1, //unused
             widget.workoutType,
             countActivities,
             _route,
@@ -461,6 +451,12 @@ class _WorkingOutState extends State<WorkingOut> {
 
     setState(() {
       recording = true;
+
+      User user = FirebaseAuth.instance.currentUser;
+      row.add(user.uid);
+      rows.add(row);
+      row = []; //reset
+
       row.add("Timestamp");
       row.add("Ax");
       row.add("Ay");
@@ -539,9 +535,6 @@ class _WorkingOutState extends State<WorkingOut> {
           body: Stack(
             children: <Widget>[
               SafeArea(
-                top: true,
-                left: true,
-                right: true,
                 child: Align(
                   alignment: Alignment.center,
                   child:
@@ -560,7 +553,7 @@ class _WorkingOutState extends State<WorkingOut> {
                     builder: (BuildContext context, scrollCon) {
                       return Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 12.0,
+                          horizontal: getProportionWidth(10.0),
                         ),
                         decoration: BoxDecoration(
                           color: Theme.of(context).backgroundColor,
@@ -577,29 +570,31 @@ class _WorkingOutState extends State<WorkingOut> {
                         ),
                         child: ListView(
                           controller: scrollCon,
-                          padding: const EdgeInsets.all(6.0),
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.all(getProportionWidth(6.0)),
                           children: <Widget>[
-                            SizedBox(height: 6.0),
+                            SizedBox(height: getProportionWidth(6.0)),
                             Center(
                               child: Container(
-                                height: 7.0,
-                                width: 70.0,
+                                height: getProportionWidth(6.0),
+                                width: getProportionWidth(60.0),
                                 decoration: BoxDecoration(
                                   color: Colors.blueGrey[200],
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 12.0),
-                            Stack(
-                              children: <Widget>[
-                                SectionCard(
-                                  height: widget.workoutType != "Auto" ? 360.0 : 320.0,
-                                  title: "Workout Details",
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 70.0, left: 24.0, right: 24.0),
+                            SizedBox(height: getProportionWidth(10.0)),
+                            SectionCard(
+                              height: widget.workoutType != "Auto"
+                                  ? getProportionWidth(320.0)
+                                  : getProportionWidth(285.0),
+                              title: "Workout Details",
+                              topRightButton: SizedBox(width: 0.0),
+                              content:
+                                Container(
+                                  height: widget.workoutType != "Auto" ? getProportionWidth(240.0) : getProportionWidth(205.0),
+                                  width: double.infinity,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -619,77 +614,121 @@ class _WorkingOutState extends State<WorkingOut> {
                                                 style: TextStyle(
                                                   fontSize:
                                                       readyCountdown == "0"
-                                                          ? 30.0
-                                                          : 25.0,
+                                                          ? getProportionWidth(25.0)
+                                                          : getProportionWidth(22.0),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: 15.0),
-                                          ElevatedButton(
-                                            onPressed: startPressed ? (){} : startCountdown,
-                                            style: ElevatedButton.styleFrom(
-                                              //button background color
-                                              primary: startPressed
-                                                  ? kDisabled
-                                                  : kOkOrStart,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.0,
-                                                  vertical: 10.0),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0)),
-                                            ),
-                                            child: Text(
-                                              "Start".toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 5.0),
-                                          ElevatedButton(
-                                            onPressed: stopStopwatch,
-                                            style: ElevatedButton.styleFrom(
-                                              //button background color
-                                              primary: recording
-                                                  ? kStopOrAutoBtn
-                                                  : kReturn,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.0,
-                                                  vertical: 10.0),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0)),
-                                            ),
-                                            child: Text(
-                                              tracking
-                                                  ? "Stop".toUpperCase()
-                                                  : "Leave".toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
+                                          SizedBox(width: getProportionWidth(12.0)),
+                                          startPressed
+                                              ? SizedBox(width: 0.0)
+                                              : ElevatedButton(
+                                                  onPressed: startPressed
+                                                      ? () {}
+                                                      : startCountdown,
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    //button background color
+                                                    primary: startPressed
+                                                        ? kDisabled
+                                                        : kOkOrStart,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: getProportionWidth(8.0),
+                                                            vertical: getProportionWidth(8.0)),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                  ),
+                                                  child: Text(
+                                                    "Start".toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: getProportionWidth(18.0),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                          SizedBox(width: getProportionWidth(5.0)),
+                                          recording
+                                              ?
+                                              //stop button
+                                              ElevatedButton(
+                                                  onPressed:
+                                                      () {}, //will not end the workout if just tap
+                                                  onLongPress: stopStopwatch,
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    //button background color
+                                                    primary: kStopOrAutoBtn,
+                                                    // : kReturn,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: getProportionWidth(8.0),
+                                                            vertical: getProportionWidth(8.0)),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                  ),
+                                                  child: Text(
+                                                    "Long Press to Stop"
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: getProportionWidth(12.0),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                )
+                                              : ElevatedButton(
+                                                  onPressed:
+                                                      stopStopwatch, //in stopStopwatch function, return home page
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: kReturn,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: getProportionWidth(8.0),
+                                                            vertical: getProportionWidth(8.0)),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                  ),
+                                                  child: Text(
+                                                    "Leave".toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: getProportionWidth(18.0),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
                                         ],
                                       ),
 
                                       //TODO: classifying the type of physical activities
-                                      SizedBox(height: 20.0),
+                                      SizedBox(height: getProportionWidth(18.0)),
                                       tracking
                                           ? TyperAnimatedTextKit(
                                               text: [
                                                 "Tracking ...",
                                               ],
                                               textStyle: TextStyle(
-                                                fontSize: 20.0,
+                                                fontSize: getProportionWidth(18.0),
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               textAlign: TextAlign.start,
@@ -700,7 +739,7 @@ class _WorkingOutState extends State<WorkingOut> {
                                           ? SizedBox(height: 0.0)
                                           : Column(
                                               children: [
-                                                SizedBox(height: 10.0),
+                                                SizedBox(height: getProportionWidth(10.0)),
                                                 widget.workoutType != "Auto"
                                                     ? DetailRow(
                                                         title: 'Workout Type :',
@@ -710,14 +749,14 @@ class _WorkingOutState extends State<WorkingOut> {
                                                         title:
                                                             'Activity Detected :',
                                                         content: _result),
-                                                SizedBox(height: 10.0),
+                                                SizedBox(height: getProportionWidth(10.0)),
                                                 DetailRow(
                                                     title: 'Total Distance :',
                                                     content: _totalDistance
                                                             .toStringAsFixed(
                                                                 1) +
                                                         " km"),
-                                                SizedBox(height: 10.0),
+                                                SizedBox(height: getProportionWidth(10.0)),
                                                 DetailRow(
                                                     title: 'Current Speed :',
                                                     content: _currentSpeed
@@ -734,18 +773,16 @@ class _WorkingOutState extends State<WorkingOut> {
                                                             "Running")
                                                     ? Column(
                                                         children: <Widget>[
-                                                          SizedBox(
-                                                              height: 10.0),
+                                                          SizedBox(height: getProportionWidth(10.0)),
                                                           DetailRow(
                                                               title:
                                                                   'Steps Taken Today :',
                                                               content: _steps +
                                                                   " steps"),
-                                                          SizedBox(
-                                                              height: 10.0),
+                                                          SizedBox(height: getProportionWidth(10.0)),
                                                         ],
                                                       )
-                                                    : SizedBox(height: 10.0),
+                                                    : SizedBox(height: getProportionWidth(10.0)),
                                               ],
                                             ),
 
@@ -792,9 +829,8 @@ class _WorkingOutState extends State<WorkingOut> {
                                       //             ),
                                       //       ),
                                     ],
-                                  ),
+                              ),
                                 ),
-                              ],
                             ),
                           ],
                         ),

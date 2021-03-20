@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 class Buttons extends StatelessWidget {
   final String name;
@@ -14,7 +15,7 @@ class Buttons extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 60.0,
+      height: getProportionHeight(58.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           //button background color
@@ -22,13 +23,13 @@ class Buttons extends StatelessWidget {
           shape: RoundedRectangleBorder(
               borderRadius:
                   BorderRadius.circular(
-                      20.0)),
+                      getProportionWidth(20.0))),
           ),
         onPressed: press,
         child: Text(
           name.toUpperCase(),
           style: TextStyle(
-            fontSize: 26.0,
+            fontSize: getProportionWidth(23.0),
             color: Colors.white,
           ),
         ),

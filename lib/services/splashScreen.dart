@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-class CheckLogin extends StatefulWidget {
+class SplashScreen extends StatefulWidget {
   @override
-  _CheckLoginState createState() => _CheckLoginState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _CheckLoginState extends State<CheckLogin> {
+class _SplashScreenState extends State<SplashScreen> {
   StreamSubscription<User> _firebaseAuthSubs;
 
   @override
@@ -33,6 +34,7 @@ class _CheckLoginState extends State<CheckLogin> {
   @override
   Widget build(BuildContext context) {
     DarkProvider modeSwitch = Provider.of<DarkProvider>(context);
+    AdaptiveSize().init(context); //initialize screen data
     return Scaffold(
       backgroundColor:
           modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
@@ -46,7 +48,7 @@ class _CheckLoginState extends State<CheckLogin> {
             boxBackgroundColor:
                 modeSwitch.themeData ? Colors.black : kPrimaryColor_light,
             textStyle: TextStyle(
-              fontSize: 40.0,
+              fontSize: getProportionWidth(38.0),
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w700,
             ),
@@ -66,7 +68,8 @@ class _CheckLoginState extends State<CheckLogin> {
   }
 
   void navigate() async {
-    _firebaseAuthSubs = FirebaseAuth.instance.authStateChanges().listen((User u) {
+    _firebaseAuthSubs =
+        FirebaseAuth.instance.authStateChanges().listen((User u) {
       print(u);
       //return Login page or Home screen
       if (u == null)

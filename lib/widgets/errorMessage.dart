@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 class ErrorMessage extends StatelessWidget {
   final List<String> errors;
@@ -17,18 +18,18 @@ class ErrorMessage extends StatelessWidget {
 
   Padding warningText(String warning) {
     return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5.0),
+    padding: EdgeInsets.symmetric(vertical: getProportionWidth(5.0)),
     child: Row(
       children: <Widget>[
         Icon(
           Icons.error_outline_rounded,
           color: Colors.red,
         ),
-        SizedBox(width: 5.0),
+        SizedBox(width: getProportionWidth(5.0)),
         Text(
           warning,
           style: TextStyle(
-            fontSize: 16.0,
+            fontSize: getProportionWidth(14.0),
             color: Colors.red,
           ),
         ),

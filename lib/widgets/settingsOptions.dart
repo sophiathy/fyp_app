@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 class SettingsOptions extends StatefulWidget {
   final IconData icon;
@@ -26,13 +27,13 @@ class _SettingsOptionsState extends State<SettingsOptions> {
           Icon(
             widget.icon,
             color: Theme.of(context).primaryColor,
-            size: 35.0,
+            size: getProportionWidth(33.0),
           ),
-          SizedBox(width: 20.0),
+          SizedBox(width: getProportionWidth(20.0)),
           Text(
             widget.title,
             style: Theme.of(context).textTheme.bodyText2.copyWith(
-                  fontSize: 20.0,
+                  fontSize: getProportionWidth(18.0),
                   fontWeight: FontWeight.w500,
                 ),
           ),

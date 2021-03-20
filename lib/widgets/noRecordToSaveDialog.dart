@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 //No record will be saved if user pressed on the "leave" button
 noRecordToSaveDialog(BuildContext context) {
@@ -11,7 +12,7 @@ noRecordToSaveDialog(BuildContext context) {
         dialogType: DialogType.NO_HEADER,
         body: Column(
           children: <Widget>[
-            SizedBox(height: 35.0),
+            SizedBox(height: getProportionWidth(32.0)),
             Text(
               'No workout record has been saved.',
               style: Theme.of(context)
@@ -19,10 +20,10 @@ noRecordToSaveDialog(BuildContext context) {
                 .headline3
                 .copyWith(
                   fontStyle: FontStyle.normal,
-                  fontSize: 16.0,
+                  fontSize: getProportionWidth(14.0),
                 ),
             ),
-            SizedBox(height: 25.0),
+            SizedBox(height: getProportionWidth(22.0)),
           ],
         ),
         btnOkOnPress: () {

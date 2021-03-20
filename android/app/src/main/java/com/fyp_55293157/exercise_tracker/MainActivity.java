@@ -62,7 +62,9 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     // private float[] results;
     private String result;
     private Interpreter tflite;
-    private static final String MODEL_FILE_PATH = "model.tflite";
+    private static final String MODEL_FILE_PATH = "finalModel.tflite";
+    private final int sensorsInputs = 6;
+    private final int outputTypes = 4;  //TODO: change back to 5
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
         // results = new float[7];
         result = "Tracking...";
-        currentData = new float[TIME_STAMP][6];
+        currentData = new float[TIME_STAMP][sensorsInputs];
         count = 0;
 
         // current = new ArrayList<List<Float>>();
@@ -99,7 +101,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
         // List<Float> tmp = new ArrayList<>();
-        float[] sensors = new float[6];
+        float[] sensors = new float[sensorsInputs];
 
         // if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
         //     ax.add(event.values[0]);
@@ -138,7 +140,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
         //add to currentData if the time step counter is less than TIME_STAMP
         if(count < TIME_STAMP){
-            for(int i = 0; i < 6; i++)
+            for(int i = 0; i < sensorsInputs; i++)
                 currentData[count][i] = sensors[i];
 
             count++;
@@ -150,7 +152,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     private List<String> toStringList(float[][] prob){
         List<String> res = new ArrayList<String>();
 
-        for(int i = 0; i < 7; i++)
+        for(int i = 0; i < outputTypes; i++)
             res.add(Float.toString(roundFloat(prob[0][i], 3)));
 
         return res;
@@ -170,8 +172,8 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
     private String classifyActivity() {
         // List<List<List<Float>>> data = new ArrayList<List<List<Float>>>();
-        float[][][] sensorsData = new float[1][TIME_STAMP][6];
-        float[][] probabilities = new float[1][7];
+        float[][][] sensorsData = new float[1][TIME_STAMP][sensorsInputs];
+        float[][] probabilities = new float[1][outputTypes];
 
         // if (ax.size() >= TIME_STAMP && ay.size() >= TIME_STAMP && az.size() >= TIME_STAMP
         // && gx.size() >= TIME_STAMP && gy.size() >= TIME_STAMP && gz.size() >= TIME_STAMP){
@@ -181,7 +183,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
             //move currentData to sensorsData (fits the format of input)
             for(int i = 0; i < TIME_STAMP; i++){
-                for(int j = 0; j < 6; j++){
+                for(int j = 0; j < sensorsInputs; j++){
                     sensorsData[0][i][j] = currentData[i][j];
                 }
             }
@@ -211,31 +213,27 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
             int highestProbability = 0;     //default is 0
 
             //find the activity with the highest probability
-            for(int i = 0; i <= 6; i++){
+            for(int i = 0; i < outputTypes; i++){
                 if(probabilities[0][i] > probabilities[0][highestProbability])
                     highestProbability = i;
             }
 
+            // if(highestProbability == 0)
+            //     result = "Running";
             if(highestProbability == 0)
-                result = "Biking";
-            else if(highestProbability == 1)
-                result = "Downstairs";
-            else if(highestProbability == 2)
-                result = "Jogging";
-            else if(highestProbability == 3)
-                result = "Sitting";
-            else if(highestProbability == 4)
                 result = "Standing";
-            else if(highestProbability == 5)
-                result = "Upstairs";
-            else if(highestProbability == 6)
+            else if(highestProbability == 1)
                 result = "Walking";
+            else if(highestProbability == 2)
+                result = "Walking Upstairs";
+            else if(highestProbability == 3)
+                result = "Walking Downstairs";
 
             Log.i(TAG, "Current Activity: "+ result);
 
             //reset the timestamp counter and the array
             count = 0;
-            currentData = new float[TIME_STAMP][6];
+            currentData = new float[TIME_STAMP][sensorsInputs];
             // data.clear();
             // current.clear();
             // ax.clear(); ay.clear(); az.clear();

@@ -1,5 +1,7 @@
 {
     "cSpell.ignoreWords": [
+        "callback",
+        "dissmiss",
         "draggable",
         "firestore",
         "flutter",
@@ -7,13 +9,19 @@
         "isize",
         "jp",
         "noto",
+        "nullsafety",
+        "on",
         "pedo",
         "points",
         "polyline",
         "polylines",
         "sans",
+        "screenutil",
         "scrollable",
+        "spinkit",
+        "succes",
         "tflite",
-        "typer"
+        "typer",
+        "wakelock"
     ]
 }

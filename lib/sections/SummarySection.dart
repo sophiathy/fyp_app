@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:hive/hive.dart';
@@ -25,8 +26,10 @@ class _SummarySectionState extends State<SummarySection> {
   int _todaySteps;
   String _steps = "0";
   Box<int> pedoBox = Hive.box('steps'); //store last saved steps counted
-  Box<int> workoutDurationBox = Hive.box('workoutDuration'); //store last saved workout seconds
-  Box<double> workoutDistanceBox = Hive.box('workoutDistance'); //store last saved workout distance
+  Box<int> todaysDurationBox =
+      Hive.box('todaysDuration'); //store last saved today's workout seconds
+  Box<double> todaysDistanceBox =
+      Hive.box('todaysDistance'); //store last saved today's workout distance
 
   @override
   void initState() {
@@ -43,8 +46,7 @@ class _SummarySectionState extends State<SummarySection> {
   }
 
   void setUpPedometer() {
-    _pedoSub =
-        Pedometer.stepCountStream.listen(stepsToday, onError: stepError);
+    _pedoSub = Pedometer.stepCountStream.listen(stepsToday, onError: stepError);
   }
 
   Future<int> stepsToday(StepCount streamCount) async {
@@ -105,169 +107,171 @@ class _SummarySectionState extends State<SummarySection> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SectionCard(
-          height: 270.0,
-          title: "Today's Summary",
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
-          child: Container(
-            height: 200.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(width: 30.0),
+    return SectionCard(
+      height: getProportionHeight(214.0),
+      title: "Today's Summary",
+      topRightButton: SizedBox(width: 0.0),
+      content:
+        Container(
+          height: getProportionWidth(165.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(width: getProportionWidth(30.0)),
 
-                //today's steps percentage indicator
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularPercentIndicator(
-                        radius: 135.0,
-                        lineWidth: 12.0,
-                        animateFromLastPercent: true,
-                        circularStrokeCap: CircularStrokeCap.round,
-                        percent: (_steps != "N/A")
-                            ? (double.parse(_steps) / 10000.0)
-                            : 0.0,
-                        center: Text(
-                          _steps,
-                          style: Theme.of(context).textTheme.bodyText2.copyWith(
-                                color: Colors.green,
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        progressColor: Colors.green,
-                        backgroundColor:
-                            widget.modeSwitch ? kIconBg_dark : kIconBg_light,
-                      ),
-                      SizedBox(height: 10.0),
-                      Text(
-                        "Steps",
+              //today's steps percentage indicator
+              //pedometer's value will reset to 0 if user restart his/her smartphone
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularPercentIndicator(
+                      radius: getProportionWidth(115.0),
+                      lineWidth: getProportionWidth(10.0),
+                      animateFromLastPercent: true,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      percent: (_steps != "N/A")
+                          ? (double.parse(_steps) / 10000.0)
+                          : 0.0,
+                      center: Text(
+                        _steps,
                         style: Theme.of(context).textTheme.bodyText2.copyWith(
                               color: Colors.green,
-                              fontSize: 18.0,
+                              fontSize: getProportionWidth(22.0),
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                    ],
-                  ),
+                      progressColor: Colors.green,
+                      backgroundColor:
+                          widget.modeSwitch ? kIconBg_dark : kIconBg_light,
+                    ),
+                    SizedBox(height: getProportionHeight(10.0)),
+                    Text(
+                      "Steps",
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Colors.green,
+                            fontSize: getProportionWidth(16.0),
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
                 ),
+              ),
 
-                SizedBox(width: 50.0),
+              SizedBox(width: getProportionWidth(45.0)),
 
-                //workout minutes & distance
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Container(
-                              height: 40.0,
-                              width: 40.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: widget.modeSwitch
-                                    ? kIconBg_dark
-                                    : kIconBg_light,
-                              ),
-                              child: Icon(
-                                Icons.timer_rounded,
-                                color: Colors.blue,
-                              ),
+              //workout minutes & distance
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            height: getProportionWidth(36.0),
+                            width: getProportionWidth(36.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: widget.modeSwitch
+                                  ? kIconBg_dark
+                                  : kIconBg_light.withOpacity(0.5),
                             ),
-                            SizedBox(width: 15.0),
-                            Text(
-                              (workoutDurationBox.get(DateTime.now().day, defaultValue: 0)~/60/60).toStringAsFixed(1),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  .copyWith(
-                                    color: Colors.blue,
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            child: Icon(
+                              Icons.timer_rounded,
+                              color: Colors.pink,
                             ),
-                            SizedBox(width: 10.0),
-                            Text(
-                              "hours",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  .copyWith(
-                                    color: Colors.blue,
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: getProportionWidth(12.0)),
+                          Text(
+                            (todaysDurationBox.get(DateTime.now().day,
+                                        defaultValue: 0) ~/
+                                    60 /
+                                    60)
+                                .toStringAsFixed(1),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                .copyWith(
+                                  color: Colors.pink,
+                                  fontSize: getProportionWidth(28.0),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          SizedBox(width: getProportionWidth(8.0)),
+                          Text(
+                            "hours",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                .copyWith(
+                                  color: Colors.pink,
+                                  fontSize: getProportionWidth(12.0),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Container(
-                              height: 40.0,
-                              width: 40.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: widget.modeSwitch
-                                    ? kIconBg_dark
-                                    : kIconBg_light,
-                              ),
-                              child: Icon(
-                                Icons.place_outlined,
-                                color: Colors.amber,
-                              ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            height: getProportionWidth(36.0),
+                            width: getProportionWidth(36.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: widget.modeSwitch
+                                  ? kIconBg_dark
+                                  : kIconBg_light.withOpacity(0.5),
                             ),
-                            SizedBox(width: 15.0),
-                            Text(
-                              workoutDistanceBox.get(DateTime.now().day, defaultValue: 0).toStringAsFixed(1),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  .copyWith(
-                                    color: Colors.amber,
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            child: Icon(
+                              Icons.place_outlined,
+                              color: Colors.amber,
                             ),
-                            SizedBox(width: 10.0),
-                            Text(
-                              "km",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  .copyWith(
-                                    color: Colors.amber,
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: getProportionWidth(12.0)),
+                          Text(
+                            todaysDistanceBox
+                                .get(DateTime.now().day, defaultValue: 0)
+                                .toStringAsFixed(1),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                .copyWith(
+                                  color: Colors.amber,
+                                  fontSize: getProportionWidth(28.0),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          SizedBox(width: getProportionWidth(8.0)),
+                          Text(
+                            "km",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                .copyWith(
+                                  color: Colors.amber,
+                                  fontSize: getProportionWidth(12.0),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ],
     );
   }
 }

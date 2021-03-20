@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/errorMessage.dart';
 import 'package:fyp_app/services/authAccount.dart';
@@ -32,7 +33,7 @@ class _RegisterState extends State<Register> {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(getProportionWidth(18.0)),
           child: Container(
             width: double.infinity,
             child: ListView(
@@ -40,9 +41,6 @@ class _RegisterState extends State<Register> {
               children: <Widget>[
                 //return to Login
                 SafeArea(
-                  top: true,
-                  left: true,
-                  right: true,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -50,13 +48,13 @@ class _RegisterState extends State<Register> {
                       Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(getProportionWidth(28.0)),
                           splashColor: Colors.indigo[50],
                           onTap: (() => Navigator.of(context).pop()),
                           child: Icon(
                             Icons.arrow_back_ios_rounded,
                             color: Colors.indigo[300],
-                            size: 25.0,
+                            size: getProportionWidth(23.0),
                           ),
                         ),
                       ),
@@ -65,7 +63,7 @@ class _RegisterState extends State<Register> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: EdgeInsets.all(getProportionWidth(28.0)),
                   child: Text("Register an Account".toUpperCase(),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5),
@@ -92,7 +90,7 @@ class _RegisterState extends State<Register> {
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(getProportionWidth(30.0)),
                               splashColor: Colors.indigo[50],
                               onTap: () {
                                 this.setState(() => _emailController.clear());
@@ -100,7 +98,7 @@ class _RegisterState extends State<Register> {
                               child: Icon(
                                 Icons.backspace_rounded,
                                 color: Colors.indigo[100],
-                                size: 25.0,
+                                size: getProportionWidth(23.0),
                               ),
                             ),
                           ),
@@ -143,7 +141,7 @@ class _RegisterState extends State<Register> {
                         },
                       ),
 
-                      SizedBox(height: 25),
+                      SizedBox(height: getProportionWidth(23.0)),
 
                       //password field
                       TextFormField(
@@ -159,7 +157,7 @@ class _RegisterState extends State<Register> {
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(getProportionWidth(30.0)),
                               splashColor: Colors.indigo[50],
                               onTap: () {
                                 this.setState(
@@ -168,7 +166,7 @@ class _RegisterState extends State<Register> {
                               child: Icon(
                                 Icons.backspace_rounded,
                                 color: Colors.indigo[100],
-                                size: 25.0,
+                                size: getProportionWidth(23.0),
                               ),
                             ),
                           ),
@@ -211,7 +209,7 @@ class _RegisterState extends State<Register> {
                         },
                       ),
 
-                      SizedBox(height: 25),
+                      SizedBox(height: getProportionWidth(23.0)),
 
                       //confirm password field
                       TextFormField(
@@ -227,7 +225,7 @@ class _RegisterState extends State<Register> {
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(getProportionWidth(30.0)),
                               splashColor: Colors.indigo[50],
                               onTap: () {
                                 this.setState(
@@ -236,7 +234,7 @@ class _RegisterState extends State<Register> {
                               child: Icon(
                                 Icons.backspace_rounded,
                                 color: Colors.indigo[100],
-                                size: 25.0,
+                                size: getProportionWidth(23.0),
                               ),
                             ),
                           ),
@@ -277,11 +275,11 @@ class _RegisterState extends State<Register> {
                         },
                       ),
 
-                      SizedBox(height: 20),
+                      SizedBox(height: getProportionWidth(14.0)),
 
                       ErrorMessage(errors: errors),
 
-                      SizedBox(height: 15),
+                      SizedBox(height: getProportionWidth(12.0)),
 
                       //create account button
                       Buttons(

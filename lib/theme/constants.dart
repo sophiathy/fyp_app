@@ -25,9 +25,7 @@ const kWalking = Colors.indigo;
 const kUpstairs = Colors.red;
 const kDownstairs = Colors.green;
 const kRunning = Colors.orange;
-const kCycling = Colors.purple;
-const kStanding = Colors.teal;
-const kSitting = Colors.yellow;
+const kStanding = Colors.purple;
 
 //regular expression
 final RegExp emailRegExp =

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:fyp_app/widgets/manualContent.dart';
@@ -21,7 +22,7 @@ class _UserManualState extends State<UserManual> {
       image: "assets/images/manual_2.svg",
       title: "Easy to Use,\nRecord Every Workout Moment",
       desc:
-          "When you are using Exercise Tracker, you physical activity can be\nrecorded easily.",
+          "When you are using Exercise Tracker, your physical activities can be\nrecorded easily.",
     ),
     ManualContent(
       image: "assets/images/manual_3.svg",
@@ -38,7 +39,7 @@ class _UserManualState extends State<UserManual> {
       image: "assets/images/manual_5.svg",
       title: "Auto Tracking",
       desc:
-          "After recording a number of workouts, Exercise Tracker will start to recognize your physical activity automatically.",
+          "After recording a number of workouts, auto tracking mode will be unlocked for you to start tracking on a workout without inputting the types manually.",
     ),
     ManualContent(
       image: "assets/images/manual_6.svg",
@@ -72,7 +73,7 @@ class _UserManualState extends State<UserManual> {
       child: Scaffold(
         backgroundColor: modeSwitch.themeData ? kIconBg_dark : Colors.white,
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(getProportionWidth(16.0)),
           child: SafeArea(
             child: SizedBox(
               width: double.infinity, //center everything
@@ -105,7 +106,7 @@ class _UserManualState extends State<UserManual> {
                           ),
                           Spacer(),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: EdgeInsets.all(getProportionWidth(16.0)),
                             child: Row(
                               children: <Widget>[
                                 //Skip button > return Home
@@ -116,7 +117,7 @@ class _UserManualState extends State<UserManual> {
                                         child: Text(
                                           "Skip".toUpperCase(),
                                           style: TextStyle(
-                                            fontSize: 20.0,
+                                            fontSize: getProportionWidth(18.0),
                                             fontWeight: FontWeight.bold,
                                             color: kDisabled,
                                           ),
@@ -141,19 +142,19 @@ class _UserManualState extends State<UserManual> {
                                     //button background color
                                     primary: kPrimaryColor_light,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 10.0),
+                                        horizontal: getProportionWidth(8.0),
+                                        vertical: getProportionHeight(8.0)),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(
-                                                10.0)),
+                                                getProportionWidth(8.0))),
                                   ),
                                   child: Text(
                                     (currentPageNo == guides.length - 1)
                                         ? "Got it!".toUpperCase()
                                         : "Next".toUpperCase(),
                                     style: TextStyle(
-                                      fontSize: 20.0,
+                                      fontSize: getProportionWidth(18.0),
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 class DetailRow extends StatelessWidget {
   final String title;
@@ -20,7 +21,7 @@ class DetailRow extends StatelessWidget {
               .textTheme
               .bodyText2
               .copyWith(
-                fontSize: 20.0,
+                fontSize: getProportionWidth(17.0),
                 fontWeight: FontWeight.w500,
               ),
         ),
@@ -30,7 +31,7 @@ class DetailRow extends StatelessWidget {
               .textTheme
               .bodyText2
               .copyWith(
-                fontSize: 20.0,
+                fontSize: getProportionWidth(17.0),
               ),
         ),
       ],

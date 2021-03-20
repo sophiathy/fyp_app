@@ -107,7 +107,7 @@ class _FinalMapState extends State<FinalMap> {
             southwest: _southwest,
             northeast: _northeast,
           ),
-          20.0, //padding
+          80.0, //padding
         ),
       );
     });

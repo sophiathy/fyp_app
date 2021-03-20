@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_app/theme/adaptiveSize.dart';
 
 //Workout record will be saved if user stopped the stopwatch
 savedRecordDialog(BuildContext context) {
@@ -11,31 +12,31 @@ savedRecordDialog(BuildContext context) {
         buttonsBorderRadius: BorderRadius.all(Radius.circular(10.0)),
         body: Column(
           children: <Widget>[
-            SizedBox(height: 15.0),
+            SizedBox(height: getProportionWidth(12.0)),
             Text(
               'Well Done!',
               style: Theme.of(context)
                 .textTheme
                 .headline6
                 .copyWith(
-                  fontSize: 20.0,
+                  fontSize: getProportionWidth(18.0),
                 ),
             ),
-            SizedBox(height: 20.0),
+            SizedBox(height: getProportionWidth(18.0)),
             Text(
               'Your workout record has been saved.',
               style: Theme.of(context)
                 .textTheme
                 .bodyText2
                 .copyWith(
-                  fontSize: 16.0,
+                  fontSize: getProportionWidth(14.0),
                 ),
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: getProportionWidth(8.0)),
           ],
         ),
         btnOkOnPress: () {
-          debugPrint('User pressed OK');
+          debugPrint('User pressed NICE');
         },
         btnOkIcon: Icons.check_circle,
         btnOkText: 'Nice',

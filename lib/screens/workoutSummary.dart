@@ -11,9 +11,9 @@ import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
 import 'package:fyp_app/widgets/finalMap.dart';
-import 'package:fyp_app/widgets/savedRecordDialog.dart';
+import 'package:fyp_app/widgets/dialogs/savedRecordDialog.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
-import 'package:fyp_app/widgets/typeIndicator.dart';
+import 'package:fyp_app/widgets/indicators/typeIndicator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 // import 'package:path_provider/path_provider.dart';
@@ -383,7 +383,7 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
               child: DraggableScrollableSheet(
                   initialChildSize: widget.workoutType == "Auto" ? 0.42 : 0.35,
                   minChildSize: 0.15,
-                  maxChildSize: widget.workoutType == "Auto" ? 0.75 : 0.58,
+                  maxChildSize: widget.workoutType == "Auto" ? 0.85 : 0.65,
                   builder: (BuildContext context, scrollCon) {
                     return Container(
                       padding: EdgeInsets.symmetric(
@@ -402,269 +402,272 @@ class _WorkoutSummaryState extends State<WorkoutSummary> {
                           )
                         ],
                       ),
-                      child: ListView(
-                        controller: scrollCon,
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.all(getProportionWidth(6.0)),
-                        children: <Widget>[
-                          SizedBox(height: getProportionWidth(6.0)),
-                          Center(
-                            child: Container(
-                              height: getProportionWidth(6.0),
-                              width: getProportionWidth(60.0),
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey[300],
-                                borderRadius: BorderRadius.circular(5.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18.0),
+                          topRight: Radius.circular(18.0),
+                        ),
+                        child: ListView(
+                          controller: scrollCon,
+                          padding: EdgeInsets.all(getProportionWidth(6.0)),
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            SizedBox(height: getProportionWidth(6.0)),
+                            Center(
+                              child: Container(
+                                height: getProportionWidth(6.0),
+                                width: getProportionWidth(60.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey[300],
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: getProportionWidth(10.0)),
-                          SectionCard(
-                            height: widget.workoutType == "Auto"
-                                ? getProportionWidth(420.0)
-                                : getProportionWidth(290.0),
-                            title: "Workout Summary",
-                            topRightButton: SizedBox(width: 0.0),
-                            content:
-                              //workout summary
-                              Column(
-                                children: <Widget>[
-                                  widget.workoutType != "Auto"
-                                      ? DetailRow(
-                                          title: 'Workout Type :',
-                                          content: widget.workoutType)
-                                      : Column(
-                                          children: <Widget>[
-                                            DetailRow(
-                                                title:
-                                                    'Distribution of Workout(s) :',
-                                                content: ""),
-                                            SizedBox(height: getProportionWidth(10.0)),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Spacer(),
-                                                Container(
-                                                  height: getProportionWidth(160.0),
-                                                  width: getProportionWidth(160.0),
-                                                  child: PieChart(
-                                                    PieChartData(
-                                                        pieTouchData:
-                                                            PieTouchData(
-                                                                touchCallback:
-                                                                    (tapped) {
-                                                          setState(() {
-                                                            if (tapped.touchInput
-                                                                    is FlLongPressEnd ||
-                                                                tapped.touchInput
-                                                                    is FlPanEnd) //long press end or drag end
-                                                              tappedIndex =
-                                                                  -1; //reset index
-                                                            else
-                                                              tappedIndex = tapped
-                                                                  .touchedSectionIndex; //save newly tapped section
-                                                          });
-                                                        }),
-                                                        borderData: FlBorderData(
-                                                            show:
-                                                                false), //remove outer border
-                                                        centerSpaceRadius:
-                                                            20.0,
-                                                        sectionsSpace:
-                                                            2, //spaces between sections
-                                                        sections:
-                                                            displayActivities()),
+                            SizedBox(height: getProportionWidth(10.0)),
+                            SectionCard(
+                              title: "Workout Summary",
+                              topRightButton: SizedBox(width: 0.0),
+                              content:
+                                //workout summary
+                                Column(
+                                  children: <Widget>[
+                                    widget.workoutType != "Auto"
+                                        ? DetailRow(
+                                            title: 'Workout Type :',
+                                            content: widget.workoutType)
+                                        : Column(
+                                            children: <Widget>[
+                                              DetailRow(
+                                                  title:
+                                                      'Distribution of Workout(s) :',
+                                                  content: ""),
+                                              SizedBox(height: getProportionWidth(10.0)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Spacer(),
+                                                  Container(
+                                                    height: getProportionWidth(160.0),
+                                                    width: getProportionWidth(160.0),
+                                                    child: PieChart(
+                                                      PieChartData(
+                                                          pieTouchData:
+                                                              PieTouchData(
+                                                                  touchCallback:
+                                                                      (tapped) {
+                                                            setState(() {
+                                                              if (tapped.touchInput
+                                                                      is FlLongPressEnd ||
+                                                                  tapped.touchInput
+                                                                      is FlPanEnd) //long press end or drag end
+                                                                tappedIndex =
+                                                                    -1; //reset index
+                                                              else
+                                                                tappedIndex = tapped
+                                                                    .touchedSectionIndex; //save newly tapped section
+                                                            });
+                                                          }),
+                                                          borderData: FlBorderData(
+                                                              show:
+                                                                  false), //remove outer border
+                                                          centerSpaceRadius:
+                                                              20.0,
+                                                          sectionsSpace:
+                                                              2, //spaces between sections
+                                                          sections:
+                                                              displayActivities()),
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(width: getProportionWidth(30.0)),
-                                                //detected workout type indicator
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: <Widget>[
-                                                    // widget.countActivities[
-                                                    //             0] >
-                                                    //         0
-                                                    //     ? TypeIndicator(
-                                                    //         type: "Running",
-                                                    //         color: tappedIndex ==
-                                                    //                 0
-                                                    //             ? kRunning
-                                                    //             : kRunning
-                                                    //                 .withOpacity(
-                                                    //                     0.5),
-                                                    //         textColor: tappedIndex ==
-                                                    //                 0
-                                                    //             ? Theme.of(
-                                                    //                     context)
-                                                    //                 .primaryColor
-                                                    //             : Theme.of(
-                                                    //                     context)
-                                                    //                 .primaryColor
-                                                    //                 .withOpacity(
-                                                    //                     0.5),
-                                                    //       )
-                                                    //     : SizedBox(
-                                                    //         width: 0.0),
+                                                  SizedBox(width: getProportionWidth(30.0)),
+                                                  //detected workout type indicator
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      // widget.countActivities[
+                                                      //             0] >
+                                                      //         0
+                                                      //     ? TypeIndicator(
+                                                      //         type: "Running",
+                                                      //         color: tappedIndex ==
+                                                      //                 0
+                                                      //             ? kRunning
+                                                      //             : kRunning
+                                                      //                 .withOpacity(
+                                                      //                     0.5),
+                                                      //         textColor: tappedIndex ==
+                                                      //                 0
+                                                      //             ? Theme.of(
+                                                      //                     context)
+                                                      //                 .primaryColor
+                                                      //             : Theme.of(
+                                                      //                     context)
+                                                      //                 .primaryColor
+                                                      //                 .withOpacity(
+                                                      //                     0.5),
+                                                      //       )
+                                                      //     : SizedBox(
+                                                      //         width: 0.0),
 
-                                                    widget.countActivities[
-                                                                0] >
-                                                            0
-                                                        ? TypeIndicator(
-                                                            type: "Standing",
-                                                            color: tappedIndex ==
-                                                                    0
-                                                                ? kStanding
-                                                                : kStanding
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            textColor: tappedIndex ==
-                                                                    0
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                          )
-                                                        : SizedBox(
-                                                            width: 0.0),
-                                                        widget.countActivities[
-                                                                1] >
-                                                            0
-                                                        ? TypeIndicator(
-                                                            type: "Walking",
-                                                            color: tappedIndex ==
-                                                                    1
-                                                                ? kWalking
-                                                                : kWalking
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            textColor: tappedIndex ==
-                                                                    1
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                          )
-                                                        : SizedBox(
-                                                            width: 0.0),
-                                                    widget.countActivities[
-                                                                2] >
-                                                            0
-                                                        ? TypeIndicator(
-                                                            type: "Upstairs",
-                                                            color: tappedIndex ==
-                                                                    2
-                                                                ? kUpstairs
-                                                                : kUpstairs
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            textColor: tappedIndex ==
-                                                                    2
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                          )
-                                                        : SizedBox(
-                                                            width: 0.0),
-                                                    widget.countActivities[
-                                                                3] >
-                                                            0
-                                                        ? TypeIndicator(
-                                                            type:
-                                                                "Downstairs",
-                                                            color: tappedIndex ==
-                                                                    3
-                                                                ? kDownstairs
-                                                                : kDownstairs
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            textColor: tappedIndex ==
-                                                                    3
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                          )
-                                                        : SizedBox(
-                                                            width: 0.0),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                  SizedBox(height: getProportionWidth(10.0)),
-                                  DetailRow(
-                                      title: 'Duration :',
-                                      content: widget.duration),
-                                  SizedBox(height: getProportionWidth(10.0)),
-                                  DetailRow(
-                                      title: 'Total Distance :',
-                                      content: widget.totalDistance
-                                              .toStringAsFixed(1) +
-                                          " km"),
-                                  SizedBox(height: getProportionWidth(10.0)),
-                                  DetailRow(
-                                      title: 'Average Speed :',
-                                      content:
-                                          "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
-                                  SizedBox(height: getProportionWidth(10.0)),
-                                  DetailRow(
-                                      title: 'Highest Speed :',
-                                      content:
-                                          "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
-                                  (widget.workoutType == "Walking" ||
-                                          widget.workoutType ==
-                                              "Walking Upstairs" ||
-                                          widget.workoutType ==
-                                              "Walking Downstairs" ||
-                                          widget.workoutType == "Running")
-                                      ? Column(
-                                          children: <Widget>[
-                                            SizedBox(height: getProportionWidth(10.0)),
-                                            DetailRow(
-                                                title: 'Steps Taken Today :',
-                                                content:
-                                                    "${widget.todaySteps} steps"),
-                                            SizedBox(height: getProportionWidth(10.0)),
-                                          ],
-                                        )
-                                      : SizedBox(height: getProportionWidth(10.0)),
-                                ],
-                              ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: getProportionWidth(20.0)),
-                            child: Buttons(
-                              name: "Return to Home",
-                              press: (() => Navigator.of(context)
-                                  .pushReplacementNamed('/home')),
+                                                      widget.countActivities[
+                                                                  0] >
+                                                              0
+                                                          ? TypeIndicator(
+                                                              type: "Standing",
+                                                              color: tappedIndex ==
+                                                                      0
+                                                                  ? kStanding
+                                                                  : kStanding
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                              textColor: tappedIndex ==
+                                                                      0
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                            )
+                                                          : SizedBox(
+                                                              width: 0.0),
+                                                          widget.countActivities[
+                                                                  1] >
+                                                              0
+                                                          ? TypeIndicator(
+                                                              type: "Walking",
+                                                              color: tappedIndex ==
+                                                                      1
+                                                                  ? kWalking
+                                                                  : kWalking
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                              textColor: tappedIndex ==
+                                                                      1
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                            )
+                                                          : SizedBox(
+                                                              width: 0.0),
+                                                      widget.countActivities[
+                                                                  2] >
+                                                              0
+                                                          ? TypeIndicator(
+                                                              type: "Upstairs",
+                                                              color: tappedIndex ==
+                                                                      2
+                                                                  ? kUpstairs
+                                                                  : kUpstairs
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                              textColor: tappedIndex ==
+                                                                      2
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                            )
+                                                          : SizedBox(
+                                                              width: 0.0),
+                                                      widget.countActivities[
+                                                                  3] >
+                                                              0
+                                                          ? TypeIndicator(
+                                                              type:
+                                                                  "Downstairs",
+                                                              color: tappedIndex ==
+                                                                      3
+                                                                  ? kDownstairs
+                                                                  : kDownstairs
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                              textColor: tappedIndex ==
+                                                                      3
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .primaryColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                            )
+                                                          : SizedBox(
+                                                              width: 0.0),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                    SizedBox(height: getProportionWidth(10.0)),
+                                    DetailRow(
+                                        title: 'Duration :',
+                                        content: widget.duration),
+                                    SizedBox(height: getProportionWidth(10.0)),
+                                    DetailRow(
+                                        title: 'Total Distance :',
+                                        content: widget.totalDistance
+                                                .toStringAsFixed(1) +
+                                            " km"),
+                                    SizedBox(height: getProportionWidth(10.0)),
+                                    DetailRow(
+                                        title: 'Average Speed :',
+                                        content:
+                                            "${widget.averageSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                    SizedBox(height: getProportionWidth(10.0)),
+                                    DetailRow(
+                                        title: 'Highest Speed :',
+                                        content:
+                                            "${widget.highestSpeed.toStringAsFixed(1)} m/s\u00B2"),
+                                    (widget.workoutType == "Walking" ||
+                                            widget.workoutType ==
+                                                "Walking Upstairs" ||
+                                            widget.workoutType ==
+                                                "Walking Downstairs" ||
+                                            widget.workoutType == "Running")
+                                        ? Column(
+                                            children: <Widget>[
+                                              SizedBox(height: getProportionWidth(10.0)),
+                                              DetailRow(
+                                                  title: 'Steps Taken Today :',
+                                                  content:
+                                                      "${widget.todaySteps} steps"),
+                                              SizedBox(height: getProportionWidth(10.0)),
+                                            ],
+                                          )
+                                        : SizedBox(height: getProportionWidth(10.0)),
+                                  ],
+                                ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: getProportionWidth(20.0)),
+                              child: Buttons(
+                                name: "Return to Home",
+                                press: (() => Navigator.of(context)
+                                    .pushReplacementNamed('/home')),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }),

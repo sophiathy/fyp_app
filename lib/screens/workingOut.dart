@@ -10,7 +10,7 @@ import 'package:fyp_app/services/screenArguments.dart';
 import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/detailRow.dart';
-import 'package:fyp_app/widgets/noRecordToSaveDialog.dart';
+import 'package:fyp_app/widgets/dialogs/noRecordToSaveDialog.dart';
 import 'package:fyp_app/widgets/showMap.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
 import 'package:geolocator/geolocator.dart';
@@ -549,7 +549,7 @@ class _WorkingOutState extends State<WorkingOut> {
                 child: DraggableScrollableSheet(
                     initialChildSize: 0.25,
                     minChildSize: 0.20,
-                    maxChildSize: widget.workoutType != "Auto" ? 0.50 : 0.45,
+                    maxChildSize: widget.workoutType != "Auto" ? 0.60 : 0.55,
                     builder: (BuildContext context, scrollCon) {
                       return Container(
                         padding: EdgeInsets.symmetric(
@@ -568,271 +568,273 @@ class _WorkingOutState extends State<WorkingOut> {
                             )
                           ],
                         ),
-                        child: ListView(
-                          controller: scrollCon,
-                          physics: BouncingScrollPhysics(),
-                          padding: EdgeInsets.all(getProportionWidth(6.0)),
-                          children: <Widget>[
-                            SizedBox(height: getProportionWidth(6.0)),
-                            Center(
-                              child: Container(
-                                height: getProportionWidth(6.0),
-                                width: getProportionWidth(60.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueGrey[200],
-                                  borderRadius: BorderRadius.circular(5.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(18.0),
+                            topRight: Radius.circular(18.0),
+                          ),
+                          child: ListView(
+                            controller: scrollCon,
+                            padding: EdgeInsets.all(getProportionWidth(6.0)),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              SizedBox(height: getProportionWidth(6.0)),
+                              Center(
+                                child: Container(
+                                  height: getProportionWidth(6.0),
+                                  width: getProportionWidth(60.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey[200],
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: getProportionWidth(10.0)),
-                            SectionCard(
-                              height: widget.workoutType != "Auto"
-                                  ? getProportionWidth(320.0)
-                                  : getProportionWidth(285.0),
-                              title: "Workout Details",
-                              topRightButton: SizedBox(width: 0.0),
-                              content:
-                                Container(
-                                  height: widget.workoutType != "Auto" ? getProportionWidth(240.0) : getProportionWidth(205.0),
-                                  width: double.infinity,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                readyCountdown == "0"
-                                                    ? stopwatchTime
-                                                    : readyCountdown,
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      readyCountdown == "0"
-                                                          ? getProportionWidth(25.0)
-                                                          : getProportionWidth(22.0),
+                              SizedBox(height: getProportionWidth(10.0)),
+                              SectionCard(
+                                title: "Workout Details",
+                                topRightButton: SizedBox(width: 0.0),
+                                content:
+                                  Container(
+                                    width: double.infinity,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  readyCountdown == "0"
+                                                      ? stopwatchTime
+                                                      : readyCountdown,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        readyCountdown == "0"
+                                                            ? getProportionWidth(25.0)
+                                                            : getProportionWidth(22.0),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: getProportionWidth(12.0)),
+                                            startPressed
+                                                ? SizedBox(width: 0.0)
+                                                : ElevatedButton(
+                                                    onPressed: startPressed
+                                                        ? () {}
+                                                        : startCountdown,
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                      //button background color
+                                                      primary: startPressed
+                                                          ? kDisabled
+                                                          : kOkOrStart,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: getProportionWidth(8.0),
+                                                              vertical: getProportionWidth(8.0)),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0)),
+                                                    ),
+                                                    child: Text(
+                                                      "Start".toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontSize: getProportionWidth(18.0),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                            SizedBox(width: getProportionWidth(5.0)),
+                                            recording
+                                                ?
+                                                //stop button
+                                                ElevatedButton(
+                                                    onPressed:
+                                                        () {}, //will not end the workout if just tap
+                                                    onLongPress: stopStopwatch,
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                      //button background color
+                                                      primary: kStopOrAutoBtn,
+                                                      // : kReturn,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: getProportionWidth(8.0),
+                                                              vertical: getProportionWidth(8.0)),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0)),
+                                                    ),
+                                                    child: Text(
+                                                      "Long Press to Stop"
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontSize: getProportionWidth(12.0),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : ElevatedButton(
+                                                    onPressed:
+                                                        stopStopwatch, //in stopStopwatch function, return home page
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                      primary: kReturn,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: getProportionWidth(8.0),
+                                                              vertical: getProportionWidth(8.0)),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0)),
+                                                    ),
+                                                    child: Text(
+                                                      "Leave".toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontSize: getProportionWidth(18.0),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ],
+                                        ),
+
+                                        //TODO: classifying the type of physical activities
+                                        SizedBox(height: getProportionWidth(18.0)),
+                                        tracking
+                                            ? TyperAnimatedTextKit(
+                                                text: [
+                                                  "Tracking ...",
+                                                ],
+                                                textStyle: TextStyle(
+                                                  fontSize: getProportionWidth(18.0),
                                                   fontWeight: FontWeight.bold,
                                                 ),
+                                                textAlign: TextAlign.start,
+                                              )
+                                            : SizedBox(height: 0.0),
+
+                                        trackingDelay
+                                            ? SizedBox(height: 0.0)
+                                            : Column(
+                                                children: [
+                                                  SizedBox(height: getProportionWidth(10.0)),
+                                                  widget.workoutType != "Auto"
+                                                      ? DetailRow(
+                                                          title: 'Workout Type :',
+                                                          content:
+                                                              widget.workoutType)
+                                                      : DetailRow(
+                                                          title:
+                                                              'Activity Detected :',
+                                                          content: _result),
+                                                  SizedBox(height: getProportionWidth(10.0)),
+                                                  DetailRow(
+                                                      title: 'Total Distance :',
+                                                      content: _totalDistance
+                                                              .toStringAsFixed(
+                                                                  1) +
+                                                          " km"),
+                                                  SizedBox(height: getProportionWidth(10.0)),
+                                                  DetailRow(
+                                                      title: 'Current Speed :',
+                                                      content: _currentSpeed
+                                                              .toStringAsFixed(
+                                                                  1) +
+                                                          " m/s\u00B2"),
+                                                  (widget.workoutType ==
+                                                              "Walking" ||
+                                                          widget.workoutType ==
+                                                              "Walking Upstairs" ||
+                                                          widget.workoutType ==
+                                                              "Walking Downstairs" ||
+                                                          widget.workoutType ==
+                                                              "Running")
+                                                      ? Column(
+                                                          children: <Widget>[
+                                                            SizedBox(height: getProportionWidth(10.0)),
+                                                            DetailRow(
+                                                                title:
+                                                                    'Steps Taken Today :',
+                                                                content: _steps +
+                                                                    " steps"),
+                                                            SizedBox(height: getProportionWidth(10.0)),
+                                                          ],
+                                                        )
+                                                      : SizedBox(height: getProportionWidth(10.0)),
+                                                ],
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(width: getProportionWidth(12.0)),
-                                          startPressed
-                                              ? SizedBox(width: 0.0)
-                                              : ElevatedButton(
-                                                  onPressed: startPressed
-                                                      ? () {}
-                                                      : startCountdown,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    //button background color
-                                                    primary: startPressed
-                                                        ? kDisabled
-                                                        : kOkOrStart,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: getProportionWidth(8.0),
-                                                            vertical: getProportionWidth(8.0)),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0)),
-                                                  ),
-                                                  child: Text(
-                                                    "Start".toUpperCase(),
-                                                    style: TextStyle(
-                                                      fontSize: getProportionWidth(18.0),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                          SizedBox(width: getProportionWidth(5.0)),
-                                          recording
-                                              ?
-                                              //stop button
-                                              ElevatedButton(
-                                                  onPressed:
-                                                      () {}, //will not end the workout if just tap
-                                                  onLongPress: stopStopwatch,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    //button background color
-                                                    primary: kStopOrAutoBtn,
-                                                    // : kReturn,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: getProportionWidth(8.0),
-                                                            vertical: getProportionWidth(8.0)),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0)),
-                                                  ),
-                                                  child: Text(
-                                                    "Long Press to Stop"
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                      fontSize: getProportionWidth(12.0),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                )
-                                              : ElevatedButton(
-                                                  onPressed:
-                                                      stopStopwatch, //in stopStopwatch function, return home page
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    primary: kReturn,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: getProportionWidth(8.0),
-                                                            vertical: getProportionWidth(8.0)),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0)),
-                                                  ),
-                                                  child: Text(
-                                                    "Leave".toUpperCase(),
-                                                    style: TextStyle(
-                                                      fontSize: getProportionWidth(18.0),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                        ],
-                                      ),
 
-                                      //TODO: classifying the type of physical activities
-                                      SizedBox(height: getProportionWidth(18.0)),
-                                      tracking
-                                          ? TyperAnimatedTextKit(
-                                              text: [
-                                                "Tracking ...",
-                                              ],
-                                              textStyle: TextStyle(
-                                                fontSize: getProportionWidth(18.0),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.start,
-                                            )
-                                          : SizedBox(height: 0.0),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_biking),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_downstairs),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_jogging),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_sitting),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_standing),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_upstairs),
+                                        // SizedBox(height: 10.0),
+                                        // Text(_walking),
+                                        // SizedBox(height: 10.0),
 
-                                      trackingDelay
-                                          ? SizedBox(height: 0.0)
-                                          : Column(
-                                              children: [
-                                                SizedBox(height: getProportionWidth(10.0)),
-                                                widget.workoutType != "Auto"
-                                                    ? DetailRow(
-                                                        title: 'Workout Type :',
-                                                        content:
-                                                            widget.workoutType)
-                                                    : DetailRow(
-                                                        title:
-                                                            'Activity Detected :',
-                                                        content: _result),
-                                                SizedBox(height: getProportionWidth(10.0)),
-                                                DetailRow(
-                                                    title: 'Total Distance :',
-                                                    content: _totalDistance
-                                                            .toStringAsFixed(
-                                                                1) +
-                                                        " km"),
-                                                SizedBox(height: getProportionWidth(10.0)),
-                                                DetailRow(
-                                                    title: 'Current Speed :',
-                                                    content: _currentSpeed
-                                                            .toStringAsFixed(
-                                                                1) +
-                                                        " m/s\u00B2"),
-                                                (widget.workoutType ==
-                                                            "Walking" ||
-                                                        widget.workoutType ==
-                                                            "Walking Upstairs" ||
-                                                        widget.workoutType ==
-                                                            "Walking Downstairs" ||
-                                                        widget.workoutType ==
-                                                            "Running")
-                                                    ? Column(
-                                                        children: <Widget>[
-                                                          SizedBox(height: getProportionWidth(10.0)),
-                                                          DetailRow(
-                                                              title:
-                                                                  'Steps Taken Today :',
-                                                              content: _steps +
-                                                                  " steps"),
-                                                          SizedBox(height: getProportionWidth(10.0)),
-                                                        ],
-                                                      )
-                                                    : SizedBox(height: getProportionWidth(10.0)),
-                                              ],
-                                            ),
-
-                                      // SizedBox(height: 10.0),
-                                      // Text(_biking),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_downstairs),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_jogging),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_sitting),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_standing),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_upstairs),
-                                      // SizedBox(height: 10.0),
-                                      // Text(_walking),
-                                      // SizedBox(height: 10.0),
-
-                                      //google api
-                                      // SizedBox(height: 20.0),
-                                      // _results.isEmpty
-                                      //     ? Text(
-                                      //         "Tracking...",
-                                      //         style: Theme.of(context)
-                                      //             .textTheme
-                                      //             .bodyText2
-                                      //             .copyWith(
-                                      //               fontSize: 20.0,
-                                      //             ),
-                                      //       )
-                                      //     : Text(
-                                      //         "Detected: \t" +
-                                      //             _detectedActivity +
-                                      //             "\t" +
-                                      //             _detectedActivityStatus +
-                                      //             "\t" +
-                                      //             _detectedActivityTime,
-                                      //         style: Theme.of(context)
-                                      //             .textTheme
-                                      //             .bodyText2
-                                      //             .copyWith(
-                                      //               fontSize: 20.0,
-                                      //             ),
-                                      //       ),
-                                    ],
-                              ),
+                                        //google api
+                                        // SizedBox(height: 20.0),
+                                        // _results.isEmpty
+                                        //     ? Text(
+                                        //         "Tracking...",
+                                        //         style: Theme.of(context)
+                                        //             .textTheme
+                                        //             .bodyText2
+                                        //             .copyWith(
+                                        //               fontSize: 20.0,
+                                        //             ),
+                                        //       )
+                                        //     : Text(
+                                        //         "Detected: \t" +
+                                        //             _detectedActivity +
+                                        //             "\t" +
+                                        //             _detectedActivityStatus +
+                                        //             "\t" +
+                                        //             _detectedActivityTime,
+                                        //         style: Theme.of(context)
+                                        //             .textTheme
+                                        //             .bodyText2
+                                        //             .copyWith(
+                                        //               fontSize: 20.0,
+                                        //             ),
+                                        //       ),
+                                      ],
                                 ),
-                            ),
-                          ],
+                                  ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }),

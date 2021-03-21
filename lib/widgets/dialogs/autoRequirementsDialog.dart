@@ -30,8 +30,9 @@ autoRequirementsDialog(BuildContext context) {
         SizedBox(height: getProportionWidth(18.0)),
 
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: getProportionWidth(32.0)),
+          padding: EdgeInsets.symmetric(horizontal: getProportionWidth(25.0)),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               settingsBox.get(walkingRequiredKey, defaultValue: 2) == 0
               ? SizedBox(width: 0.0)
@@ -48,7 +49,7 @@ autoRequirementsDialog(BuildContext context) {
                       ),
                     ),
                   ),
-                  SizedBox(width: getProportionWidth(8.0)),
+                  Spacer(),
                   Text(
                     "${settingsBox.get(walkingRequiredKey, defaultValue: 2)} time(s)",
                     style: Theme.of(context).textTheme.bodyText2.copyWith(
@@ -74,7 +75,7 @@ autoRequirementsDialog(BuildContext context) {
                       ),
                     ),
                   ),
-                  SizedBox(width: getProportionWidth(8.0)),
+                  Spacer(),
                   Text(
                     "${settingsBox.get(walkingUpstairsRequiredKey, defaultValue: 2)} time(s)",
                     style: Theme.of(context).textTheme.bodyText2.copyWith(
@@ -99,7 +100,7 @@ autoRequirementsDialog(BuildContext context) {
                       ),
                     ),
                   ),
-                  SizedBox(width: getProportionWidth(8.0)),
+                  Spacer(),
                   Text(
                     "${settingsBox.get(walkingDownstairsRequiredKey, defaultValue: 2)} time(s)",
                     style: Theme.of(context).textTheme.bodyText2.copyWith(
@@ -124,7 +125,7 @@ autoRequirementsDialog(BuildContext context) {
                       ),
                     ),
                   ),
-                  SizedBox(width: getProportionWidth(8.0)),
+                  Spacer(),
                   Text(
                     "${settingsBox.get(runningRequiredKey, defaultValue: 2)} time(s)",
                     style: Theme.of(context).textTheme.bodyText2.copyWith(

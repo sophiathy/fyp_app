@@ -25,7 +25,6 @@ class _RecordsSectionState extends State<RecordsSection> {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      height: getProportionHeight(285.0),
       title: "Recent Records",
       topRightButton: SizedBox(width: 0.0),
       content:
@@ -51,10 +50,10 @@ class _RecordsSectionState extends State<RecordsSection> {
                       borderRadius: BorderRadius.circular(getProportionWidth(15.0)),
                       child: Container(
                         width: getProportionWidth(278.0),
-                        height: getProportionHeight(210.0),
                         child: ListView(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: BouncingScrollPhysics(),
                           padding: EdgeInsets.zero,
+                          shrinkWrap: true,
                           children: <Widget>[
                             recentRecordsBox.get(4) != null
                                 ? RecordOptions(

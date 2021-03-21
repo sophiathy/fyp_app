@@ -3,7 +3,7 @@ import 'package:fyp_app/theme/adaptiveSize.dart';
 import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/theme/darkProvider.dart';
 import 'package:fyp_app/widgets/manualContent.dart';
-import 'package:fyp_app/widgets/pageIndicator.dart';
+import 'package:fyp_app/widgets/indicators/pageIndicator.dart';
 import 'package:provider/provider.dart';
 
 class UserManual extends StatefulWidget {

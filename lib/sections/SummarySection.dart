@@ -108,12 +108,10 @@ class _SummarySectionState extends State<SummarySection> {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      height: getProportionHeight(214.0),
       title: "Today's Summary",
       topRightButton: SizedBox(width: 0.0),
       content:
         Container(
-          height: getProportionWidth(165.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -165,57 +163,59 @@ class _SummarySectionState extends State<SummarySection> {
               Flexible(
                 flex: 2,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Container(
-                            height: getProportionWidth(36.0),
-                            width: getProportionWidth(36.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: widget.modeSwitch
-                                  ? kIconBg_dark
-                                  : kIconBg_light.withOpacity(0.5),
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: getProportionWidth(25.0)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                              height: getProportionWidth(36.0),
+                              width: getProportionWidth(36.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: widget.modeSwitch
+                                    ? kIconBg_dark
+                                    : kIconBg_light.withOpacity(0.5),
+                              ),
+                              child: Icon(
+                                Icons.timer_rounded,
+                                color: Colors.pink,
+                              ),
                             ),
-                            child: Icon(
-                              Icons.timer_rounded,
-                              color: Colors.pink,
+                            SizedBox(width: getProportionWidth(12.0)),
+                            Text(
+                              (todaysDurationBox.get(DateTime.now().day,
+                                          defaultValue: 0) ~/
+                                      60 /
+                                      60)
+                                  .toStringAsFixed(1),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.pink,
+                                    fontSize: getProportionWidth(28.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                          ),
-                          SizedBox(width: getProportionWidth(12.0)),
-                          Text(
-                            (todaysDurationBox.get(DateTime.now().day,
-                                        defaultValue: 0) ~/
-                                    60 /
-                                    60)
-                                .toStringAsFixed(1),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2
-                                .copyWith(
-                                  color: Colors.pink,
-                                  fontSize: getProportionWidth(28.0),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          SizedBox(width: getProportionWidth(8.0)),
-                          Text(
-                            "hours",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2
-                                .copyWith(
-                                  color: Colors.pink,
-                                  fontSize: getProportionWidth(12.0),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
+                            SizedBox(width: getProportionWidth(8.0)),
+                            Text(
+                              "hours",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  .copyWith(
+                                    color: Colors.pink,
+                                    fontSize: getProportionWidth(12.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Container(

@@ -5,7 +5,6 @@ import 'package:fyp_app/theme/constants.dart';
 import 'package:fyp_app/widgets/buttons.dart';
 import 'package:fyp_app/widgets/exerciseBtn.dart';
 import 'package:fyp_app/widgets/sectionCard.dart';
-import 'package:fyp_app/widgets/toggleTrackingModeBtn.dart';
 import 'package:hive/hive.dart';
 
 class StartExSection extends StatefulWidget {
@@ -40,7 +39,6 @@ class _StartExSectionState extends State<StartExSection> {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      height: getProportionHeight(160.0),
       title: "Start an Exercise",
       topRightButton:
       //toggle tracking mode (manual or auto) (only show it when auto is unlocked)
@@ -59,7 +57,8 @@ class _StartExSectionState extends State<StartExSection> {
             style: ElevatedButton.styleFrom(
               primary: isAuto == 0 ? kPrimaryColor_light : kDisabled,
               padding: EdgeInsets.all(getProportionWidth(2.0)),
-              minimumSize: Size(getProportionWidth(55.0), getProportionHeight(18.0)),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,                  //remove padding between buttons
+              minimumSize: Size(getProportionWidth(50.0), getProportionHeight(20.0)),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(getProportionWidth(8.0)),
@@ -84,7 +83,8 @@ class _StartExSectionState extends State<StartExSection> {
             style: ElevatedButton.styleFrom(
               primary: isAuto == 0 ? kDisabled : kStopOrAutoBtn,
               padding: EdgeInsets.all(getProportionWidth(2.0)),
-              minimumSize: Size(getProportionWidth(42.0), getProportionHeight(18.0)),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,                  //remove padding between buttons
+              minimumSize: Size(getProportionWidth(34.0), getProportionHeight(20.0)),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(getProportionWidth(8.0)),

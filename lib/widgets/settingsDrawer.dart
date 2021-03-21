@@ -23,6 +23,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.all(getProportionWidth(28.0)),
+        physics: BouncingScrollPhysics(),
+        shrinkWrap: true,
         children: <Widget>[
           Container(
             height: getProportionHeight(230.0),

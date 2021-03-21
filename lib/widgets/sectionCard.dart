@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fyp_app/theme/adaptiveSize.dart';
 
 class SectionCard extends StatelessWidget {
-  final double height;
   final String title;
   final Widget topRightButton;
   final Widget content;
 
   const SectionCard({
-    this.height,
     this.title,
     this.topRightButton,
     this.content,
@@ -19,7 +17,6 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(getProportionWidth(22.0)),
-      height: height,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).indicatorColor,
@@ -31,6 +28,7 @@ class SectionCard extends StatelessWidget {
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
                 title.toUpperCase(),
@@ -43,7 +41,10 @@ class SectionCard extends StatelessWidget {
           ),
 
           //Widget
-          content,
+          Padding(
+            padding: EdgeInsets.only(top: getProportionWidth(10.0)),
+            child: content,
+          ),
         ],
       ),
     );

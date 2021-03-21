@@ -45,17 +45,16 @@ class _LoginState extends State<Login> {
                   FocusScope.of(context).requestFocus(new FocusNode());
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: getProportionWidth(16.0)),
+                  padding: EdgeInsets.all(getProportionWidth(18.0)),
                   child: SafeArea(
                     child: Container(
-                      height: getProportionHeight(500.0),
                       width: double.infinity,
                       child: ListView(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: getProportionWidth(50.0)),
+                            padding: EdgeInsets.only(top: getProportionWidth(32.0), bottom: getProportionWidth(50.0)),
                             child: SafeArea(
                               child: Text("Exercise\nTracker",
                                   textAlign: TextAlign.center,

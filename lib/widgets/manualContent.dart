@@ -16,13 +16,13 @@ class ManualContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        SizedBox(height: getProportionHeight(40.0)),
+        SizedBox(height: getProportionWidth(30.0)),
         SvgPicture.asset(
           image,
-          height: getProportionHeight(180.0),
+          height: getProportionWidth(180.0),
           width: getProportionWidth(200.0),
         ),
-        SizedBox(height: getProportionHeight(30.0)),
+        SizedBox(height: getProportionWidth(30.0)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: getProportionWidth(12.0)),
           child: Text(
@@ -31,7 +31,7 @@ class ManualContent extends StatelessWidget {
             style: Theme.of(context).textTheme.headline5,
           ),
         ),
-        SizedBox(height: getProportionHeight(25.0)),
+        SizedBox(height: getProportionWidth(25.0)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: getProportionWidth(30.0)),
           child: Text(
@@ -42,7 +42,7 @@ class ManualContent extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: getProportionHeight(20.0)),
+        SizedBox(height: getProportionWidth(20.0)),
       ],
     );
   }

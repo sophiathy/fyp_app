@@ -189,10 +189,7 @@ class _SummarySectionState extends State<SummarySection> {
                             SizedBox(width: getProportionWidth(12.0)),
                             Text(
                               (todaysDurationBox.get(DateTime.now().day,
-                                          defaultValue: 0) ~/
-                                      60 /
-                                      60)
-                                  .toStringAsFixed(1),
+                                defaultValue: 0) ~/ 60 / 60).toStringAsFixed(1),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2

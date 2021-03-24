@@ -65,30 +65,26 @@ class _ReviewRecordState extends State<ReviewRecord> {
 
     return List.generate(record.elementAt(2).length, (type) {
       bool isTapped = type == tappedIndex;
-      double opacity = isTapped
-          ? 1
-          : 0.5; //if tapped, the type name will be highlighted in indicator
+      double opacity = isTapped ? 1 : 0.5; //if tapped, the type name will be highlighted in indicator
 
       double titleSize = isTapped ? getProportionWidth(20.0) : getProportionWidth(12.0);
       double radius = isTapped ? getProportionWidth(60.0) : getProportionWidth(50.0);
 
       switch (type) {
-        // case 0:
-        //   return PieChartSectionData(
-        //     color: kRunning.withOpacity(opacity), //Running
-        //     title: record.elementAt(2).elementAt(type) > 0
-        //         ? '${(record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 100).toStringAsFixed(1)} %'
-        //         : "",
-        //     titleStyle: TextStyle(
-        //         color: Colors.white,
-        //         fontSize: titleSize,
-        //         fontWeight: FontWeight.bold),
-        //     value: record.elementAt(2).elementAt(type).toDouble() /
-        //         sumOfCount *
-        //         360,
-        //     radius: radius,
-        //   );
         case 0:
+          return PieChartSectionData(
+            color: kRunning.withOpacity(opacity), //Running
+            title: record.elementAt(2).elementAt(type) > 0
+                ? '${(record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 100).toStringAsFixed(1)} %'
+                : "",
+            titleStyle: TextStyle(
+                color: Colors.white,
+                fontSize: titleSize,
+                fontWeight: FontWeight.bold),
+            value: record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 360,
+            radius: radius,
+          );
+        case 1:
           return PieChartSectionData(
             color: kStanding.withOpacity(opacity), //Standing
             title: record.elementAt(2).elementAt(type) > 0
@@ -98,12 +94,10 @@ class _ReviewRecordState extends State<ReviewRecord> {
                 color: Colors.white,
                 fontSize: titleSize,
                 fontWeight: FontWeight.bold),
-            value: record.elementAt(2).elementAt(type).toDouble() /
-                sumOfCount *
-                360,
+            value: record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 360,
             radius: radius,
           );
-        case 1:
+        case 2:
           return PieChartSectionData(
             color: kWalking.withOpacity(opacity), //Walking
             title: record.elementAt(2).elementAt(type) > 0
@@ -113,12 +107,10 @@ class _ReviewRecordState extends State<ReviewRecord> {
                 color: Colors.white,
                 fontSize: titleSize,
                 fontWeight: FontWeight.bold),
-            value: record.elementAt(2).elementAt(type).toDouble() /
-                sumOfCount *
-                360,
+            value: record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 360,
             radius: radius,
           );
-        case 2:
+        case 3:
           return PieChartSectionData(
             color: kUpstairs.withOpacity(opacity), //Walking upstairs
             title: record.elementAt(2).elementAt(type) > 0
@@ -128,12 +120,10 @@ class _ReviewRecordState extends State<ReviewRecord> {
                 color: Colors.white,
                 fontSize: titleSize,
                 fontWeight: FontWeight.bold),
-            value: record.elementAt(2).elementAt(type).toDouble() /
-                sumOfCount *
-                360,
+            value: record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 360,
             radius: radius,
           );
-        case 3:
+        case 4:
           return PieChartSectionData(
             color: kDownstairs.withOpacity(opacity), //Walking downstairs
             title: record.elementAt(2).elementAt(type) > 0
@@ -143,9 +133,7 @@ class _ReviewRecordState extends State<ReviewRecord> {
                 color: Colors.white,
                 fontSize: titleSize,
                 fontWeight: FontWeight.bold),
-            value: record.elementAt(2).elementAt(type).toDouble() /
-                sumOfCount *
-                360,
+            value: record.elementAt(2).elementAt(type).toDouble() / sumOfCount * 360,
             radius: radius,
           );
         default:
@@ -181,8 +169,7 @@ class _ReviewRecordState extends State<ReviewRecord> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SectionCard(
-                      title:
-                          "Workout Review",
+                      title: "Workout Review",
                       topRightButton: SizedBox(width: 0.0),
                       content:
                         //workout review
@@ -196,184 +183,112 @@ class _ReviewRecordState extends State<ReviewRecord> {
                             ),
                             SizedBox(height: getProportionWidth(10.0)),
                             record.elementAt(1) != "Auto"
-                                ? DetailRow(
-                                    title: 'Workout Type :',
-                                    content: record.elementAt(1))
-                                : Column(
+                            ? DetailRow(
+                                title: 'Workout Type :',
+                                content: record.elementAt(1))
+                            : Column(
+                                children: <Widget>[
+                                  DetailRow(
+                                      title: 'Distribution of Workout(s) :',
+                                      content: ""),
+                                  SizedBox(height: getProportionWidth(10.0)),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      DetailRow(
-                                          title:
-                                              'Distribution of Workout(s) :',
-                                          content: ""),
-                                      SizedBox(height: getProportionWidth(10.0)),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceBetween,
+                                      Spacer(),
+                                      Container(
+                                        height: getProportionWidth(160.0),
+                                        width: getProportionWidth(160.0),
+                                        child: PieChart(
+                                          PieChartData(
+                                            pieTouchData: PieTouchData(
+                                              touchCallback: (tapped) {
+                                                setState(() {
+                                                  if (tapped.touchInput is FlLongPressEnd ||
+                                                      tapped.touchInput is FlPanEnd) //long press end or drag end
+                                                    tappedIndex = -1; //reset index
+                                                  else
+                                                    tappedIndex = tapped.touchedSectionIndex; //save newly tapped section
+                                                });
+                                            }),
+                                            borderData: FlBorderData(
+                                              show: false), //remove outer border
+                                            centerSpaceRadius: 20.0,
+                                            sectionsSpace: 2, //spaces between sections
+                                            sections:displayActivities()),
+                                        ),
+                                      ),
+                                      SizedBox(width: getProportionWidth(30.0)),
+                                      //detected workout type indicator
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Spacer(),
-                                          Container(
-                                            height: getProportionWidth(160.0),
-                                            width: getProportionWidth(160.0),
-                                            child: PieChart(
-                                              PieChartData(
-                                                  pieTouchData:
-                                                      PieTouchData(
-                                                          touchCallback:
-                                                              (tapped) {
-                                                    setState(() {
-                                                      if (tapped.touchInput
-                                                              is FlLongPressEnd ||
-                                                          tapped.touchInput
-                                                              is FlPanEnd) //long press end or drag end
-                                                        tappedIndex =
-                                                            -1; //reset index
-                                                      else
-                                                        tappedIndex = tapped
-                                                            .touchedSectionIndex; //save newly tapped section
-                                                    });
-                                                  }),
-                                                  borderData: FlBorderData(
-                                                      show:
-                                                          false), //remove outer border
-                                                  centerSpaceRadius:
-                                                      20.0,
-                                                  sectionsSpace:
-                                                      2, //spaces between sections
-                                                  sections:
-                                                      displayActivities()),
-                                            ),
-                                          ),
-                                          SizedBox(width: getProportionWidth(30.0)),
-                                          //detected workout type indicator
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                            children: <Widget>[
-                                              // record.elementAt(2).elementAt(0) > 0
-                                              //     ? TypeIndicator(
-                                              //         type: "Running",
-                                              //         color: tappedIndex ==
-                                              //                 3
-                                              //             ? kRunning
-                                              //             : kRunning
-                                              //                 .withOpacity(
-                                              //                     0.5),
-                                              //         textColor: tappedIndex ==
-                                              //                 3
-                                              //             ? Theme.of(
-                                              //                     context)
-                                              //                 .primaryColor
-                                              //             : Theme.of(
-                                              //                     context)
-                                              //                 .primaryColor
-                                              //                 .withOpacity(
-                                              //                     0.5),
-                                              //       )
-                                              //     : SizedBox(
-                                              //         width: 0.0),
+                                          record.elementAt(2).elementAt(0) > 0
+                                          ? TypeIndicator(
+                                              type: "Running",
+                                              color: tappedIndex == 0
+                                                  ? kRunning
+                                                  : kRunning.withOpacity(0.5),
+                                              textColor: tappedIndex == 0
+                                                  ? Theme.of(context).primaryColor
+                                                  : Theme.of(context).primaryColor.withOpacity(0.5),
+                                            )
+                                          : SizedBox(width: 0.0),
 
-                                              record.elementAt(2).elementAt(0) > 0
-                                              ? TypeIndicator(
-                                                  type: "Standing",
-                                                  color: tappedIndex ==
-                                                          0
-                                                      ? kStanding
-                                                      : kStanding
-                                                          .withOpacity(
-                                                              0.5),
-                                                  textColor: tappedIndex ==
-                                                          0
-                                                      ? Theme.of(
-                                                              context)
-                                                          .primaryColor
-                                                      : Theme.of(
-                                                              context)
-                                                          .primaryColor
-                                                          .withOpacity(
-                                                              0.5),
-                                                )
-                                              : SizedBox(
-                                                  width: 0.0),
+                                          record.elementAt(2).elementAt(1) > 0
+                                          ? TypeIndicator(
+                                              type: "Standing",
+                                              color: tappedIndex == 1
+                                                  ? kStanding
+                                                  : kStanding.withOpacity(0.5),
+                                              textColor: tappedIndex == 1
+                                                  ? Theme.of(context).primaryColor
+                                                  : Theme.of(context).primaryColor.withOpacity(0.5),
+                                            )
+                                          : SizedBox(width: 0.0),
 
-                                              record.elementAt(2).elementAt(1) > 0
-                                                  ? TypeIndicator(
-                                                      type: "Walking",
-                                                      color: tappedIndex ==
-                                                              1
-                                                          ? kWalking
-                                                          : kWalking
-                                                              .withOpacity(
-                                                                  0.5),
-                                                      textColor: tappedIndex ==
-                                                              1
-                                                          ? Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                          : Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                              .withOpacity(
-                                                                  0.5),
-                                                    )
-                                                  : SizedBox(
-                                                      width: 0.0),
+                                          record.elementAt(2).elementAt(2) > 0
+                                          ? TypeIndicator(
+                                              type: "Walking",
+                                              color: tappedIndex == 2
+                                                  ? kWalking
+                                                  : kWalking.withOpacity(0.5),
+                                              textColor: tappedIndex == 2
+                                                  ? Theme.of(context).primaryColor
+                                                  : Theme.of(context).primaryColor.withOpacity(0.5),
+                                            )
+                                          : SizedBox(width: 0.0),
 
-                                              record.elementAt(2).elementAt(2) > 0
-                                                  ? TypeIndicator(
-                                                      type: "Upstairs",
-                                                      color: tappedIndex ==
-                                                              2
-                                                          ? kUpstairs
-                                                          : kUpstairs
-                                                              .withOpacity(
-                                                                  0.5),
-                                                      textColor: tappedIndex ==
-                                                              2
-                                                          ? Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                          : Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                              .withOpacity(
-                                                                  0.5),
-                                                    )
-                                                  : SizedBox(
-                                                      width: 0.0),
+                                          record.elementAt(2).elementAt(3) > 0
+                                          ? TypeIndicator(
+                                              type: "Upstairs",
+                                              color: tappedIndex == 3
+                                                  ? kUpstairs
+                                                  : kUpstairs.withOpacity(0.5),
+                                              textColor: tappedIndex == 3
+                                                  ? Theme.of(context).primaryColor
+                                                  : Theme.of(context).primaryColor.withOpacity(0.5),
+                                            )
+                                          : SizedBox(width: 0.0),
 
-                                              record.elementAt(2).elementAt(3) > 0
-                                                  ? TypeIndicator(
-                                                      type:
-                                                          "Downstairs",
-                                                      color: tappedIndex ==
-                                                              3
-                                                          ? kDownstairs
-                                                          : kDownstairs
-                                                              .withOpacity(
-                                                                  0.5),
-                                                      textColor: tappedIndex ==
-                                                              3
-                                                          ? Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                          : Theme.of(
-                                                                  context)
-                                                              .primaryColor
-                                                              .withOpacity(
-                                                                  0.5),
-                                                    )
-                                                  : SizedBox(
-                                                      width: 0.0),
-                                            ],
-                                          ),
+                                          record.elementAt(2).elementAt(4) > 0
+                                          ? TypeIndicator(
+                                              type: "Downstairs",
+                                              color: tappedIndex == 4
+                                                  ? kDownstairs
+                                                  : kDownstairs.withOpacity(0.5),
+                                              textColor: tappedIndex == 4
+                                                  ? Theme.of(context).primaryColor
+                                                  : Theme.of(context).primaryColor.withOpacity(0.5),
+                                            )
+                                          : SizedBox(width: 0.0),
                                         ],
                                       ),
                                     ],
                                   ),
+                                ],
+                              ),
                             SizedBox(height: getProportionWidth(10.0)),
                             DetailRow(
                                 title: 'Duration :',
@@ -381,31 +296,25 @@ class _ReviewRecordState extends State<ReviewRecord> {
                             SizedBox(height: getProportionWidth(10.0)),
                             DetailRow(
                                 title: 'Total Distance :',
-                                content: record.elementAt(4)
-                                        .toStringAsFixed(1) +
-                                    " km"),
+                                content: record.elementAt(4).toStringAsFixed(1) + " km"),
                             SizedBox(height: getProportionWidth(10.0)),
                             DetailRow(
                                 title: 'Average Speed :',
-                                content:
-                                    "${record.elementAt(5).toStringAsFixed(1)} m/s\u00B2"),
+                                content: "${record.elementAt(5).toStringAsFixed(1)} m/s\u00B2"),
                             SizedBox(height: getProportionWidth(10.0)),
                             DetailRow(
                                 title: 'Highest Speed :',
-                                content:
-                                    "${record.elementAt(6).toStringAsFixed(1)} m/s\u00B2"),
+                                content: "${record.elementAt(6).toStringAsFixed(1)} m/s\u00B2"),
                             SizedBox(height: getProportionWidth(10.0)),
                           ],
                       ),
                         ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: getProportionWidth(20.0)),
+                      padding: EdgeInsets.only(top: getProportionWidth(20.0)),
                       child: Buttons(
                         name: "Return to Home",
-                        press: (() => Navigator.of(context)
-                            .pushReplacementNamed('/home')),
+                        press: (() => Navigator.of(context).pushReplacementNamed('/home')),
                       ),
                     ),
                   ],

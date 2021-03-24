@@ -64,7 +64,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     private Interpreter tflite;
     private static final String MODEL_FILE_PATH = "finalModel.tflite";
     private final int sensorsInputs = 6;
-    private final int outputTypes = 4;  //TODO: change back to 5
+    private final int outputTypes = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,15 +218,15 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
                     highestProbability = i;
             }
 
-            // if(highestProbability == 0)
-            //     result = "Running";
             if(highestProbability == 0)
+                result = "Running";
+            if(highestProbability == 1)
                 result = "Standing";
-            else if(highestProbability == 1)
-                result = "Walking";
             else if(highestProbability == 2)
-                result = "Walking Upstairs";
+                result = "Walking";
             else if(highestProbability == 3)
+                result = "Walking Upstairs";
+            else if(highestProbability == 4)
                 result = "Walking Downstairs";
 
             Log.i(TAG, "Current Activity: "+ result);

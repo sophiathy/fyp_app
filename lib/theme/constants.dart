@@ -21,11 +21,11 @@ const kReturn = Colors.indigoAccent;
 const kDisabled = Color(0xFF90A4AE);
 
 //used in pie chart (auto tracking mode)
+const kRunning = Colors.orange;
+const kStanding = Colors.purple;
 const kWalking = Colors.indigo;
 const kUpstairs = Colors.red;
 const kDownstairs = Colors.green;
-const kRunning = Colors.orange;
-const kStanding = Colors.purple;
 
 //regular expression
 final RegExp emailRegExp =

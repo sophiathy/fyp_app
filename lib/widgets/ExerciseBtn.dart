@@ -88,7 +88,8 @@ Widget _typeIcon(String type) {
       color: icolor,
       size: isize,
     );
-  }
+  } else
+    return SizedBox(width: 0.0);
   // else if (type == "Cycling") {
   //   return Icon(
   //     Icons.directions_bike_rounded,

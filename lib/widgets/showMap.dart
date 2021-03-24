@@ -67,11 +67,11 @@ class _ShowMapState extends State<ShowMap> {
 
   Future<void> keepUserCenter(Position movingPos) async {
     final GoogleMapController gc = await _mapController.future;
-    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
-    //TODO: add dialog for location permission
-    if (!isLocationServiceEnabled)
-      LocationPermission permission = await Geolocator.requestPermission();
+    //(unused) add dialog for location permission
+    // if (!isLocationServiceEnabled)
+    //   LocationPermission permission = await Geolocator.requestPermission();
 
     gc.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(

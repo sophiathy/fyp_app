@@ -89,10 +89,9 @@ class _HomeState extends State<Home> {
                             children: <Widget>[
                               //mode switcher
                               IconButton(
-                                //TODO:Explain in report
+                                //toggle the theme mode
                                 onPressed: () {
-                                  setState(() => modeSwitch.themeData =
-                                      !modeSwitch.themeData);
+                                  setState(() => modeSwitch.themeData = !modeSwitch.themeData);
                                 },
                                 icon: modeSwitch.themeData
                                     ? Icon(
@@ -167,24 +166,21 @@ class _HomeState extends State<Home> {
 
                         //Today's Summary
                         Padding(
-                          padding: EdgeInsets.only(
-                              bottom: getProportionWidth(20.0)),
+                          padding: EdgeInsets.only(bottom: getProportionWidth(20.0)),
                           child: SummarySection(
                               modeSwitch: modeSwitch.themeData),
                         ),
 
                         //Start an Exercise
                         Padding(
-                          padding: EdgeInsets.only(
-                              bottom: getProportionWidth(20.0)),
+                          padding: EdgeInsets.only(bottom: getProportionWidth(20.0)),
                           child: StartExSection(
                               modeSwitch: modeSwitch.themeData),
                         ),
 
                         //Recent Records
                         Padding(
-                          padding: EdgeInsets.only(
-                              bottom: getProportionWidth(20.0)),
+                          padding: EdgeInsets.only(bottom: getProportionWidth(20.0)),
                           child: RecordsSection(
                               modeSwitch: modeSwitch.themeData),
                         ),

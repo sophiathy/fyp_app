@@ -69,8 +69,7 @@ class About extends StatelessWidget {
                   padding: EdgeInsets.only(top: getProportionWidth(20.0)),
                   child: Buttons(
                     name: "Return to Home",
-                    press: (() => Navigator.of(context)
-                        .pushReplacementNamed('/home')),
+                    press: (() => Navigator.of(context).pushReplacementNamed('/home')),
                   ),
                 ),
               ],

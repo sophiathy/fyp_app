@@ -21,7 +21,6 @@ import 'package:provider/provider.dart';
 
 //*********************Designed by Tang Ho Yan Sophia (sophiathy2@gmail.com)***********************//
 
-//TODO: Solving No Firebase App 'DEFAULT' has been created
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDirectory = await getApplicationDocumentsDirectory();
@@ -64,7 +63,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO:need comment
+    //listen to the change of theme
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<DarkProvider>(
@@ -73,7 +72,6 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ],
-      //TODO: important! this fixes all the problems of dark mode
       child: Consumer<DarkProvider>(
           builder: (BuildContext context, value, Widget child) {
         return StreamProvider<UserProperties>.value(

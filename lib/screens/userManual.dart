@@ -134,8 +134,7 @@ class _UserManualState extends State<UserManual> {
 
                                     //press button to navigate between pages
                                     _controller.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 200),
+                                        duration: const Duration(milliseconds: 200),
                                         curve: Curves.bounceIn);
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -145,9 +144,7 @@ class _UserManualState extends State<UserManual> {
                                         horizontal: getProportionWidth(8.0),
                                         vertical: getProportionHeight(8.0)),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                getProportionWidth(8.0))),
+                                        borderRadius: BorderRadius.circular(getProportionWidth(8.0))),
                                   ),
                                   child: Text(
                                     (currentPageNo == guides.length - 1)

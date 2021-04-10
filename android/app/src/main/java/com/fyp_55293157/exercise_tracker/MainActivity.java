@@ -62,7 +62,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     // private float[] results;
     private String result;
     private Interpreter tflite;
-    private static final String MODEL_FILE_PATH = "finalModel.tflite";
+    private static final String MODEL_FILE_PATH = "myModel.tflite";
     private final int sensorsInputs = 6;
     private final int outputTypes = 5;
 
@@ -86,8 +86,8 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
         // mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
-        mSensorManager.registerListener(this,mAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        mSensorManager.registerListener(this,mGyroscope, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_FASTEST);
         // mSensorManager.registerListener(this,mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
 
         try{
@@ -162,12 +162,12 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     public void onAccuracyChanged(Sensor sensor, int accuracy){}
 
     private MappedByteBuffer loadModelFile() throws Exception {
-        AssetFileDescriptor fileDescriptor = this.getAssets().openFd(MODEL_FILE_PATH);
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        AssetFileDescriptor fileDesc = this.getAssets().openFd(MODEL_FILE_PATH);
+        FileInputStream input_stream = new FileInputStream(fileDesc.getFileDescriptor());
+        FileChannel file_channel = input_stream.getChannel();
+        long start_offset = fileDesc.getStartOffset();
+        long deLength = fileDesc.getDeclaredLength();
+        return file_channel.map(FileChannel.MapMode.READ_ONLY, start_offset, deLength);
     }
 
     private String classifyActivity() {
